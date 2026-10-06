@@ -38,6 +38,10 @@ jobs:
         working-directory: client
         run: npm run build
 
+      # GitHub Pages SPA routing fix
+      - name: Create SPA 404 fallback
+        run: cp client/dist/index.html client/dist/404.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
