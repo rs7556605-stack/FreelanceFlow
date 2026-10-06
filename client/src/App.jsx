@@ -42,10 +42,9 @@ const App = () => {
   }, []);
 
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-
+  <AuthProvider>
+    <BrowserRouter basename="/FreelanceFlow">
+      <Routes>
           {/* ==========================================
               PUBLIC ROUTES
           ========================================== */}
