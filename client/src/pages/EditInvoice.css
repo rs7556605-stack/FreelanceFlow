@@ -1,0 +1,543 @@
+.edit-invoice-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 30px;
+  box-sizing: border-box;
+  background: #f8fafc;
+}
+
+.edit-invoice-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.edit-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 22px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.edit-back-btn:hover {
+  color: #1d4ed8;
+}
+
+.edit-invoice-header {
+  margin-bottom: 25px;
+}
+
+.edit-invoice-header h1 {
+  margin: 0 0 5px;
+  font-size: 30px;
+  color: #0f172a;
+}
+
+.edit-invoice-header p {
+  margin: 0;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.edit-invoice-error,
+.edit-invoice-success {
+  padding: 14px;
+  border-radius: 9px;
+  margin-bottom: 20px;
+}
+
+.edit-invoice-error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.edit-invoice-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.edit-invoice-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.edit-invoice-section {
+  background: white;
+  padding: 25px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.edit-invoice-section h2 {
+  margin: 0 0 20px;
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.edit-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.edit-info-grid div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.edit-info-grid span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.edit-info-grid strong {
+  color: #0f172a;
+}
+
+.edit-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.edit-field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.edit-field input,
+.edit-field select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: white;
+  outline: none;
+}
+
+.edit-field input:focus,
+.edit-field select:focus {
+  border-color: #2563eb;
+}
+
+.edit-invoice-summary {
+  padding: 24px;
+  border-radius: 12px;
+  background: #0f172a;
+  color: white;
+}
+
+.edit-invoice-summary > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 0;
+  color: #cbd5e1;
+}
+
+.edit-invoice-summary strong {
+  color: white;
+}
+
+.edit-invoice-summary .edit-total {
+  margin-top: 10px;
+  padding-top: 17px;
+  border-top: 1px solid #475569;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.edit-invoice-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.edit-cancel-btn,
+.edit-save-btn {
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.edit-cancel-btn {
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #334155;
+}
+
+.edit-save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: #2563eb;
+  color: white;
+}
+
+.edit-save-btn:hover {
+  background: #1d4ed8;
+}
+
+.edit-save-btn:disabled,
+.edit-cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.edit-invoice-loading {
+  padding: 80px;
+  text-align: center;
+  color: #64748b;
+}
+
+@media (max-width: 700px) {
+  .edit-invoice-page {
+    padding: 18px;
+  }
+
+  .edit-info-grid,
+  .edit-fields-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-invoice-actions {
+    flex-direction: column-reverse;
+  }
+
+  .edit-cancel-btn,
+  .edit-save-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* =========================================================
+   EDIT INVOICE - DARK THEME
+   FreelanceFlow
+   ========================================================= */
+
+
+/* =========================================================
+   MAIN PAGE
+   ========================================================= */
+
+html[data-theme="dark"] .edit-invoice-page {
+  min-height: 100vh;
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .edit-invoice-container {
+  color: #e2e8f0 !important;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
+
+html[data-theme="dark"] .edit-back-btn {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .edit-back-btn:hover {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .edit-back-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+html[data-theme="dark"] .edit-invoice-header h1 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .edit-invoice-header p {
+  color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+html[data-theme="dark"] .edit-invoice-error {
+  background: #450a0a !important;
+  color: #fecaca !important;
+  border-color: #7f1d1d !important;
+}
+
+
+/* =========================================================
+   SUCCESS
+   ========================================================= */
+
+html[data-theme="dark"] .edit-invoice-success {
+  background: #052e16 !important;
+  color: #86efac !important;
+  border-color: #166534 !important;
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+html[data-theme="dark"] .edit-invoice-loading {
+  background: #0f172a !important;
+  color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   MAIN FORM
+   ========================================================= */
+
+html[data-theme="dark"] .edit-invoice-form {
+  color: #e2e8f0 !important;
+}
+
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+html[data-theme="dark"] .edit-invoice-section {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] .edit-invoice-section h2 {
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+
+/* =========================================================
+   INVOICE INFORMATION
+   ========================================================= */
+
+html[data-theme="dark"] .edit-info-grid {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .edit-info-grid > div {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .edit-info-grid span {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .edit-info-grid strong {
+  color: #f8fafc !important;
+}
+
+
+/* =========================================================
+   EDIT FIELDS
+   ========================================================= */
+
+html[data-theme="dark"] .edit-field label {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .edit-field input,
+html[data-theme="dark"] .edit-field select {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] .edit-field input:focus,
+html[data-theme="dark"] .edit-field select:focus {
+  border-color: #60a5fa !important;
+  outline: none;
+}
+
+html[data-theme="dark"] .edit-field input:disabled,
+html[data-theme="dark"] .edit-field select:disabled {
+  background: #172033 !important;
+  color: #64748b !important;
+  cursor: not-allowed;
+}
+
+html[data-theme="dark"] .edit-field small {
+  color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   SELECT OPTIONS
+   ========================================================= */
+
+html[data-theme="dark"] .edit-field select option {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+
+/* =========================================================
+   DATE INPUT
+   ========================================================= */
+
+html[data-theme="dark"] .edit-field input[type="date"] {
+  color-scheme: dark;
+}
+
+
+/* =========================================================
+   NUMBER INPUT
+   ========================================================= */
+
+html[data-theme="dark"] .edit-field input[type="number"] {
+  color-scheme: dark;
+}
+
+
+/* =========================================================
+   SUMMARY
+   ========================================================= */
+
+html[data-theme="dark"] .edit-invoice-summary {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] .edit-invoice-summary > div {
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .edit-invoice-summary span {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .edit-invoice-summary strong {
+  color: #f8fafc !important;
+}
+
+
+/* =========================================================
+   TOTAL
+   ========================================================= */
+
+html[data-theme="dark"] .edit-invoice-summary .edit-total {
+  border-top-color: #475569 !important;
+}
+
+html[data-theme="dark"] .edit-total span {
+  color: #cbd5e1 !important;
+  font-weight: 600;
+}
+
+html[data-theme="dark"] .edit-total strong {
+  color: #60a5fa !important;
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+html[data-theme="dark"] .edit-invoice-actions {
+  color: #e2e8f0 !important;
+}
+
+
+/* =========================================================
+   CANCEL BUTTON
+   ========================================================= */
+
+html[data-theme="dark"] .edit-cancel-btn {
+  background: #334155 !important;
+  color: #e2e8f0 !important;
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] .edit-cancel-btn:hover {
+  background: #475569 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .edit-cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   SAVE BUTTON
+   ========================================================= */
+
+html[data-theme="dark"] .edit-save-btn {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+}
+
+html[data-theme="dark"] .edit-save-btn:hover {
+  background: #1d4ed8 !important;
+  border-color: #1d4ed8 !important;
+}
+
+html[data-theme="dark"] .edit-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+html[data-theme="dark"] .edit-invoice-page ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html[data-theme="dark"] .edit-invoice-page ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+html[data-theme="dark"] .edit-invoice-page ::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 10px;
+}
+
+html[data-theme="dark"] .edit-invoice-page ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}

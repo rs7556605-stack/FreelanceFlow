@@ -1,0 +1,799 @@
+.invoice-details-page {
+  min-height: 100vh;
+  width: 100%;
+  padding: 30px;
+  box-sizing: border-box;
+  background: #f8fafc;
+}
+
+.invoice-details-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.invoice-details-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.invoice-details-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.invoice-details-back-btn:hover {
+  color: #1d4ed8;
+}
+
+.invoice-details-status {
+  display: inline-flex;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.invoice-details-status.draft {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.invoice-details-status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.invoice-details-status.paid {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.invoice-details-status.overdue {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.invoice-details-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* HEADER */
+
+.invoice-details-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  padding: 35px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.invoice-logo {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #2563eb;
+  margin-bottom: 15px;
+}
+
+.invoice-details-header h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #0f172a;
+}
+
+.invoice-number {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.invoice-date-box {
+  display: flex;
+  gap: 35px;
+}
+
+.invoice-date-box div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.invoice-date-box span {
+  color: #64748b;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.invoice-date-box strong {
+  color: #0f172a;
+  font-size: 14px;
+}
+
+/* CLIENT */
+
+.invoice-client-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  padding: 30px 35px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.invoice-client-box,
+.invoice-period-box {
+  display: flex;
+  gap: 14px;
+}
+
+.invoice-section-icon {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.invoice-label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+}
+
+.invoice-client-box h3 {
+  margin: 0 0 5px;
+  color: #0f172a;
+  font-size: 16px;
+}
+
+.invoice-client-box p,
+.invoice-period-box p {
+  margin: 3px 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* ITEMS */
+
+.invoice-items-section {
+  padding: 30px 35px;
+}
+
+.invoice-items-section h2 {
+  margin: 0 0 18px;
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.invoice-items-wrapper {
+  overflow-x: auto;
+}
+
+.invoice-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 650px;
+}
+
+.invoice-items-table th,
+.invoice-items-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.invoice-items-table th {
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.invoice-items-table td {
+  color: #334155;
+  font-size: 14px;
+}
+
+.invoice-items-table th:nth-child(n + 2),
+.invoice-items-table td:nth-child(n + 2) {
+  text-align: right;
+}
+
+/* TOTAL */
+
+.invoice-total-section {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 35px 35px;
+}
+
+.invoice-total-box {
+  width: 330px;
+}
+
+.invoice-total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.invoice-total-row strong {
+  color: #334155;
+}
+
+.invoice-grand-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 16px;
+  border-top: 2px solid #0f172a;
+  color: #0f172a;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.invoice-details-loading {
+  padding: 80px 20px;
+  text-align: center;
+  color: #64748b;
+}
+
+.invoice-details-error {
+  margin-top: 30px;
+  padding: 18px;
+  border-radius: 10px;
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+  .invoice-details-page {
+    padding: 18px;
+  }
+
+  .invoice-details-header {
+    flex-direction: column;
+    padding: 25px;
+  }
+
+  .invoice-date-box {
+    gap: 25px;
+  }
+
+  .invoice-client-section {
+    grid-template-columns: 1fr;
+    padding: 25px;
+  }
+
+  .invoice-items-section {
+    padding: 25px;
+  }
+
+  .invoice-total-section {
+    padding: 0 25px 25px;
+  }
+
+  .invoice-total-box {
+    width: 100%;
+  }
+}
+
+/* =====================================================
+   DOWNLOAD PDF BUTTON
+===================================================== */
+
+.invoice-details-top > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.invoice-details-top > div > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 10px 16px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #111827;
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.invoice-details-top > div > button:hover {
+  background: #1f2937;
+  transform: translateY(-1px);
+}
+
+.invoice-details-top > div > button:active {
+  transform: translateY(0);
+}
+
+.invoice-details-top > div > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+  .invoice-details-top > div {
+    gap: 8px;
+  }
+
+  .invoice-details-top > div > button {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+}
+
+
+
+
+
+/* =========================================================
+   INVOICE DETAILS - DARK THEME
+   FreelanceFlow
+   ========================================================= */
+
+/* PAGE */
+html[data-theme="dark"] .invoice-details-page {
+  min-height: 100vh;
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .invoice-details-container {
+  color: #e2e8f0 !important;
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-details-loading {
+  background: #0f172a !important;
+  color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-details-back-btn {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .invoice-details-back-btn:hover {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-details-error {
+  background: #450a0a !important;
+  color: #fecaca !important;
+  border-color: #7f1d1d !important;
+}
+
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-details-top {
+  color: #e2e8f0 !important;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-details-status {
+  border-color: transparent !important;
+}
+
+html[data-theme="dark"] .invoice-details-status.paid {
+  background: #052e16 !important;
+  color: #4ade80 !important;
+  border-color: #166534 !important;
+}
+
+html[data-theme="dark"] .invoice-details-status.pending {
+  background: #451a03 !important;
+  color: #fbbf24 !important;
+  border-color: #92400e !important;
+}
+
+html[data-theme="dark"] .invoice-details-status.overdue {
+  background: #450a0a !important;
+  color: #f87171 !important;
+  border-color: #7f1d1d !important;
+}
+
+html[data-theme="dark"] .invoice-details-status.draft {
+  background: #334155 !important;
+  color: #cbd5e1 !important;
+  border-color: #475569 !important;
+}
+
+
+/* =========================================================
+   DOWNLOAD PDF BUTTON
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-details-top button {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+}
+
+html[data-theme="dark"] .invoice-details-top button:hover {
+  background: #1d4ed8 !important;
+  border-color: #1d4ed8 !important;
+}
+
+html[data-theme="dark"] .invoice-details-top button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   MAIN INVOICE CARD
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-details-card {
+  background: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+  box-shadow: none !important;
+}
+
+
+/* =========================================================
+   INVOICE HEADER
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-details-header {
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .invoice-details-header h1 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .invoice-number {
+  color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   INVOICE LOGO
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-logo {
+  background: #172554 !important;
+  color: #60a5fa !important;
+}
+
+
+/* =========================================================
+   DATE BOX
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-date-box {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .invoice-date-box span {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .invoice-date-box strong {
+  color: #f8fafc !important;
+}
+
+
+/* =========================================================
+   CLIENT + BILLING PERIOD
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-client-section {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .invoice-client-box,
+html[data-theme="dark"] .invoice-period-box {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .invoice-section-icon {
+  background: #172554 !important;
+  color: #60a5fa !important;
+}
+
+html[data-theme="dark"] .invoice-label {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .invoice-client-box h3 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .invoice-client-box p,
+html[data-theme="dark"] .invoice-period-box p {
+  color: #cbd5e1 !important;
+}
+
+
+/* =========================================================
+   ITEMS SECTION
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-items-section {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .invoice-items-section h2 {
+  color: #f8fafc !important;
+}
+
+
+/* =========================================================
+   ITEMS TABLE
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-items-wrapper {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .invoice-items-table {
+  background: #1e293b !important;
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .invoice-items-table thead {
+  background: #0f172a !important;
+}
+
+html[data-theme="dark"] .invoice-items-table th {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .invoice-items-table td {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .invoice-items-table td strong {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .invoice-items-table tbody tr:hover td {
+  background: #334155 !important;
+}
+
+
+/* =========================================================
+   TOTAL SECTION
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-total-section {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .invoice-total-box {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+
+/* =========================================================
+   TOTAL ROWS
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-total-row {
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .invoice-total-row span {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .invoice-total-row strong {
+  color: #f8fafc !important;
+}
+
+
+/* =========================================================
+   GRAND TOTAL
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-grand-total {
+  border-top-color: #475569 !important;
+}
+
+html[data-theme="dark"] .invoice-grand-total span {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .invoice-grand-total strong {
+  color: #60a5fa !important;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-details-page ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html[data-theme="dark"] .invoice-details-page ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+html[data-theme="dark"] .invoice-details-page ::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 10px;
+}
+
+html[data-theme="dark"] .invoice-details-page ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+
+/* =========================================================
+   BACK TO INVOICES BUTTON
+   ========================================================= */
+
+.invoice-details-back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 10px 16px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #475569;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  line-height: 1;
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.invoice-details-back-btn:hover {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.invoice-details-back-btn:active {
+  transform: translateY(1px);
+}
+
+.invoice-details-back-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-details-back-btn {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .invoice-details-back-btn:hover {
+  background: #334155 !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] .invoice-details-back-btn:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .invoice-details-back-btn {
+    padding: 9px 13px;
+    font-size: 13px;
+    gap: 7px;
+  }
+
+  .invoice-details-back-btn svg {
+    width: 17px;
+    height: 17px;
+  }
+}

@@ -1,0 +1,617 @@
+.invoices-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+.invoices-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.invoices-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.invoices-header h1 {
+  margin: 0 0 6px;
+  font-size: 30px;
+}
+
+.invoices-header p {
+  margin: 0;
+  color: #64748b;
+}
+
+.create-invoice-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 9px;
+  background: #2563eb;
+  color: white;
+  text-decoration: none;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.create-invoice-btn:hover {
+  background: #1d4ed8;
+}
+
+.invoice-error {
+  padding: 14px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.invoice-loading {
+  padding: 50px;
+  text-align: center;
+  color: #64748b;
+}
+
+.invoice-empty {
+  padding: 60px 20px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+}
+
+.invoice-empty h2 {
+  margin-bottom: 8px;
+}
+
+.invoice-empty p {
+  color: #64748b;
+  margin-bottom: 20px;
+}
+
+.invoice-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.invoice-table th,
+.invoice-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.invoice-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 14px;
+}
+
+.invoice-table td {
+  color: #334155;
+}
+
+.invoice-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.invoice-status.draft {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.invoice-status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.invoice-status.paid {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.invoice-status.overdue {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.view-invoice-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+@media (max-width: 700px) {
+  .invoices-page {
+    padding: 20px;
+  }
+
+  .invoices-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .create-invoice-btn {
+    width: 100%;
+  }
+}
+
+.invoices-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 22px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.invoices-back-btn:hover {
+  color: #1d4ed8;
+}
+
+.invoice-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.edit-invoice-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border-radius: 7px;
+  background: #f1f5f9;
+  color: #334155;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.edit-invoice-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* =====================================================
+   INVOICE ACTION BUTTONS
+===================================================== */
+
+.invoice-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* VIEW */
+
+.view-invoice-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border-radius: 7px;
+  background: #eff6ff;
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.view-invoice-btn:hover {
+  background: #dbeafe;
+}
+
+/* EDIT */
+
+.edit-invoice-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border-radius: 7px;
+  background: #f1f5f9;
+  color: #334155;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.edit-invoice-btn:hover {
+  background: #e2e8f0;
+}
+
+/* DELETE */
+
+.delete-invoice-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border: none;
+  border-radius: 7px;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.delete-invoice-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.delete-invoice-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* SUCCESS MESSAGE */
+
+.invoice-success {
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border-radius: 9px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* MOBILE */
+
+@media (max-width: 800px) {
+  .invoice-action-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .view-invoice-btn,
+  .edit-invoice-btn,
+  .delete-invoice-btn {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+/* =========================================================
+   INVOICES - DARK THEME
+   FreelanceFlow
+   ========================================================= */
+
+
+/* =========================================================
+   MAIN PAGE
+   ========================================================= */
+
+html[data-theme="dark"] .invoices-page {
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+  min-height: 100vh;
+}
+
+html[data-theme="dark"] .invoices-container {
+  color: #e2e8f0 !important;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
+
+html[data-theme="dark"] .invoices-back-btn {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .invoices-back-btn:hover {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+html[data-theme="dark"] .invoices-header h1 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .invoices-header p {
+  color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   CREATE INVOICE BUTTON
+   ========================================================= */
+
+html[data-theme="dark"] .create-invoice-btn {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+}
+
+html[data-theme="dark"] .create-invoice-btn:hover {
+  background: #1d4ed8 !important;
+  border-color: #1d4ed8 !important;
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-error {
+  background: #450a0a !important;
+  color: #fecaca !important;
+  border-color: #7f1d1d !important;
+}
+
+
+/* =========================================================
+   SUCCESS MESSAGE
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-success {
+  background: #052e16 !important;
+  color: #86efac !important;
+  border-color: #166534 !important;
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-loading {
+  background: #1e293b !important;
+  color: #94a3b8 !important;
+  border-color: #334155 !important;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-empty {
+  background: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .invoice-empty h2 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .invoice-empty p {
+  color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-table-wrapper {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  box-shadow: none !important;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-table {
+  background: #1e293b !important;
+  color: #e2e8f0 !important;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-table thead {
+  background: #0f172a !important;
+}
+
+html[data-theme="dark"] .invoice-table th {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+
+/* =========================================================
+   TABLE BODY
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-table td {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .invoice-table td strong {
+  color: #f8fafc !important;
+}
+
+
+/* =========================================================
+   TABLE ROW HOVER
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-table tbody tr:hover {
+  background: #334155 !important;
+}
+
+html[data-theme="dark"] .invoice-table tbody tr:hover td {
+  background: #334155 !important;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-status {
+  border-color: transparent !important;
+}
+
+
+/* PAID */
+
+html[data-theme="dark"] .invoice-status.paid {
+  background: #052e16 !important;
+  color: #4ade80 !important;
+  border-color: #166534 !important;
+}
+
+
+/* PENDING */
+
+html[data-theme="dark"] .invoice-status.pending {
+  background: #451a03 !important;
+  color: #fbbf24 !important;
+  border-color: #92400e !important;
+}
+
+
+/* OVERDUE */
+
+html[data-theme="dark"] .invoice-status.overdue {
+  background: #450a0a !important;
+  color: #f87171 !important;
+  border-color: #7f1d1d !important;
+}
+
+
+/* DRAFT */
+
+html[data-theme="dark"] .invoice-status.draft {
+  background: #334155 !important;
+  color: #cbd5e1 !important;
+  border-color: #475569 !important;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-action-buttons {
+  color: #e2e8f0 !important;
+}
+
+
+/* VIEW */
+
+html[data-theme="dark"] .view-invoice-btn {
+  background: #172554 !important;
+  color: #60a5fa !important;
+  border-color: #1e40af !important;
+}
+
+html[data-theme="dark"] .view-invoice-btn:hover {
+  background: #1e3a8a !important;
+  color: #93c5fd !important;
+}
+
+
+/* EDIT */
+
+html[data-theme="dark"] .edit-invoice-btn {
+  background: #334155 !important;
+  color: #cbd5e1 !important;
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] .edit-invoice-btn:hover {
+  background: #475569 !important;
+  color: #ffffff !important;
+}
+
+
+/* DELETE */
+
+html[data-theme="dark"] .delete-invoice-btn {
+  background: #450a0a !important;
+  color: #f87171 !important;
+  border-color: #7f1d1d !important;
+}
+
+html[data-theme="dark"] .delete-invoice-btn:hover {
+  background: #7f1d1d !important;
+  color: #fecaca !important;
+}
+
+html[data-theme="dark"] .delete-invoice-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+html[data-theme="dark"] .invoices-page ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html[data-theme="dark"] .invoices-page ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+html[data-theme="dark"] .invoices-page ::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 10px;
+}
+
+html[data-theme="dark"] .invoices-page ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}

@@ -1,0 +1,1067 @@
+/* ==========================================
+   PROJECTS PAGE
+========================================== */
+
+.projects-page {
+  min-height: 100vh;
+  background: #f1f5f9;
+  padding: 32px 24px;
+}
+
+.projects-container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* ==========================================
+   BACK BUTTON
+========================================== */
+
+.projects-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 20px;
+
+  padding: 10px 16px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #334155;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.projects-back-btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.projects-back-btn:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.projects-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 28px;
+}
+
+.projects-title {
+  margin: 0;
+
+  font-size: 30px;
+  font-weight: 700;
+
+  color: #0f172a;
+}
+
+.projects-subtitle {
+  margin: 6px 0 0;
+
+  color: #64748b;
+
+  font-size: 15px;
+}
+
+.add-project-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  padding: 12px 20px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.add-project-btn:hover {
+  background: #1d4ed8;
+}
+
+.add-project-btn:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================
+   ERROR
+========================================== */
+
+.projects-error {
+  margin-bottom: 24px;
+
+  padding: 12px 16px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background: #fef2f2;
+  color: #dc2626;
+
+  font-size: 14px;
+}
+
+/* ==========================================
+   SEARCH
+========================================== */
+
+.projects-search-box {
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 12px;
+
+  padding: 16px;
+
+  margin-bottom: 24px;
+}
+
+.projects-search-wrapper {
+  position: relative;
+}
+
+.projects-search-icon {
+  position: absolute;
+
+  left: 13px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #94a3b8;
+}
+
+.projects-search-input {
+  width: 100%;
+
+  border: 1px solid #cbd5e1;
+
+  border-radius: 8px;
+
+  padding: 12px 16px 12px 42px;
+
+  font-size: 15px;
+
+  outline: none;
+}
+
+.projects-search-input:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* ==========================================
+   FORM
+========================================== */
+
+.project-form {
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 12px;
+
+  padding: 24px;
+
+  margin-bottom: 24px;
+}
+
+.project-form-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 24px;
+}
+
+.project-form-title {
+  margin: 0;
+
+  font-size: 20px;
+
+  font-weight: 700;
+
+  color: #0f172a;
+}
+
+.close-project-form-btn {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+
+  background: transparent;
+
+  color: #64748b;
+
+  cursor: pointer;
+
+  padding: 5px;
+
+  border-radius: 6px;
+}
+
+.close-project-form-btn:hover {
+  background: #f1f5f9;
+
+  color: #0f172a;
+}
+
+.project-form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 20px;
+}
+
+.project-form-group {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.project-full-width {
+  grid-column: span 2;
+}
+
+.project-form-label {
+  margin-bottom: 8px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #334155;
+}
+
+.project-form-input {
+  width: 100%;
+
+  border: 1px solid #cbd5e1;
+
+  border-radius: 8px;
+
+  padding: 12px 16px;
+
+  font-size: 15px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  transition: 0.2s ease;
+}
+
+.project-form-input:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.project-form-textarea {
+  resize: vertical;
+
+  min-height: 100px;
+}
+
+/* ==========================================
+   FORM ACTIONS
+========================================== */
+
+.project-form-actions {
+  grid-column: span 2;
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 12px;
+}
+
+.cancel-project-btn {
+  border: 1px solid #cbd5e1;
+
+  background: #ffffff;
+
+  color: #334155;
+
+  padding: 12px 20px;
+
+  border-radius: 8px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.cancel-project-btn:hover {
+  background: #f8fafc;
+}
+
+.save-project-btn {
+  border: none;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  padding: 12px 20px;
+
+  border-radius: 8px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.save-project-btn:hover {
+  background: #1d4ed8;
+}
+
+.save-project-btn:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   EMPTY
+========================================== */
+
+.projects-empty {
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 12px;
+
+  padding: 60px 20px;
+
+  text-align: center;
+}
+
+.projects-empty-icon {
+  color: #cbd5e1;
+
+  margin: 0 auto 16px;
+}
+
+.projects-empty-title {
+  margin: 0;
+
+  font-size: 18px;
+
+  font-weight: 600;
+
+  color: #0f172a;
+}
+
+.projects-empty-text {
+  margin: 6px 0 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+/* ==========================================
+   PROJECT GRID
+========================================== */
+
+.projects-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 20px;
+}
+
+/* ==========================================
+   PROJECT CARD
+========================================== */
+
+.project-card {
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 12px;
+
+  padding: 24px;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.05);
+
+  transition: 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 25px rgba(15, 23, 42, 0.08);
+}
+
+.project-card-header {
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 12px;
+}
+
+.project-card-name {
+  margin: 0;
+
+  font-size: 18px;
+
+  font-weight: 700;
+
+  color: #0f172a;
+}
+
+.project-card-client {
+  margin: 5px 0 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+.project-card-actions {
+  display: flex;
+
+  gap: 6px;
+}
+
+.project-action-btn {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: transparent;
+
+  cursor: pointer;
+}
+
+.project-edit-btn {
+  color: #475569;
+}
+
+.project-edit-btn:hover {
+  background: #f1f5f9;
+}
+
+.project-delete-btn {
+  color: #dc2626;
+}
+
+.project-delete-btn:hover {
+  background: #fef2f2;
+}
+
+/* ==========================================
+   STATUS
+========================================== */
+
+.project-status-row {
+  margin-top: 16px;
+}
+
+.project-status {
+  display: inline-flex;
+
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+.project-status-active {
+  background: #dbeafe;
+
+  color: #1d4ed8;
+}
+
+.project-status-completed {
+  background: #dcfce7;
+
+  color: #15803d;
+}
+
+/* ==========================================
+   DESCRIPTION
+========================================== */
+
+.project-card-description {
+  margin: 16px 0 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+
+  display: -webkit-box;
+
+  -webkit-line-clamp: 3;
+
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+}
+
+/* ==========================================
+   DETAILS
+========================================== */
+
+.project-details {
+  margin-top: 20px;
+
+  padding-top: 16px;
+
+  border-top: 1px solid #e2e8f0;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 16px;
+}
+
+.project-detail-item {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.project-detail-item span {
+  color: #94a3b8;
+
+  font-size: 12px;
+}
+
+.project-detail-item strong {
+  color: #0f172a;
+
+  font-size: 14px;
+}
+
+/* ==========================================
+   TABLET
+========================================== */
+
+@media (max-width: 1024px) {
+
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 768px) {
+
+  .projects-page {
+    padding: 20px 16px;
+  }
+
+  .projects-header {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .add-project-btn {
+    width: 100%;
+  }
+
+  .project-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-full-width {
+    grid-column: span 1;
+  }
+
+  .project-form-actions {
+    grid-column: span 1;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+/* ==========================================
+   SMALL MOBILE
+========================================== */
+
+@media (max-width: 480px) {
+
+  .projects-page {
+    padding: 16px 12px;
+  }
+
+  .projects-title {
+    font-size: 26px;
+  }
+
+  .project-form {
+    padding: 18px;
+  }
+
+  .project-card {
+    padding: 18px;
+  }
+
+  .projects-back-btn {
+    width: 100%;
+
+    justify-content: center;
+  }
+
+}
+
+
+
+/* =========================================================
+   PROJECTS PAGE THEME
+   Existing layout/design unchanged
+   ========================================================= */
+
+:root {
+  --projects-bg: #f8fafc;
+  --projects-surface: #ffffff;
+  --projects-text: #0f172a;
+  --projects-text-secondary: #64748b;
+  --projects-border: #e2e8f0;
+  --projects-input-bg: #ffffff;
+  --projects-hover: #f8fafc;
+  --projects-icon-bg: #eff6ff;
+}
+
+
+/* =========================================================
+   DARK THEME VARIABLES
+========================================================= */
+
+html[data-theme="dark"] {
+  --projects-bg: #0f172a;
+  --projects-surface: #1e293b;
+  --projects-text: #f8fafc;
+  --projects-text-secondary: #cbd5e1;
+  --projects-border: #334155;
+  --projects-input-bg: #0f172a;
+  --projects-hover: #334155;
+  --projects-icon-bg: #172554;
+}
+
+
+/* =========================================================
+   MAIN PAGE
+========================================================= */
+
+html[data-theme="dark"] .projects-page {
+  background: var(--projects-bg) !important;
+  color: var(--projects-text) !important;
+}
+
+html[data-theme="dark"] .projects-container {
+  color: var(--projects-text) !important;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+html[data-theme="dark"] .projects-back-btn {
+  background: var(--projects-surface) !important;
+  color: var(--projects-text-secondary) !important;
+  border-color: var(--projects-border) !important;
+}
+
+html[data-theme="dark"] .projects-back-btn:hover {
+  background: var(--projects-hover) !important;
+  color: var(--projects-text) !important;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+html[data-theme="dark"] .projects-title {
+  color: var(--projects-text) !important;
+}
+
+html[data-theme="dark"] .projects-subtitle {
+  color: var(--projects-text-secondary) !important;
+}
+
+
+/* =========================================================
+   ADD PROJECT BUTTON
+========================================================= */
+
+html[data-theme="dark"] .add-project-btn {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .add-project-btn:hover {
+  background: #1d4ed8 !important;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+html[data-theme="dark"] .projects-error {
+  background: #450a0a !important;
+  color: #fecaca !important;
+  border-color: #7f1d1d !important;
+}
+
+
+/* =========================================================
+   SEARCH BOX
+========================================================= */
+
+html[data-theme="dark"] .projects-search-box {
+  background: var(--projects-surface) !important;
+  border-color: var(--projects-border) !important;
+}
+
+html[data-theme="dark"] .projects-search-wrapper {
+  background: var(--projects-input-bg) !important;
+  border-color: var(--projects-border) !important;
+}
+
+html[data-theme="dark"] .projects-search-icon {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .projects-search-input {
+  background: transparent !important;
+  color: var(--projects-text) !important;
+}
+
+html[data-theme="dark"] .projects-search-input::placeholder {
+  color: #64748b !important;
+}
+
+
+/* =========================================================
+   PROJECT FORM
+========================================================= */
+
+html[data-theme="dark"] .project-form {
+  background: var(--projects-surface) !important;
+  border-color: var(--projects-border) !important;
+}
+
+html[data-theme="dark"] .project-form-header {
+  border-color: var(--projects-border) !important;
+}
+
+html[data-theme="dark"] .project-form-title {
+  color: var(--projects-text) !important;
+}
+
+html[data-theme="dark"] .close-project-form-btn {
+  color: var(--projects-text-secondary) !important;
+}
+
+html[data-theme="dark"] .close-project-form-btn:hover {
+  background: var(--projects-hover) !important;
+  color: var(--projects-text) !important;
+}
+
+
+/* =========================================================
+   FORM LABELS
+========================================================= */
+
+html[data-theme="dark"] .project-form-label {
+  color: var(--projects-text-secondary) !important;
+}
+
+
+/* =========================================================
+   FORM INPUTS
+========================================================= */
+
+html[data-theme="dark"] .project-form-input {
+  background: var(--projects-input-bg) !important;
+  color: var(--projects-text) !important;
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] .project-form-input:focus {
+  background: var(--projects-input-bg) !important;
+  color: var(--projects-text) !important;
+  border-color: #60a5fa !important;
+}
+
+html[data-theme="dark"] .project-form-input::placeholder {
+  color: #64748b !important;
+}
+
+
+/* Select dropdown */
+
+html[data-theme="dark"] .project-form-input option {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+
+/* Date input */
+
+html[data-theme="dark"] .project-form-input[type="date"] {
+  color-scheme: dark;
+}
+
+
+/* =========================================================
+   FORM BUTTONS
+========================================================= */
+
+html[data-theme="dark"] .cancel-project-btn {
+  background: #334155 !important;
+  color: #e2e8f0 !important;
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] .cancel-project-btn:hover {
+  background: #475569 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .save-project-btn {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .save-project-btn:hover {
+  background: #1d4ed8 !important;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+html[data-theme="dark"] .projects-empty {
+  background: var(--projects-surface) !important;
+  border-color: var(--projects-border) !important;
+}
+
+html[data-theme="dark"] .projects-empty-icon {
+  color: #64748b !important;
+}
+
+html[data-theme="dark"] .projects-empty-title {
+  color: var(--projects-text) !important;
+}
+
+html[data-theme="dark"] .projects-empty-text {
+  color: var(--projects-text-secondary) !important;
+}
+
+
+/* =========================================================
+   PROJECT CARD
+========================================================= */
+
+html[data-theme="dark"] .project-card {
+  background: var(--projects-surface) !important;
+  border-color: var(--projects-border) !important;
+  color: var(--projects-text) !important;
+}
+
+html[data-theme="dark"] .project-card:hover {
+  border-color: #475569 !important;
+}
+
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+html[data-theme="dark"] .project-card-header {
+  border-color: var(--projects-border) !important;
+}
+
+html[data-theme="dark"] .project-card-name {
+  color: var(--projects-text) !important;
+}
+
+html[data-theme="dark"] .project-card-client {
+  color: var(--projects-text-secondary) !important;
+}
+
+
+/* =========================================================
+   CARD ACTION BUTTONS
+========================================================= */
+
+html[data-theme="dark"] .project-action-btn {
+  border-color: var(--projects-border) !important;
+}
+
+html[data-theme="dark"] .project-edit-btn {
+  background: #172554 !important;
+  color: #60a5fa !important;
+}
+
+html[data-theme="dark"] .project-edit-btn:hover {
+  background: #1e3a8a !important;
+}
+
+html[data-theme="dark"] .project-delete-btn {
+  background: #450a0a !important;
+  color: #f87171 !important;
+}
+
+html[data-theme="dark"] .project-delete-btn:hover {
+  background: #7f1d1d !important;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+html[data-theme="dark"] .project-status-row {
+  border-color: var(--projects-border) !important;
+}
+
+
+/* Active */
+
+html[data-theme="dark"] .project-status-active {
+  background: #052e16 !important;
+  color: #4ade80 !important;
+  border-color: #166534 !important;
+}
+
+
+/* Completed */
+
+html[data-theme="dark"] .project-status-completed {
+  background: #172554 !important;
+  color: #60a5fa !important;
+  border-color: #1e40af !important;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+html[data-theme="dark"] .project-card-description {
+  color: var(--projects-text-secondary) !important;
+}
+
+
+/* =========================================================
+   PROJECT DETAILS
+========================================================= */
+
+html[data-theme="dark"] .project-details {
+  border-color: var(--projects-border) !important;
+}
+
+html[data-theme="dark"] .project-detail-item {
+  color: var(--projects-text-secondary) !important;
+}
+
+html[data-theme="dark"] .project-detail-item span {
+  color: var(--projects-text-secondary) !important;
+}
+
+html[data-theme="dark"] .project-detail-item strong {
+  color: var(--projects-text) !important;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+html[data-theme="dark"] .projects-page ::-webkit-scrollbar {
+  width: 8px;
+}
+
+html[data-theme="dark"] .projects-page ::-webkit-scrollbar-track {
+  background: var(--projects-bg);
+}
+
+html[data-theme="dark"] .projects-page ::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 10px;
+}
+
+html[data-theme="dark"] .projects-page ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}

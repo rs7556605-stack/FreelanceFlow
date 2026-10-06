@@ -1,0 +1,831 @@
+/* =========================================================
+   ABOUT ME PAGE
+   FreelanceFlow
+   ========================================================= */
+
+.about-me-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.about-me-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px 24px 50px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+.about-me-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 28px;
+}
+
+.about-me-back-btn,
+.about-me-edit-btn,
+.about-me-cancel-btn,
+.about-me-save-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.about-me-back-btn {
+  background: #fff;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.about-me-back-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.about-me-edit-btn,
+.about-me-save-btn {
+  background: #2563eb;
+  color: #fff;
+  border: 1px solid #2563eb;
+}
+
+.about-me-edit-btn:hover,
+.about-me-save-btn:hover {
+  background: #1d4ed8;
+}
+
+.about-me-cancel-btn {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.about-me-cancel-btn:hover {
+  background: #e2e8f0;
+}
+
+.about-me-edit-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.about-me-header {
+  margin-bottom: 25px;
+}
+
+.about-me-header h1 {
+  margin: 0;
+  font-size: 30px;
+  color: #0f172a;
+}
+
+.about-me-header p {
+  margin: 7px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* =========================================================
+   MESSAGES
+   ========================================================= */
+
+.about-me-success,
+.about-me-error {
+  padding: 12px 15px;
+  margin-bottom: 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.about-me-success {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.about-me-error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* =========================================================
+   PROFILE
+   ========================================================= */
+
+.about-me-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 25px;
+  margin-bottom: 20px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.about-me-avatar {
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.about-me-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-me-profile-info h2 {
+  margin: 0;
+  font-size: 23px;
+  color: #0f172a;
+}
+
+.about-me-profile-info > p {
+  margin: 5px 0 10px;
+  color: #64748b;
+}
+
+.about-me-profile-info > span,
+.about-me-email {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.about-me-profile-form {
+  min-width: 450px;
+}
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.about-me-card {
+  margin-bottom: 20px;
+  padding: 23px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.about-me-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.about-me-card-header > svg {
+  flex-shrink: 0;
+  color: #2563eb;
+}
+
+.about-me-card-header h2 {
+  margin: 0;
+  font-size: 17px;
+  color: #0f172a;
+}
+
+.about-me-card-header p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.about-me-bio,
+.about-me-content-text {
+  margin: 0;
+  color: #475569;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.about-me-empty {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* =========================================================
+   SKILLS
+   ========================================================= */
+
+.about-me-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.about-me-skill {
+  padding: 7px 12px;
+  border-radius: 20px;
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #dbeafe;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   TWO COLUMNS
+   ========================================================= */
+
+.about-me-two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.about-me-field {
+  margin-bottom: 16px;
+}
+
+.about-me-field:last-child {
+  margin-bottom: 0;
+}
+
+.about-me-field label {
+  display: block;
+  margin-bottom: 7px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.about-me-field input,
+.about-me-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background: #fff;
+  color: #0f172a;
+  font-size: 14px;
+  outline: none;
+}
+
+.about-me-field input:focus,
+.about-me-textarea:focus {
+  border-color: #2563eb;
+}
+
+.about-me-textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.about-me-field small {
+  display: block;
+  margin-top: 6px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+/* =========================================================
+   SOCIAL
+   ========================================================= */
+
+.about-me-social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.about-me-social-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border-radius: 7px;
+  background: #f1f5f9;
+  color: #334155;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.about-me-social-links a:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.about-me-social-form {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.about-me-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  font-size: 15px;
+}
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+
+html[data-theme="dark"] .about-me-page {
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .about-me-back-btn {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .about-me-back-btn:hover {
+  background: #334155 !important;
+  color: #fff !important;
+}
+
+html[data-theme="dark"] .about-me-header h1,
+html[data-theme="dark"] .about-me-profile-info h2,
+html[data-theme="dark"] .about-me-card-header h2 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .about-me-header p,
+html[data-theme="dark"] .about-me-profile-info > p,
+html[data-theme="dark"] .about-me-profile-info > span,
+html[data-theme="dark"] .about-me-email {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .about-me-profile-card,
+html[data-theme="dark"] .about-me-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .about-me-avatar {
+  background: #172554 !important;
+  color: #60a5fa !important;
+}
+
+html[data-theme="dark"] .about-me-card-header p {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .about-me-bio,
+html[data-theme="dark"] .about-me-content-text {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .about-me-skill {
+  background: #172554 !important;
+  color: #60a5fa !important;
+  border-color: #1e40af !important;
+}
+
+html[data-theme="dark"] .about-me-field label {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .about-me-field input,
+html[data-theme="dark"] .about-me-textarea {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] .about-me-field input::placeholder,
+html[data-theme="dark"] .about-me-textarea::placeholder {
+  color: #64748b !important;
+}
+
+html[data-theme="dark"] .about-me-social-links a {
+  background: #334155 !important;
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .about-me-social-links a:hover {
+  background: #475569 !important;
+  color: #fff !important;
+}
+
+html[data-theme="dark"] .about-me-empty {
+  color: #64748b !important;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .about-me-container {
+    padding: 24px 16px 40px;
+  }
+
+  .about-me-topbar {
+    align-items: flex-start;
+  }
+
+  .about-me-profile-card {
+    align-items: flex-start;
+  }
+
+  .about-me-profile-form {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .about-me-two-column {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .about-me-topbar {
+    flex-direction: column;
+  }
+
+  .about-me-edit-btn,
+  .about-me-edit-actions,
+  .about-me-save-btn,
+  .about-me-cancel-btn {
+    width: 100%;
+  }
+
+  .about-me-edit-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .about-me-profile-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .about-me-profile-info {
+    width: 100%;
+  }
+
+  .about-me-profile-info > span,
+  .about-me-email {
+    justify-content: center;
+  }
+
+  .about-me-header h1 {
+    font-size: 25px;
+  }
+}
+
+
+/* =====================================================
+   SKILLS EDITOR
+===================================================== */
+
+.about-me-editable-skill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.about-me-skill-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.about-me-skill-remove:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+}
+
+.about-me-skill-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.about-me-skill-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.about-me-skill-input-row input {
+  flex: 1;
+}
+
+.about-me-skill-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 42px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.about-me-skill-add-btn:hover {
+  background: #1d4ed8;
+}
+
+.about-me-skill-add-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .about-me-skill-input-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .about-me-skill-add-btn {
+    width: 100%;
+  }
+}
+
+
+
+/* ==========================================
+   PROFILE PHOTO WRAPPER
+========================================== */
+
+.about-me-avatar-wrapper {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+}
+
+/* ==========================================
+   PROFILE PHOTO CIRCLE
+========================================== */
+
+.about-me-avatar {
+  width: 110px;
+  height: 110px;
+  padding: 0;
+
+  border: 3px solid #3b82f6;
+  border-radius: 50%;
+
+  background: #1e293b;
+  color: #94a3b8;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.about-me-avatar:hover {
+  border-color: #60a5fa;
+  transform: scale(1.03);
+
+  box-shadow:
+    0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+/* ==========================================
+   PROFILE IMAGE
+========================================== */
+
+.about-me-avatar img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+/* ==========================================
+   PHOTO MENU
+========================================== */
+
+.about-me-photo-menu {
+  position: absolute;
+
+  top: 118px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: 170px;
+
+  padding: 6px;
+
+  background: #1e293b;
+
+  border: 1px solid #475569;
+  border-radius: 10px;
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.3);
+
+  z-index: 1000;
+
+  box-sizing: border-box;
+}
+
+/* ==========================================
+   PHOTO MENU BUTTON
+========================================== */
+
+.about-me-photo-menu button {
+  width: 100%;
+  min-height: 38px;
+
+  padding: 8px 10px;
+
+  border: none;
+  border-radius: 7px;
+
+  background: transparent;
+
+  color: #e2e8f0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  text-align: left;
+}
+
+.about-me-photo-menu button:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+/* ==========================================
+   REMOVE PHOTO
+========================================== */
+
+.about-me-photo-menu
+  .about-me-photo-remove {
+  color: #f87171;
+}
+
+.about-me-photo-menu
+  .about-me-photo-remove:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+}
+
+/* ==========================================
+   LIGHT THEME
+========================================== */
+
+[data-theme="light"]
+  .about-me-avatar {
+  background: #f1f5f9;
+  border-color: #3b82f6;
+  color: #64748b;
+}
+
+[data-theme="light"]
+  .about-me-photo-menu {
+  background: #ffffff;
+  border-color: #cbd5e1;
+
+  box-shadow:
+    0 10px 25px rgba(15, 23, 42, 0.12);
+}
+
+[data-theme="light"]
+  .about-me-photo-menu button {
+  color: #334155;
+}
+
+[data-theme="light"]
+  .about-me-photo-menu button:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+[data-theme="light"]
+  .about-me-photo-menu
+  .about-me-photo-remove {
+  color: #dc2626;
+}
+
+[data-theme="light"]
+  .about-me-photo-menu
+  .about-me-photo-remove:hover {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 640px) {
+  .about-me-avatar-wrapper {
+    width: 90px;
+    height: 90px;
+  }
+
+  .about-me-avatar {
+    width: 90px;
+    height: 90px;
+  }
+
+  .about-me-photo-menu {
+    top: 98px;
+    left: 0;
+    transform: none;
+  }
+}
+
+/* ==========================================
+   SMALL MOBILE
+========================================== */
+
+@media (max-width: 400px) {
+  .about-me-avatar-wrapper {
+    width: 78px;
+    height: 78px;
+  }
+
+  .about-me-avatar {
+    width: 78px;
+    height: 78px;
+  }
+
+  .about-me-photo-menu {
+    top: 86px;
+    width: 155px;
+  }
+}

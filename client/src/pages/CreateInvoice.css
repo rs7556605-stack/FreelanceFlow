@@ -1,0 +1,847 @@
+.create-invoice-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 30px;
+  box-sizing: border-box;
+  background: #f8fafc;
+}
+
+.create-invoice-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.create-invoice-header {
+  margin-bottom: 25px;
+}
+
+.invoice-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.create-invoice-header h1 {
+  margin: 0 0 7px;
+  font-size: 30px;
+  color: #0f172a;
+}
+
+.create-invoice-header p {
+  margin: 0;
+  color: #64748b;
+}
+
+.create-invoice-error,
+.create-invoice-success {
+  padding: 14px 16px;
+  border-radius: 9px;
+  margin-bottom: 20px;
+}
+
+.create-invoice-error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.create-invoice-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.create-invoice-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.invoice-section {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.invoice-section h2 {
+  margin: 0 0 20px;
+  font-size: 19px;
+  color: #0f172a;
+}
+
+.invoice-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.invoice-field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.invoice-field select,
+.invoice-field input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+  font-size: 14px;
+  background: white;
+}
+
+.invoice-field select:focus,
+.invoice-field input:focus {
+  border-color: #2563eb;
+}
+
+.invoice-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.invoice-help-text {
+  margin: 5px 0 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.section-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.section-title-row h2 {
+  margin-bottom: 5px;
+}
+
+.section-title-row p {
+  margin: 0 0 20px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.selected-count {
+  padding: 7px 12px;
+  border-radius: 20px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.invoice-placeholder {
+  padding: 35px 20px;
+  text-align: center;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  color: #64748b;
+}
+
+.invoice-placeholder h3 {
+  margin: 0 0 7px;
+  color: #334155;
+}
+
+.invoice-placeholder p {
+  margin: 0;
+}
+
+.time-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.time-log-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.time-log-card:hover {
+  border-color: #93c5fd;
+  background: #f8fbff;
+}
+
+.time-log-card.selected {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.time-log-card input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.time-log-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.time-log-title {
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.time-log-title span {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.time-log-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.time-log-values {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.time-log-values span {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.time-log-values strong:last-child {
+  min-width: 90px;
+}
+
+.tax-field {
+  max-width: 300px;
+}
+
+.tax-input-wrapper {
+  position: relative;
+}
+
+.tax-input-wrapper input {
+  padding-right: 40px;
+}
+
+.tax-input-wrapper span {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  font-weight: 600;
+}
+
+.invoice-summary {
+  background: #0f172a;
+  color: white;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.invoice-summary-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 20px;
+}
+
+.invoice-summary-title h2 {
+  margin: 0;
+  font-size: 19px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  color: #cbd5e1;
+}
+
+.summary-row strong {
+  color: white;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 18px;
+  margin-top: 10px;
+  border-top: 1px solid #334155;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.invoice-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.invoice-cancel-btn,
+.invoice-save-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.invoice-cancel-btn {
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #334155;
+}
+
+.invoice-save-btn {
+  border: none;
+  background: #2563eb;
+  color: white;
+}
+
+.invoice-save-btn:hover {
+  background: #1d4ed8;
+}
+
+.invoice-save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 800px) {
+  .invoice-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .time-log-card {
+    align-items: flex-start;
+  }
+
+  .time-log-values {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 600px) {
+  .create-invoice-page {
+    padding: 18px;
+  }
+
+  .invoice-section {
+    padding: 18px;
+  }
+
+  .section-title-row {
+    flex-direction: column;
+  }
+
+  .time-log-card {
+    flex-wrap: wrap;
+  }
+
+  .time-log-info {
+    width: calc(100% - 40px);
+  }
+
+  .time-log-values {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .invoice-actions {
+    flex-direction: column-reverse;
+  }
+
+  .invoice-cancel-btn,
+  .invoice-save-btn {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   CREATE INVOICE - DARK THEME
+   FreelanceFlow
+   ========================================================= */
+
+
+/* =========================================================
+   MAIN PAGE
+   ========================================================= */
+
+html[data-theme="dark"] .create-invoice-page {
+  min-height: 100vh;
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .create-invoice-container {
+  color: #e2e8f0 !important;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+html[data-theme="dark"] .create-invoice-header h1 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .create-invoice-header p {
+  color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-back-btn {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .invoice-back-btn:hover {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+html[data-theme="dark"] .create-invoice-error {
+  background: #450a0a !important;
+  color: #fecaca !important;
+  border-color: #7f1d1d !important;
+}
+
+
+/* =========================================================
+   SUCCESS
+   ========================================================= */
+
+html[data-theme="dark"] .create-invoice-success {
+  background: #052e16 !important;
+  color: #86efac !important;
+  border-color: #166534 !important;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+html[data-theme="dark"] .create-invoice-form {
+  color: #e2e8f0 !important;
+}
+
+
+/* =========================================================
+   INVOICE SECTIONS
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-section {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] .invoice-section h2 {
+  color: #f8fafc !important;
+}
+
+
+/* =========================================================
+   SECTION TITLE
+   ========================================================= */
+
+html[data-theme="dark"] .section-title-row {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .section-title-row h2 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .section-title-row p {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .selected-count {
+  background: #172554 !important;
+  color: #60a5fa !important;
+  border-color: #1e40af !important;
+}
+
+
+/* =========================================================
+   FIELDS
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-field label {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .invoice-field input,
+html[data-theme="dark"] .invoice-field select {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] .invoice-field input:focus,
+html[data-theme="dark"] .invoice-field select:focus {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  border-color: #60a5fa !important;
+  outline: none;
+}
+
+html[data-theme="dark"] .invoice-field input::placeholder {
+  color: #64748b !important;
+}
+
+html[data-theme="dark"] .invoice-field input:disabled,
+html[data-theme="dark"] .invoice-field select:disabled {
+  background: #172033 !important;
+  color: #64748b !important;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   SELECT OPTIONS
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-field select option {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+
+/* =========================================================
+   DATE INPUT
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-field input[type="date"] {
+  color-scheme: dark;
+}
+
+
+/* =========================================================
+   NUMBER INPUT
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-field input[type="number"] {
+  color-scheme: dark;
+}
+
+
+/* =========================================================
+   HELP TEXT
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-help-text {
+  color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-placeholder {
+  background: #0f172a !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .invoice-placeholder h3 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .invoice-placeholder p {
+  color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   TIME LOG LIST
+   ========================================================= */
+
+html[data-theme="dark"] .time-log-list {
+  color: #e2e8f0 !important;
+}
+
+
+/* =========================================================
+   TIME LOG CARD
+   ========================================================= */
+
+html[data-theme="dark"] .time-log-card {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .time-log-card:hover {
+  background: #172033 !important;
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] .time-log-card.selected {
+  background: #172554 !important;
+  border-color: #3b82f6 !important;
+}
+
+
+/* =========================================================
+   CHECKBOX
+   ========================================================= */
+
+html[data-theme="dark"] .time-log-card input[type="checkbox"] {
+  accent-color: #2563eb;
+}
+
+
+/* =========================================================
+   TIME LOG INFO
+   ========================================================= */
+
+html[data-theme="dark"] .time-log-info {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .time-log-title {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .time-log-title span {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .time-log-meta {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .time-log-meta span {
+  color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   TIME LOG VALUES
+   ========================================================= */
+
+html[data-theme="dark"] .time-log-values {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .time-log-values strong {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .time-log-values span {
+  color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   TAX
+   ========================================================= */
+
+html[data-theme="dark"] .tax-field {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .tax-input-wrapper {
+  background: #0f172a !important;
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] .tax-input-wrapper input {
+  background: transparent !important;
+  color: #f8fafc !important;
+  border-color: transparent !important;
+}
+
+html[data-theme="dark"] .tax-input-wrapper input:focus {
+  border-color: transparent !important;
+  outline: none;
+}
+
+html[data-theme="dark"] .tax-input-wrapper span {
+  color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   INVOICE SUMMARY
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-summary {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] .invoice-summary-title {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .invoice-summary-title h2 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .invoice-summary-title svg {
+  color: #60a5fa !important;
+}
+
+
+/* =========================================================
+   SUMMARY ROW
+   ========================================================= */
+
+html[data-theme="dark"] .summary-row {
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"] .summary-row span {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .summary-row strong {
+  color: #f8fafc !important;
+}
+
+
+/* =========================================================
+   SUMMARY TOTAL
+   ========================================================= */
+
+html[data-theme="dark"] .summary-total {
+  border-top-color: #475569 !important;
+}
+
+html[data-theme="dark"] .summary-total span {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .summary-total strong {
+  color: #60a5fa !important;
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-actions {
+  color: #e2e8f0 !important;
+}
+
+
+/* =========================================================
+   CANCEL BUTTON
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-cancel-btn {
+  background: #334155 !important;
+  color: #e2e8f0 !important;
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] .invoice-cancel-btn:hover {
+  background: #475569 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .invoice-cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   SAVE / CREATE BUTTON
+   ========================================================= */
+
+html[data-theme="dark"] .invoice-save-btn {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+}
+
+html[data-theme="dark"] .invoice-save-btn:hover {
+  background: #1d4ed8 !important;
+  border-color: #1d4ed8 !important;
+}
+
+html[data-theme="dark"] .invoice-save-btn:disabled {
+  background: #334155 !important;
+  color: #64748b !important;
+  border-color: #475569 !important;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+html[data-theme="dark"] .create-invoice-page ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html[data-theme="dark"] .create-invoice-page ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+html[data-theme="dark"] .create-invoice-page ::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 10px;
+}
+
+html[data-theme="dark"] .create-invoice-page ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
