@@ -304,14 +304,12 @@ const forgotPassword = async (req, res) => {
       });
     }
 
-    // Correct email regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(cleanEmail)) {
       return res.status(400).json({
         success: false,
-        message:
-          "Please enter a valid email address.",
+        message: "Please enter a valid email address.",
       });
     }
 
@@ -356,65 +354,37 @@ const forgotPassword = async (req, res) => {
     // SAVE OTP
     //
     // IMPORTANT:
-    // Do NOT use user.save() here.
+    // Use updateOne instead of user.save().
     //
-    // Some older OAuth users may not have username.
-    // User.save() validates the complete document and can fail
-    // with:
-    // username: Path `username` is required
-    //
-    // updateOne() only updates the required OTP fields.
+    // This prevents validation errors for old users
+    // whose username may be missing.
     // ----------------------------------------------------------
-
-    const updateFields = {
-      resetPasswordOTP: otp,
-      resetPasswordOTPExpires: otpExpires,
-    };
-
-    // Optional fields only if they exist in the schema
-    if (
-      Object.prototype.hasOwnProperty.call(
-        user.toObject(),
-        "resetPasswordOTPAttempts"
-      )
-    ) {
-      updateFields.resetPasswordOTPAttempts = 0;
-    }
-
-    if (
-      Object.prototype.hasOwnProperty.call(
-        user.toObject(),
-        "resetPasswordVerified"
-      )
-    ) {
-      updateFields.resetPasswordVerified = false;
-    }
-
-    if (
-      Object.prototype.hasOwnProperty.call(
-        user.toObject(),
-        "resetPasswordToken"
-      )
-    ) {
-      updateFields.resetPasswordToken = null;
-    }
-
-    if (
-      Object.prototype.hasOwnProperty.call(
-        user.toObject(),
-        "resetPasswordTokenExpires"
-      )
-    ) {
-      updateFields.resetPasswordTokenExpires = null;
-    }
 
     await User.updateOne(
       {
         _id: user._id,
       },
       {
-        $set: updateFields,
+        $set: {
+          resetPasswordOTP: otp,
+          resetPasswordOTPExpires: otpExpires,
+          resetPasswordOTPAttempts: 0,
+          resetPasswordVerified: false,
+          resetPasswordToken: null,
+          resetPasswordTokenExpires: null,
+        },
       }
+    );
+
+    console.log(
+      "=========================================="
+    );
+    console.log("🔐 PASSWORD RESET OTP");
+    console.log("Email:", cleanEmail);
+    console.log("OTP:", otp);
+    console.log("Expires:", otpExpires);
+    console.log(
+      "=========================================="
     );
 
     // ----------------------------------------------------------
@@ -489,7 +459,8 @@ const verifyOTP = async (req, res) => {
     if (!/^\d{6}$/.test(cleanOTP)) {
       return res.status(400).json({
         success: false,
-        message: "OTP must be 6 digits.",
+        message:
+          "OTP must be a 6-digit number.",
       });
     }
 
@@ -509,16 +480,52 @@ const verifyOTP = async (req, res) => {
     }
 
     // ----------------------------------------------------------
-    // CHECK OTP
+    // DEBUG INFORMATION
     // ----------------------------------------------------------
 
-    if (
-      !user.resetPasswordOTP ||
-      user.resetPasswordOTP !== cleanOTP
-    ) {
+    console.log(
+      "=========================================="
+    );
+    console.log("🔍 OTP VERIFICATION");
+    console.log("Email:", cleanEmail);
+    console.log("Entered OTP:", cleanOTP);
+    console.log(
+      "Database OTP:",
+      user.resetPasswordOTP
+    );
+    console.log(
+      "OTP Expires:",
+      user.resetPasswordOTPExpires
+    );
+    console.log(
+      "Current Time:",
+      new Date()
+    );
+    console.log(
+      "=========================================="
+    );
+
+    // ----------------------------------------------------------
+    // CHECK OTP EXISTS
+    // ----------------------------------------------------------
+
+    if (!user.resetPasswordOTP) {
       return res.status(400).json({
         success: false,
-        message: "Invalid OTP.",
+        message:
+          "No OTP found. Please request a new OTP.",
+      });
+    }
+
+    // ----------------------------------------------------------
+    // CHECK EXPIRY EXISTS
+    // ----------------------------------------------------------
+
+    if (!user.resetPasswordOTPExpires) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "OTP expiry information is missing. Please request a new OTP.",
       });
     }
 
@@ -526,11 +533,13 @@ const verifyOTP = async (req, res) => {
     // CHECK EXPIRY
     // ----------------------------------------------------------
 
+    const expiryTime = new Date(
+      user.resetPasswordOTPExpires
+    ).getTime();
+
     if (
-      !user.resetPasswordOTPExpires ||
-      new Date(
-        user.resetPasswordOTPExpires
-      ) < new Date()
+      Number.isNaN(expiryTime) ||
+      expiryTime <= Date.now()
     ) {
       return res.status(400).json({
         success: false,
@@ -540,8 +549,39 @@ const verifyOTP = async (req, res) => {
     }
 
     // ----------------------------------------------------------
+    // CHECK OTP
+    // ----------------------------------------------------------
+
+    const savedOTP = String(
+      user.resetPasswordOTP
+    ).trim();
+
+    if (savedOTP !== cleanOTP) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid OTP. Please enter the correct OTP.",
+      });
+    }
+
+    // ----------------------------------------------------------
     // OTP VERIFIED
     // ----------------------------------------------------------
+
+    await User.updateOne(
+      {
+        _id: user._id,
+      },
+      {
+        $set: {
+          resetPasswordVerified: true,
+        },
+      }
+    );
+
+    console.log(
+      `✅ OTP verified successfully for ${cleanEmail}`
+    );
 
     return res.status(200).json({
       success: true,
@@ -607,7 +647,8 @@ const resetPassword = async (req, res) => {
     if (!/^\d{6}$/.test(cleanOTP)) {
       return res.status(400).json({
         success: false,
-        message: "OTP must be 6 digits.",
+        message:
+          "OTP must be 6 digits.",
       });
     }
 
@@ -641,11 +682,13 @@ const resetPassword = async (req, res) => {
 
     if (
       !user.resetPasswordOTP ||
-      user.resetPasswordOTP !== cleanOTP
+      String(user.resetPasswordOTP).trim() !==
+        cleanOTP
     ) {
       return res.status(400).json({
         success: false,
-        message: "Invalid OTP.",
+        message:
+          "Invalid or expired OTP.",
       });
     }
 
@@ -657,12 +700,26 @@ const resetPassword = async (req, res) => {
       !user.resetPasswordOTPExpires ||
       new Date(
         user.resetPasswordOTPExpires
-      ) < new Date()
+      ).getTime() <= Date.now()
     ) {
       return res.status(400).json({
         success: false,
         message:
-          "OTP has expired. Please request a new OTP.",
+          "Invalid or expired OTP.",
+      });
+    }
+
+    // ----------------------------------------------------------
+    // CHECK OTP VERIFIED
+    // ----------------------------------------------------------
+
+    if (
+      user.resetPasswordVerified !== true
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Please verify the OTP first.",
       });
     }
 
@@ -698,42 +755,41 @@ const resetPassword = async (req, res) => {
 
     // ----------------------------------------------------------
     // UPDATE PASSWORD
+    //
+    // Use updateOne instead of user.save()
+    // to avoid username validation problems.
     // ----------------------------------------------------------
 
-    user.password = hashedPassword;
+    const updateResult =
+      await User.updateOne(
+        {
+          _id: user._id,
+        },
+        {
+          $set: {
+            password: hashedPassword,
+            resetPasswordVerified: false,
+            resetPasswordOTPAttempts: 0,
+          },
 
-    // ----------------------------------------------------------
-    // CLEAR OTP
-    // ----------------------------------------------------------
+          $unset: {
+            resetPasswordOTP: 1,
+            resetPasswordOTPExpires: 1,
+            resetPasswordToken: 1,
+            resetPasswordTokenExpires: 1,
+          },
+        }
+      );
 
-    user.resetPasswordOTP = undefined;
-
-    user.resetPasswordOTPExpires =
-      undefined;
-
-    // Optional security cleanup
-    if ("resetPasswordOTPAttempts" in user) {
-      user.resetPasswordOTPAttempts = 0;
+    if (
+      updateResult.matchedCount === 0
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Unable to reset password.",
+      });
     }
-
-    if ("resetPasswordVerified" in user) {
-      user.resetPasswordVerified = false;
-    }
-
-    if ("resetPasswordToken" in user) {
-      user.resetPasswordToken = undefined;
-    }
-
-    if ("resetPasswordTokenExpires" in user) {
-      user.resetPasswordTokenExpires =
-        undefined;
-    }
-
-    // ----------------------------------------------------------
-    // SAVE
-    // ----------------------------------------------------------
-
-    await user.save();
 
     console.log(
       `✅ Password reset successfully for user: ${user._id}`
@@ -933,12 +989,21 @@ const changePassword = async (req, res) => {
 
     // ----------------------------------------------------------
     // UPDATE PASSWORD
+    //
+    // Use updateOne instead of user.save()
+    // to avoid validation problems.
     // ----------------------------------------------------------
 
-    user.password =
-      hashedPassword;
-
-    await user.save();
+    await User.updateOne(
+      {
+        _id: user._id,
+      },
+      {
+        $set: {
+          password: hashedPassword,
+        },
+      }
+    );
 
     console.log(
       `✅ Password changed successfully for user: ${user._id}`
