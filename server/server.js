@@ -22,7 +22,7 @@ const invoiceRoutes = require("./routes/invoiceRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
-const contactRoutes = require("./routes/contactRoutes");
+
 
 // ==========================================
 // DATABASE
@@ -73,10 +73,7 @@ app.use("/api/invoices", invoiceRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-app.use(
-  "/api/contact",
-  contactRoutes
-);
+
 
 // ==========================================
 // SERVER
