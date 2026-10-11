@@ -730,59 +730,481 @@
 }
 
 
+
+
+
+
+
+
+
 /* =========================================================
-   LOG ACTIONS
+   ACTION AREA
    ========================================================= */
 
 .log-actions {
-  display: flex;
-  align-items: center;
+  position: relative !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+
+  gap: 8px;
+
+  min-width: max-content;
+
+  white-space: nowrap;
+
+  overflow: visible !important;
+}
+
+
+/* =========================================================
+   VIEW BUTTON
+   ========================================================= */
+
+.view-log-btn {
+  width: auto !important;
+  min-width: 76px;
+  height: 38px;
+
+  padding: 0 11px;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+
   gap: 7px;
-}
 
-.edit-log-btn,
-.delete-log-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  border-radius: 7px;
+  flex-shrink: 0;
+
+  white-space: nowrap;
+
+  border: 1px solid var(--time-border);
+  border-radius: 9px;
+
+  background: var(--time-input);
+  color: var(--time-primary);
+
   cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.view-log-btn svg {
+  width: 18px;
+  height: 18px;
+
+  flex-shrink: 0;
+}
+
+.view-log-btn:hover {
+  background: var(--time-primary-soft);
+  border-color: var(--time-primary);
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   THREE DOT WRAPPER
+   ========================================================= */
+
+.log-menu-wrapper {
+  position: relative !important;
+
+  width: 38px;
+  height: 38px;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  flex-shrink: 0;
+
+  overflow: visible !important;
+}
+
+
+/* =========================================================
+   THREE DOT BUTTON
+   ========================================================= */
+
+.log-menu-btn {
+  width: 38px !important;
+  height: 38px !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border: 1px solid var(--time-border);
+  border-radius: 9px;
+
+  background: var(--time-input);
+  color: var(--time-muted);
+
+  cursor: pointer;
+
+  flex-shrink: 0;
+
+  transition: 0.2s ease;
+}
+
+.log-menu-btn svg {
+  width: 19px;
+  height: 19px;
+
+  flex-shrink: 0;
+}
+
+.log-menu-btn:hover,
+.log-menu-btn.active {
+  background: rgb(48, 67, 129);
+
+  border-color: var(--time-primary);
+
+  color: var(--time-primary);
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   DROPDOWN MENU
+   ========================================================= */
+
+.log-action-menu {
+  position: absolute !important;
+
+  top: calc(100% + 9px) !important;
+  right: 0 !important;
+
+  left: auto !important;
+
+  z-index: 999999 !important;
+
+  width: 190px !important;
+
+  min-width: 190px !important;
+
+  padding: 8px !important;
+
+  display: flex !important;
+
+  flex-direction: column !important;
+
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+
+  flex-wrap: nowrap !important;
+
+  gap: 4px !important;
+
+  border: 1px solid #2b3950;
+
+  border-radius: 15px;
+
+  background: #101827;
+
+  box-shadow:
+    0 22px 50px rgba(0, 0, 0, 0.42),
+    0 6px 18px rgba(0, 0, 0, 0.22);
+
+  overflow: hidden !important;
+
+  transform-origin: top right;
+
+  animation: actionMenuOpen 0.16s ease-out;
+}
+
+
+/* =========================================================
+   DROPDOWN BUTTONS
+   ========================================================= */
+
+.log-action-menu button {
+  position: relative !important;
+
+  width: 100% !important;
+  min-width: 100% !important;
+
+  height: 44px !important;
+  min-height: 44px !important;
+
+  margin: 0 !important;
+
+  padding: 0 12px !important;
+
+  display: flex !important;
+
+  flex-direction: row !important;
+
+  align-items: center !important;
+  justify-content: flex-start !important;
+
+  flex-wrap: nowrap !important;
+
+  gap: 11px !important;
+
+  border: 0 !important;
+
+  border-radius: 9px !important;
+
+  background: transparent !important;
+
+  font-size: 14px !important;
+  font-weight: 700 !important;
+
+  line-height: 1 !important;
+
+  text-align: left !important;
+
+  white-space: nowrap !important;
+
+  cursor: pointer;
+
+  box-sizing: border-box !important;
+
   transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.edit-log-btn {
-  border: 1px solid #bfdbfe;
-  background: #eff6ff;
-  color: #2563eb;
-}
-
-.edit-log-btn:hover {
-  background: #dbeafe;
-}
-
-.delete-log-btn {
-  border: 1px solid #fecaca;
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-.delete-log-btn:hover {
-  background: #fee2e2;
-}
-
-.edit-log-btn:disabled,
-.delete-log-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
 }
 
 
+/* =========================================================
+   DROPDOWN ICONS
+   ========================================================= */
+
+.log-action-menu button svg {
+  width: 19px !important;
+  height: 19px !important;
+
+  min-width: 19px !important;
+  max-width: 19px !important;
+
+  flex: 0 0 19px !important;
+
+  display: block !important;
+}
+
+
+/* =========================================================
+   EDIT
+   ========================================================= */
+
+.log-action-menu .edit-log-btn {
+  color: #dbe7f5 !important;
+
+  background: transparent !important;
+
+  border: 0 !important;
+
+  width: 100% !important;
+  height: 44px !important;
+
+  justify-content: flex-start !important;
+}
+
+.log-action-menu .edit-log-btn svg {
+  color: #cbd5e1 !important;
+}
+
+.log-action-menu .edit-log-btn:hover {
+  background: #1d2a3e !important;
+
+  color: #ffffff !important;
+
+  transform: translateX(2px);
+}
+
+.log-action-menu .edit-log-btn:hover svg {
+  color: #ffffff !important;
+}
+
+
+/* =========================================================
+   DELETE
+   ========================================================= */
+
+.log-action-menu .delete-log-btn {
+  color: #ff5d66 !important;
+
+  background: transparent !important;
+
+  border: 0 !important;
+
+  width: 100% !important;
+  height: 44px !important;
+
+  justify-content: flex-start !important;
+}
+
+.log-action-menu .delete-log-btn svg {
+  color: #ff5d66 !important;
+}
+
+.log-action-menu .delete-log-btn:hover {
+  background: rgba(239, 68, 68, 0.12) !important;
+
+  color: #ff7279 !important;
+
+  transform: translateX(2px);
+}
+
+
+/* =========================================================
+   DISABLED
+   ========================================================= */
+
+.log-action-menu button:disabled {
+  opacity: 0.45 !important;
+
+  cursor: not-allowed !important;
+
+  transform: none !important;
+}
+
+
+/* =========================================================
+   ANIMATION
+   ========================================================= */
+
+@keyframes actionMenuOpen {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(-6px)
+      scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+
+.dark .log-action-menu {
+  background: #101827;
+
+  border-color: #2b3950;
+
+  box-shadow:
+    0 24px 55px rgba(0, 0, 0, 0.48);
+}
+
+
+/* =========================================================
+   LIGHT THEME
+   ========================================================= */
+
+:root:not(.dark) .log-action-menu {
+  background: #252425;
+
+  border-color: #e2e8f0;
+
+  box-shadow:
+    0 20px 45px rgba(15, 23, 42, 0.17);
+}
+
+:root:not(.dark) .log-action-menu .edit-log-btn {
+  color: #1e293b !important;
+}
+
+:root:not(.dark) .log-action-menu .edit-log-btn svg {
+  color: #64748b !important;
+}
+
+:root:not(.dark) .log-action-menu .edit-log-btn:hover {
+  background: #f1f5f9 !important;
+
+  color: #111827 !important;
+}
+
+:root:not(.dark) .log-action-menu .delete-log-btn:hover {
+  background: #fff1f2 !important;
+
+  color: #dc2626 !important;
+}
+
+
+/* =========================================================
+   IMPORTANT:
+   TABLE MUST ALLOW DROPDOWN TO SHOW
+   ========================================================= */
+
+.logs-table-wrapper {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+.logs-table td {
+  overflow: visible !important;
+}
+
+.log-actions,
+.log-menu-wrapper {
+  overflow: visible !important;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .log-actions {
+    gap: 5px;
+
+    min-width: max-content;
+  }
+
+  .view-log-btn {
+    width: 38px !important;
+    min-width: 38px !important;
+
+    padding: 0 !important;
+  }
+
+  .view-log-btn span {
+    display: none;
+  }
+
+  .log-action-menu {
+    width: 175px !important;
+    min-width: 175px !important;
+
+    right: 0 !important;
+
+    border-radius: 14px;
+  }
+
+  .log-action-menu button {
+    height: 43px !important;
+    min-height: 43px !important;
+
+    font-size: 13px !important;
+  }
+}
 /* =========================================================
    DARK THEME
    ========================================================= */
@@ -1483,3 +1905,6 @@ html[data-theme="dark"] .time-page ::-webkit-scrollbar-thumb:hover {
     height: 16px !important;
   }
 }
+
+
+
