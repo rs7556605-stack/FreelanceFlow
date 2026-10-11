@@ -67,6 +67,12 @@ const updateProfile = async (req, res) => {
     }
 
     // ==========================================
+    // BUILD UPDATE OBJECT
+    // ==========================================
+
+    const updateData = {};
+
+    // ==========================================
     // BASIC INFORMATION
     // ==========================================
 
@@ -80,7 +86,7 @@ const updateProfile = async (req, res) => {
         });
       }
 
-      user.name = cleanName;
+      updateData.name = cleanName;
     }
 
     // ==========================================
@@ -88,11 +94,11 @@ const updateProfile = async (req, res) => {
     // ==========================================
 
     if (profession !== undefined) {
-      user.profession = String(profession).trim();
+      updateData.profession = String(profession).trim();
     }
 
     if (bio !== undefined) {
-      user.bio = String(bio).trim();
+      updateData.bio = String(bio).trim();
     }
 
     // ==========================================
@@ -101,7 +107,7 @@ const updateProfile = async (req, res) => {
 
     if (skills !== undefined) {
       if (Array.isArray(skills)) {
-        user.skills = skills
+        updateData.skills = skills
           .map((skill) => {
             if (typeof skill === "object" && skill !== null) {
               return String(
@@ -116,7 +122,7 @@ const updateProfile = async (req, res) => {
           })
           .filter(Boolean);
       } else {
-        user.skills = String(skills)
+        updateData.skills = String(skills)
           .split(",")
           .map((skill) => skill.trim())
           .filter(Boolean);
@@ -128,7 +134,7 @@ const updateProfile = async (req, res) => {
     // ==========================================
 
     if (experience !== undefined) {
-      user.experience = String(experience).trim();
+      updateData.experience = String(experience).trim();
     }
 
     // ==========================================
@@ -136,7 +142,7 @@ const updateProfile = async (req, res) => {
     // ==========================================
 
     if (education !== undefined) {
-      user.education = String(education).trim();
+      updateData.education = String(education).trim();
     }
 
     // ==========================================
@@ -144,7 +150,7 @@ const updateProfile = async (req, res) => {
     // ==========================================
 
     if (profileImage !== undefined) {
-      user.profileImage = String(profileImage).trim();
+      updateData.profileImage = String(profileImage).trim();
     }
 
     // ==========================================
@@ -152,68 +158,138 @@ const updateProfile = async (req, res) => {
     // ==========================================
 
     if (resumeUrl !== undefined) {
-      user.resumeUrl = String(resumeUrl).trim();
+      updateData.resumeUrl = String(resumeUrl).trim();
     }
 
     // ==========================================
     // SOCIAL LINKS
     // ==========================================
 
-    if (!user.socialLinks) {
-      user.socialLinks = {};
-    }
+    const existingSocialLinks =
+      user.socialLinks &&
+      typeof user.socialLinks === "object"
+        ? user.socialLinks.toObject
+          ? user.socialLinks.toObject()
+          : { ...user.socialLinks }
+        : {};
 
-    // Support both:
-    // 1. socialLinks: { github, linkedin... }
-    // 2. direct github/linkedin/twitter/website
+    const updatedSocialLinks = {
+      ...existingSocialLinks,
+    };
 
-    if (socialLinks && typeof socialLinks === "object") {
+    let socialLinksChanged = false;
+
+    // ==========================================
+    // SOCIAL LINKS OBJECT
+    // ==========================================
+
+    if (
+      socialLinks &&
+      typeof socialLinks === "object" &&
+      !Array.isArray(socialLinks)
+    ) {
       if (socialLinks.github !== undefined) {
-        user.socialLinks.github =
+        updatedSocialLinks.github =
           String(socialLinks.github).trim();
+
+        socialLinksChanged = true;
       }
 
       if (socialLinks.linkedin !== undefined) {
-        user.socialLinks.linkedin =
+        updatedSocialLinks.linkedin =
           String(socialLinks.linkedin).trim();
+
+        socialLinksChanged = true;
       }
 
       if (socialLinks.twitter !== undefined) {
-        user.socialLinks.twitter =
+        updatedSocialLinks.twitter =
           String(socialLinks.twitter).trim();
+
+        socialLinksChanged = true;
       }
 
       if (socialLinks.website !== undefined) {
-        user.socialLinks.website =
+        updatedSocialLinks.website =
           String(socialLinks.website).trim();
+
+        socialLinksChanged = true;
       }
     }
 
+    // ==========================================
+    // DIRECT SOCIAL LINKS
+    // ==========================================
+
     if (github !== undefined) {
-      user.socialLinks.github =
+      updatedSocialLinks.github =
         String(github).trim();
+
+      socialLinksChanged = true;
     }
 
     if (linkedin !== undefined) {
-      user.socialLinks.linkedin =
+      updatedSocialLinks.linkedin =
         String(linkedin).trim();
+
+      socialLinksChanged = true;
     }
 
     if (twitter !== undefined) {
-      user.socialLinks.twitter =
+      updatedSocialLinks.twitter =
         String(twitter).trim();
+
+      socialLinksChanged = true;
     }
 
     if (website !== undefined) {
-      user.socialLinks.website =
+      updatedSocialLinks.website =
         String(website).trim();
+
+      socialLinksChanged = true;
+    }
+
+    if (socialLinksChanged) {
+      updateData.socialLinks = updatedSocialLinks;
     }
 
     // ==========================================
-    // SAVE TO DATABASE
+    // NOTHING TO UPDATE
     // ==========================================
 
-    const updatedUser = await user.save();
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No profile data provided for update",
+      });
+    }
+
+    // ==========================================
+    // UPDATE DATABASE
+    // ==========================================
+    // IMPORTANT:
+    // Using findByIdAndUpdate instead of user.save()
+    // prevents unrelated required-field validation
+    // such as missing username from breaking profile updates.
+    // ==========================================
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        $set: updateData,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found after update",
+      });
+    }
 
     // ==========================================
     // RESPONSE
@@ -224,6 +300,7 @@ const updateProfile = async (req, res) => {
       message: "Profile updated successfully",
       user: {
         id: updatedUser._id,
+        username: updatedUser.username,
         name: updatedUser.name,
         email: updatedUser.email,
         plan: updatedUser.plan,
@@ -241,19 +318,25 @@ const updateProfile = async (req, res) => {
         socialLinks: updatedUser.socialLinks,
       },
     });
-
   } catch (error) {
     console.error("Update Profile Error:", error);
 
     return res.status(500).json({
       success: false,
       message: "Server error while updating profile",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : undefined,
     });
   }
 };
 
+// ==========================================
+// EXPORTS
+// ==========================================
+
 module.exports = {
   getProfile,
   updateProfile,
-
 };
