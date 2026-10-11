@@ -1,7 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   ArrowLeft,
@@ -31,41 +28,31 @@ const TimeLogDetails = () => {
   const location = useLocation();
   const { id } = useParams();
 
-  const [log, setLog] =
-    useState(location.state?.log || null);
-
-  const [loading, setLoading] =
-    useState(!location.state?.log);
-
-  const [error, setError] =
-    useState("");
-
-  const [showMenu, setShowMenu] =
-    useState(false);
-
   // ==========================================
-  // LOAD
+  // STATE
   // ==========================================
 
-  useEffect(() => {
-    if (!id) {
-      setError(
-        "Invalid time log."
-      );
+  const [log, setLog] = useState(
+    location.state?.log || null
+  );
 
-      setLoading(false);
+  const [loading, setLoading] = useState(
+    !location.state?.log
+  );
 
-      return;
-    }
+  const [error, setError] = useState("");
 
-    if (location.state?.log) {
-      setLog(location.state.log);
-      setLoading(false);
-      return;
-    }
+  const [showMenu, setShowMenu] = useState(false);
 
-    loadLog();
-  }, [id]);
+  const [deleting, setDeleting] = useState(false);
+
+  // ==========================================
+  // BACK
+  // ==========================================
+
+  const handleBack = () => {
+    navigate("/time-logs");
+  };
 
   // ==========================================
   // LOAD LOG
@@ -76,43 +63,33 @@ const TimeLogDetails = () => {
       setLoading(true);
       setError("");
 
-      const response =
-        await API.get("/time");
+      const response = await API.get("/time");
 
-      if (
-        response.data.success
-      ) {
-        const logs =
-          response.data.timeLogs || [];
+      const logs =
+        response.data?.timeLogs || [];
 
-        const foundLog =
-          logs.find(
-            (item) =>
-              item._id === id
-          );
-
-        if (!foundLog) {
-          setError(
-            "Time log not found."
-          );
-
-          setLog(null);
-        } else {
-          setLog(foundLog);
-        }
-      } else {
-        setError(
-          "Failed to load time log."
-        );
-      }
-    } catch (error) {
-      console.error(
-        "Load Time Log Error:",
-        error
+      const foundLog = logs.find(
+        (item) =>
+          String(item?._id) === String(id)
       );
 
+      if (!foundLog) {
+        setLog(null);
+        setError("Time log not found.");
+        return;
+      }
+
+      setLog(foundLog);
+    } catch (err) {
+      console.error(
+        "Load Time Log Error:",
+        err
+      );
+
+      setLog(null);
+
       setError(
-        error.response?.data?.message ||
+        err.response?.data?.message ||
           "Failed to load time log."
       );
     } finally {
@@ -121,63 +98,176 @@ const TimeLogDetails = () => {
   };
 
   // ==========================================
-  // DATE
+  // INITIAL LOAD
   // ==========================================
 
-  const formatDate = (
-    date
-  ) => {
+  useEffect(() => {
+    if (!id) {
+      setError("Invalid time log.");
+      setLoading(false);
+      return;
+    }
+
+    /*
+      If TimeLogs page already passed
+      the complete log through navigation state,
+      use it immediately.
+    */
+
+    if (location.state?.log) {
+      setLog(location.state.log);
+      setLoading(false);
+      return;
+    }
+
+    /*
+      If user directly opens:
+      /time-log/:id
+
+      then load the log from backend.
+    */
+
+    loadLog();
+  }, [id, location.state]);
+
+  // ==========================================
+  // FORMAT DATE
+  // ==========================================
+
+  const formatDate = (date) => {
     if (!date) {
       return "-";
     }
 
-    return new Date(
-      date
-    ).toLocaleString(
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return "-";
+    }
+
+    return parsedDate.toLocaleString(
       "en-IN",
       {
-        dateStyle: "medium",
-        timeStyle: "short",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
       }
     );
   };
 
   // ==========================================
-  // DURATION
+  // FORMAT DURATION
   // ==========================================
 
-  const formatDuration = (
-    seconds
-  ) => {
-    const totalSeconds =
-      Number(seconds) || 0;
+  const formatDuration = (seconds) => {
+    const totalSeconds = Math.max(
+      0,
+      Number(seconds) || 0
+    );
 
-    const hours =
-      Math.floor(
-        totalSeconds / 3600
-      );
+    const hours = Math.floor(
+      totalSeconds / 3600
+    );
 
-    const minutes =
-      Math.floor(
-        (totalSeconds % 3600) /
-          60
-      );
+    const minutes = Math.floor(
+      (totalSeconds % 3600) / 60
+    );
 
-    const secs =
-      totalSeconds % 60;
+    const secs = Math.floor(
+      totalSeconds % 60
+    );
 
     return [
-      hours,
-      minutes,
-      secs,
-    ]
-      .map((value) =>
-        String(value).padStart(
-          2,
-          "0"
-        )
-      )
-      .join(":");
+      String(hours).padStart(2, "0"),
+      String(minutes).padStart(2, "0"),
+      String(secs).padStart(2, "0"),
+    ].join(":");
+  };
+
+  // ==========================================
+  // PROJECT NAME
+  // ==========================================
+
+  const getProjectName = () => {
+    if (!log) {
+      return "-";
+    }
+
+    return (
+      log.project?.name ||
+      log.project?.title ||
+      log.projectName ||
+      "-"
+    );
+  };
+
+  // ==========================================
+  // TASK NAME
+  // ==========================================
+
+  const getTaskName = () => {
+    if (!log) {
+      return "No Task";
+    }
+
+    return (
+      log.task?.title ||
+      log.task?.name ||
+      log.taskName ||
+      "No Task"
+    );
+  };
+
+  // ==========================================
+  // HOURLY RATE
+  // ==========================================
+
+  const getRate = () => {
+    if (!log) {
+      return 0;
+    }
+
+    return Number(
+      log.hourlyRate ??
+        log.rate ??
+        0
+    );
+  };
+
+  // ==========================================
+  // AMOUNT
+  // ==========================================
+
+  const getAmount = () => {
+    if (!log) {
+      return 0;
+    }
+
+    /*
+      If backend already has amount,
+      use it.
+    */
+
+    if (
+      log.amount !== undefined &&
+      log.amount !== null
+    ) {
+      return Number(log.amount) || 0;
+    }
+
+    /*
+      Otherwise calculate:
+
+      duration / 3600 × hourly rate
+    */
+
+    const durationHours =
+      (Number(log.duration) || 0) /
+      3600;
+
+    return durationHours * getRate();
   };
 
   // ==========================================
@@ -185,21 +275,18 @@ const TimeLogDetails = () => {
   // ==========================================
 
   const handleEdit = () => {
-    if (!log) {
+    if (!log?._id) {
       return;
     }
 
     setShowMenu(false);
 
-    navigate("/time",
-      {
-        state: {
-          editLogId:
-            log._id,
-          log,
-        },
-      }
-    );
+    navigate("/time", {
+      state: {
+        editLogId: log._id,
+        log,
+      },
+    });
   };
 
   // ==========================================
@@ -207,47 +294,83 @@ const TimeLogDetails = () => {
   // ==========================================
 
   const handleDelete = async () => {
-    if (!log?._id) {
+    if (!log?._id || deleting) {
       return;
     }
 
-    const confirmed =
-      window.confirm(
-        "Are you sure you want to delete this time log?"
-      );
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this time log?"
+    );
 
     if (!confirmed) {
       return;
     }
 
     try {
+      setDeleting(true);
       setShowMenu(false);
+      setError("");
 
       await API.delete(
         `/time/${log._id}`
       );
 
-     navigate("/time",
-        {
-          replace: true,
-          state: {
-            message:
-              "Time log deleted successfully",
-          },
-        }
-      );
-    } catch (error) {
+      /*
+        After successful deletion,
+        go back to Time Logs.
+      */
+
+      navigate("/time-logs", {
+        replace: true,
+        state: {
+          message:
+            "Time log deleted successfully.",
+        },
+      });
+    } catch (err) {
       console.error(
         "Delete Time Log Error:",
-        error
+        err
       );
 
       setError(
-        error.response?.data?.message ||
+        err.response?.data?.message ||
           "Failed to delete time log."
       );
+
+      setDeleting(false);
     }
   };
+
+  // ==========================================
+  // CLOSE MENU WHEN CLICKING OUTSIDE
+  // ==========================================
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        !event.target.closest(
+          ".details-action-wrapper"
+        )
+      ) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener(
+        "mousedown",
+        handleOutsideClick
+      );
+    }
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleOutsideClick
+      );
+    };
+  }, [showMenu]);
 
   // ==========================================
   // LOADING
@@ -256,22 +379,34 @@ const TimeLogDetails = () => {
   if (loading) {
     return (
       <div className="time-details-page">
+        <div className="time-details-container">
 
-        <div className="time-details-loading">
+          <button
+            type="button"
+            className="details-back-btn"
+            onClick={handleBack}
+          >
+            <ArrowLeft size={18} />
+            Back to Time Logs
+          </button>
 
-          <Clock3 size={34} />
+          <div className="time-details-loading">
 
-          <h2>
-            Loading Time Log...
-          </h2>
+            <div className="details-loading-icon">
+              <Clock3 size={34} />
+            </div>
 
-          <p>
-            Please wait while we
-            load the details.
-          </p>
+            <h2>
+              Loading Time Log...
+            </h2>
+
+            <p>
+              Please wait while we load the details.
+            </p>
+
+          </div>
 
         </div>
-
       </div>
     );
   }
@@ -287,17 +422,37 @@ const TimeLogDetails = () => {
         <div className="time-details-container">
 
           <button
-  type="button"
-  className="details-back-btn"
-  onClick={handleBack}
->
-  <ArrowLeft size={18} />
-  Back to Time Tracking
-</button>
+            type="button"
+            className="details-back-btn"
+            onClick={handleBack}
+          >
+            <ArrowLeft size={18} />
+            Back to Time Logs
+          </button>
 
           <div className="details-error">
-            {error ||
-              "Time log not found."}
+
+            <div className="details-error-icon">
+              !
+            </div>
+
+            <h2>
+              Time Log Not Found
+            </h2>
+
+            <p>
+              {error ||
+                "This time log could not be found."}
+            </p>
+
+            <button
+              type="button"
+              onClick={handleBack}
+              className="details-error-back"
+            >
+              Back to Time Logs
+            </button>
+
           </div>
 
         </div>
@@ -305,6 +460,20 @@ const TimeLogDetails = () => {
       </div>
     );
   }
+
+  // ==========================================
+  // VALUES
+  // ==========================================
+
+  const projectName = getProjectName();
+
+  const taskName = getTaskName();
+
+  const hourlyRate = getRate();
+
+  const amount = getAmount();
+
+  const billed = Boolean(log.billed);
 
   // ==========================================
   // UI
@@ -315,21 +484,24 @@ const TimeLogDetails = () => {
 
       <div className="time-details-container">
 
-        {/* ==========================================
+        {/* ========================================
             TOP BAR
-        ========================================== */}
+        ======================================== */}
 
         <div className="details-topbar">
 
           <button
             type="button"
             className="details-back-btn"
-           onClick={handleBack}
+            onClick={handleBack}
           >
             <ArrowLeft size={18} />
-
-            Back to Time Tracking
+            <span>
+              Back to Time Logs
+            </span>
           </button>
+
+          {/* ACTION MENU */}
 
           <div className="details-action-wrapper">
 
@@ -343,10 +515,9 @@ const TimeLogDetails = () => {
                 )
               }
               title="Actions"
+              aria-label="Actions"
             >
-              <MoreVertical
-                size={21}
-              />
+              <MoreVertical size={21} />
             </button>
 
             {showMenu && (
@@ -355,25 +526,23 @@ const TimeLogDetails = () => {
                 <button
                   type="button"
                   onClick={handleEdit}
-                  disabled={
-                    !log.endTime
-                  }
+                  disabled={!log.endTime}
                 >
                   <Pencil size={16} />
-
                   Edit
                 </button>
 
                 <button
                   type="button"
                   className="danger"
-                  onClick={
-                    handleDelete
-                  }
+                  onClick={handleDelete}
+                  disabled={deleting}
                 >
                   <Trash2 size={16} />
 
-                  Delete
+                  {deleting
+                    ? "Deleting..."
+                    : "Delete"}
                 </button>
 
               </div>
@@ -383,49 +552,58 @@ const TimeLogDetails = () => {
 
         </div>
 
-        {/* ==========================================
+        {/* ========================================
+            ERROR MESSAGE
+        ======================================== */}
+
+        {error && (
+          <div className="details-inline-error">
+            {error}
+          </div>
+        )}
+
+        {/* ========================================
             HEADER
-        ========================================== */}
+        ======================================== */}
 
         <div className="time-details-header">
 
-          <div>
+          <div className="details-header-content">
 
             <span className="details-label">
               TIME LOG DETAILS
             </span>
 
             <h1>
-              {log.project?.name ||
-                "Time Log"}
+              {projectName !== "-"
+                ? projectName
+                : "Time Log"}
             </h1>
 
             <p>
-              Complete details of
-              this working session.
+              Complete details of this
+              working session.
             </p>
 
           </div>
 
+          {/* BILLING STATUS */}
+
           <div
             className={
-              log.billed
+              billed
                 ? "details-status billed"
                 : "details-status unbilled"
             }
           >
-            {log.billed ? (
+            {billed ? (
               <>
-                <CheckCircle2
-                  size={17}
-                />
-
+                <CheckCircle2 size={17} />
                 Billed
               </>
             ) : (
               <>
                 <Circle size={17} />
-
                 Unbilled
               </>
             )}
@@ -433,11 +611,13 @@ const TimeLogDetails = () => {
 
         </div>
 
-        {/* ==========================================
+        {/* ========================================
             SUMMARY
-        ========================================== */}
+        ======================================== */}
 
         <div className="details-summary-grid">
+
+          {/* DURATION */}
 
           <div className="details-summary-card">
 
@@ -459,12 +639,12 @@ const TimeLogDetails = () => {
 
           </div>
 
+          {/* HOURLY RATE */}
+
           <div className="details-summary-card">
 
             <div className="summary-icon">
-              <DollarSign
-                size={21}
-              />
+              <DollarSign size={21} />
             </div>
 
             <div>
@@ -474,21 +654,18 @@ const TimeLogDetails = () => {
 
               <strong>
                 ₹
-                {Number(
-                  log.hourlyRate ||
-                    0
-                ).toFixed(2)}
+                {hourlyRate.toFixed(2)}
               </strong>
             </div>
 
           </div>
 
+          {/* TOTAL AMOUNT */}
+
           <div className="details-summary-card">
 
             <div className="summary-icon">
-              <DollarSign
-                size={21}
-              />
+              <DollarSign size={21} />
             </div>
 
             <div>
@@ -498,9 +675,7 @@ const TimeLogDetails = () => {
 
               <strong>
                 ₹
-                {Number(
-                  log.amount || 0
-                ).toFixed(2)}
+                {amount.toFixed(2)}
               </strong>
             </div>
 
@@ -508,22 +683,24 @@ const TimeLogDetails = () => {
 
         </div>
 
-        {/* ==========================================
+        {/* ========================================
             SESSION INFORMATION
-        ========================================== */}
+        ======================================== */}
 
         <div className="details-card">
 
           <div className="details-card-header">
 
-            <h2>
-              Session Information
-            </h2>
+            <div>
+              <h2>
+                Session Information
+              </h2>
 
-            <p>
-              Detailed information
-              about this time entry.
-            </p>
+              <p>
+                Detailed information
+                about this time entry.
+              </p>
+            </div>
 
           </div>
 
@@ -534,22 +711,17 @@ const TimeLogDetails = () => {
             <div className="details-info-item">
 
               <div className="info-icon">
-                <Briefcase
-                  size={19}
-                />
+                <Briefcase size={19} />
               </div>
 
               <div>
-
                 <span>
                   Project
                 </span>
 
                 <strong>
-                  {log.project?.name ||
-                    "-"}
+                  {projectName}
                 </strong>
-
               </div>
 
             </div>
@@ -563,16 +735,13 @@ const TimeLogDetails = () => {
               </div>
 
               <div>
-
                 <span>
                   Task
                 </span>
 
                 <strong>
-                  {log.task?.title ||
-                    "No Task"}
+                  {taskName}
                 </strong>
-
               </div>
 
             </div>
@@ -582,28 +751,26 @@ const TimeLogDetails = () => {
             <div className="details-info-item">
 
               <div className="info-icon">
-                <CalendarDays
-                  size={19}
-                />
+                <CalendarDays size={19} />
               </div>
 
               <div>
-
                 <span>
                   Date
                 </span>
 
                 <strong>
                   {formatDate(
-                    log.startTime
+                    log.startTime ||
+                      log.startedAt ||
+                      log.createdAt
                   )}
                 </strong>
-
               </div>
 
             </div>
 
-            {/* START */}
+            {/* START TIME */}
 
             <div className="details-info-item">
 
@@ -612,22 +779,21 @@ const TimeLogDetails = () => {
               </div>
 
               <div>
-
                 <span>
                   Start Time
                 </span>
 
                 <strong>
                   {formatDate(
-                    log.startTime
+                    log.startTime ||
+                      log.startedAt
                   )}
                 </strong>
-
               </div>
 
             </div>
 
-            {/* END */}
+            {/* END TIME */}
 
             <div className="details-info-item">
 
@@ -636,7 +802,6 @@ const TimeLogDetails = () => {
               </div>
 
               <div>
-
                 <span>
                   End Time
                 </span>
@@ -646,7 +811,6 @@ const TimeLogDetails = () => {
                     log.endTime
                   )}
                 </strong>
-
               </div>
 
             </div>
@@ -660,7 +824,6 @@ const TimeLogDetails = () => {
               </div>
 
               <div>
-
                 <span>
                   Duration
                 </span>
@@ -670,7 +833,6 @@ const TimeLogDetails = () => {
                     log.duration
                   )}
                 </strong>
-
               </div>
 
             </div>
@@ -680,25 +842,18 @@ const TimeLogDetails = () => {
             <div className="details-info-item">
 
               <div className="info-icon">
-                <DollarSign
-                  size={19}
-                />
+                <DollarSign size={19} />
               </div>
 
               <div>
-
                 <span>
                   Hourly Rate
                 </span>
 
                 <strong>
                   ₹
-                  {Number(
-                    log.hourlyRate ||
-                      0
-                  ).toFixed(2)}
+                  {hourlyRate.toFixed(2)}
                 </strong>
-
               </div>
 
             </div>
@@ -708,24 +863,18 @@ const TimeLogDetails = () => {
             <div className="details-info-item">
 
               <div className="info-icon">
-                <DollarSign
-                  size={19}
-                />
+                <DollarSign size={19} />
               </div>
 
               <div>
-
                 <span>
                   Amount
                 </span>
 
                 <strong>
                   ₹
-                  {Number(
-                    log.amount || 0
-                  ).toFixed(2)}
+                  {amount.toFixed(2)}
                 </strong>
-
               </div>
 
             </div>
@@ -735,29 +884,25 @@ const TimeLogDetails = () => {
             <div className="details-info-item">
 
               <div className="info-icon">
-                <CheckCircle2
-                  size={19}
-                />
+                <CheckCircle2 size={19} />
               </div>
 
               <div>
-
                 <span>
                   Billing Status
                 </span>
 
                 <strong
                   className={
-                    log.billed
+                    billed
                       ? "billing-text billed-text"
                       : "billing-text unbilled-text"
                   }
                 >
-                  {log.billed
+                  {billed
                     ? "Billed"
                     : "Unbilled"}
                 </strong>
-
               </div>
 
             </div>
@@ -766,6 +911,7 @@ const TimeLogDetails = () => {
 
         </div>
 
+       
       </div>
 
     </div>
