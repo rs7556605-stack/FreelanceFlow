@@ -25,6 +25,8 @@ export const AuthProvider = ({ children }) => {
       try {
         setUser(JSON.parse(storedUser));
       } catch (error) {
+        console.error("Invalid stored user:", error);
+
         localStorage.removeItem("token");
         localStorage.removeItem("user");
       }
@@ -37,10 +39,10 @@ export const AuthProvider = ({ children }) => {
   // REGISTER
   // ==========================================
 
-  const register = async (name, email, password) => {
+  const register = async (username, email, password) => {
     const response = await API.post("/auth/register", {
-      name,
-      email,
+      username: username.trim(),
+      email: email.trim().toLowerCase(),
       password,
     });
 
@@ -53,16 +55,20 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const response = await API.post("/auth/login", {
-      email,
+      email: email.trim().toLowerCase(),
       password,
     });
 
     const { token, user } = response.data;
 
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
+    if (token) {
+      localStorage.setItem("token", token);
+    }
 
-    setUser(user);
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+      setUser(user);
+    }
 
     return response.data;
   };
@@ -77,6 +83,10 @@ export const AuthProvider = ({ children }) => {
 
     setUser(null);
   };
+
+  // ==========================================
+  // CONTEXT VALUE
+  // ==========================================
 
   return (
     <AuthContext.Provider
