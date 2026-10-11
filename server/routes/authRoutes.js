@@ -3,33 +3,23 @@ const express = require("express");
 const router = express.Router();
 
 const {
+  login,
+  register,
   forgotPassword,
   verifyOTP,
   resetPassword,
   changePassword,
 } = require("../controllers/authController");
 
-// ==========================================
-// FORGOT PASSWORD
-// ==========================================
+router.post("/register", register);
+
+router.post("/login", login);
 
 router.post("/forgot-password", forgotPassword);
 
-// ==========================================
-// VERIFY OTP
-// ==========================================
-
 router.post("/verify-otp", verifyOTP);
 
-// ==========================================
-// RESET PASSWORD
-// ==========================================
-
 router.post("/reset-password", resetPassword);
-
-// ==========================================
-// CHANGE PASSWORD - LOGGED IN USER
-// ==========================================
 
 router.put("/change-password", changePassword);
 
