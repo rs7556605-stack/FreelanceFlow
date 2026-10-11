@@ -2,14 +2,14 @@ const Project = require("../models/Project");
 const Task = require("../models/Task");
 
 // =====================================================
-// GET DASHBOARD DATA
+// GET DASHBOARD SUMMARY
 // =====================================================
 
-const getDashboard = async (req, res) => {
+const getDashboardSummary = async (req, res) => {
   try {
-    // ===================================================
-    // GET USER ID
-    // ===================================================
+    // =================================================
+    // GET LOGGED-IN USER ID
+    // =================================================
 
     const userId =
       req.user?.id ||
@@ -23,9 +23,115 @@ const getDashboard = async (req, res) => {
       });
     }
 
-    // ===================================================
+    // =================================================
+    // CURRENT DATE
+    // =================================================
+
+    const today = new Date();
+
+    // =================================================
+    // GET ALL USER PROJECTS
+    // =================================================
+
+    const projects = await Project.find({
+      user: userId,
+    })
+      .populate("client", "name")
+      .sort({
+        createdAt: -1,
+      })
+      .lean();
+
+    // =================================================
+    // GET ALL USER TASKS
+    // =================================================
+
+    const tasks = await Task.find({
+      user: userId,
+    })
+      .populate("project", "name")
+      .sort({
+        createdAt: -1,
+      })
+      .lean();
+
+    // =================================================
+    // PROJECT STATISTICS
+    // =================================================
+
+    const totalProjects = projects.length;
+
+    const completedProjects = projects.filter(
+      (project) =>
+        String(project.status || "").toLowerCase() ===
+        "completed"
+    ).length;
+
+    const pendingProjects = projects.filter(
+      (project) =>
+        String(project.status || "").toLowerCase() !==
+        "completed"
+    ).length;
+
+    // =================================================
+    // TASK STATISTICS
+    // =================================================
+
+    const totalTasks = tasks.length;
+
+    const completedTasks = tasks.filter(
+      (task) =>
+        String(task.status || "").toLowerCase() ===
+        "completed"
+    ).length;
+
+    const pendingTasks = tasks.filter(
+      (task) =>
+        String(task.status || "").toLowerCase() !==
+        "completed"
+    ).length;
+
+    // =================================================
+    // TASKS DUE TODAY
+    // =================================================
+
+    const tasksDueToday = tasks.filter((task) => {
+      if (!task.dueDate) {
+        return false;
+      }
+
+      const dueDate = new Date(task.dueDate);
+
+      return (
+        dueDate.getFullYear() === today.getFullYear() &&
+        dueDate.getMonth() === today.getMonth() &&
+        dueDate.getDate() === today.getDate() &&
+        String(task.status || "").toLowerCase() !==
+          "completed"
+      );
+    });
+
+    // =================================================
+    // OVERDUE TASKS
+    // =================================================
+
+    const overdueTasks = tasks.filter((task) => {
+      if (!task.dueDate) {
+        return false;
+      }
+
+      const dueDate = new Date(task.dueDate);
+
+      return (
+        dueDate < today &&
+        String(task.status || "").toLowerCase() !==
+          "completed"
+      );
+    });
+
+    // =================================================
     // UPCOMING PROJECT DEADLINES
-    // ===================================================
+    // =================================================
 
     const upcomingProjectDeadlines =
       await Project.find({
@@ -37,25 +143,24 @@ const getDashboard = async (req, res) => {
 
         deadline: {
           $ne: null,
-          $gte: new Date(),
+          $gte: today,
         },
       })
-        .populate("client", "name")
+        .populate(
+          "client",
+          "name"
+        )
         .sort({
           deadline: 1,
         })
-
-        // IMPORTANT:
-        // NO .limit(5)
-
         .select(
           "name status deadline client"
         )
         .lean();
 
-    // ===================================================
+    // =================================================
     // UPCOMING TASK DEADLINES
-    // ===================================================
+    // =================================================
 
     const upcomingTaskDeadlines =
       await Task.find({
@@ -67,31 +172,26 @@ const getDashboard = async (req, res) => {
 
         dueDate: {
           $ne: null,
-          $gte: new Date(),
+          $gte: today,
         },
       })
-        .populate("project", "name")
+        .populate(
+          "project",
+          "name"
+        )
         .sort({
           dueDate: 1,
         })
-
-        // IMPORTANT:
-        // NO .limit(5)
-
         .select(
           "title status dueDate project type customType"
         )
         .lean();
 
-    // ===================================================
+    // =================================================
     // COMBINE PROJECT + TASK DEADLINES
-    // ===================================================
+    // =================================================
 
     const upcomingDeadlines = [
-      // -------------------------------------------------
-      // PROJECT DEADLINES
-      // -------------------------------------------------
-
       ...upcomingProjectDeadlines.map(
         (project) => ({
           type: "Project",
@@ -113,10 +213,6 @@ const getDashboard = async (req, res) => {
             "Unknown Client",
         })
       ),
-
-      // -------------------------------------------------
-      // TASK DEADLINES
-      // -------------------------------------------------
 
       ...upcomingTaskDeadlines.map(
         (task) => ({
@@ -147,9 +243,9 @@ const getDashboard = async (req, res) => {
       ),
     ];
 
-    // ===================================================
-    // SORT ALL DEADLINES BY DATE
-    // ===================================================
+    // =================================================
+    // SORT DEADLINES BY DATE
+    // =================================================
 
     upcomingDeadlines.sort(
       (a, b) =>
@@ -157,12 +253,271 @@ const getDashboard = async (req, res) => {
         new Date(b.date)
     );
 
-    // ===================================================
+    // =================================================
+    // PROJECT PROGRESS
+    // =================================================
+
+    const projectProgress = projects.map(
+      (project) => {
+        const projectTasks = tasks.filter(
+          (task) =>
+            String(
+              task.project?._id ||
+                task.project
+            ) ===
+            String(project._id)
+        );
+
+        const projectTotalTasks =
+          projectTasks.length;
+
+        const projectCompletedTasks =
+          projectTasks.filter(
+            (task) =>
+              String(
+                task.status || ""
+              ).toLowerCase() ===
+              "completed"
+          ).length;
+
+        let progress = 0;
+
+        if (projectTotalTasks > 0) {
+          progress = Math.round(
+            (projectCompletedTasks /
+              projectTotalTasks) *
+              100
+          );
+        } else if (
+          String(
+            project.status || ""
+          ).toLowerCase() ===
+          "completed"
+        ) {
+          progress = 100;
+        }
+
+        return {
+          _id: project._id,
+
+          name: project.name,
+
+          status: project.status,
+
+          deadline:
+            project.deadline || null,
+
+          clientId:
+            project.client?._id ||
+            null,
+
+          clientName:
+            project.client?.name ||
+            "Unknown Client",
+
+          totalTasks:
+            projectTotalTasks,
+
+          completedTasks:
+            projectCompletedTasks,
+
+          progress,
+        };
+      }
+    );
+
+    // =================================================
+    // RECENT PROJECTS
+    // =================================================
+
+    const recentProjects = projects
+      .slice(0, 5)
+      .map((project) => {
+        const projectTasks =
+          tasks.filter(
+            (task) =>
+              String(
+                task.project?._id ||
+                  task.project
+              ) ===
+              String(project._id)
+          );
+
+        const total =
+          projectTasks.length;
+
+        const completed =
+          projectTasks.filter(
+            (task) =>
+              String(
+                task.status || ""
+              ).toLowerCase() ===
+              "completed"
+          ).length;
+
+        let progress = 0;
+
+        if (total > 0) {
+          progress = Math.round(
+            (completed / total) * 100
+          );
+        } else if (
+          String(
+            project.status || ""
+          ).toLowerCase() ===
+          "completed"
+        ) {
+          progress = 100;
+        }
+
+        return {
+          _id: project._id,
+
+          name: project.name,
+
+          status: project.status,
+
+          deadline:
+            project.deadline || null,
+
+          clientId:
+            project.client?._id ||
+            null,
+
+          clientName:
+            project.client?.name ||
+            "Unknown Client",
+
+          progress,
+
+          totalTasks: total,
+
+          completedTasks: completed,
+        };
+      });
+
+    // =================================================
+    // RECENT TASKS
+    // =================================================
+
+    const recentTasks = tasks
+      .slice(0, 5)
+      .map((task) => ({
+        _id: task._id,
+
+        title: task.title,
+
+        description:
+          task.description || "",
+
+        status:
+          task.status || "Pending",
+
+        priority:
+          task.priority || "Medium",
+
+        dueDate:
+          task.dueDate || null,
+
+        projectId:
+          task.project?._id ||
+          null,
+
+        projectName:
+          task.project?.name ||
+          "Unknown Project",
+
+        type:
+          task.type || "",
+
+        customType:
+          task.customType || "",
+      }));
+
+    // =================================================
+    // OVERALL PROGRESS
+    // =================================================
+
+    let overallProgress = 0;
+
+    if (totalTasks > 0) {
+      overallProgress = Math.round(
+        (completedTasks /
+          totalTasks) *
+          100
+      );
+    } else if (
+      totalProjects > 0 &&
+      completedProjects ===
+        totalProjects
+    ) {
+      overallProgress = 100;
+    }
+
+    // =================================================
     // RESPONSE
-    // ===================================================
+    // =================================================
 
     return res.status(200).json({
       success: true,
+
+      summary: {
+        totalProjects,
+
+        completedProjects,
+
+        pendingProjects,
+
+        totalTasks,
+
+        completedTasks,
+
+        pendingTasks,
+
+        tasksDueToday:
+          tasksDueToday.length,
+
+        overdueTasks:
+          overdueTasks.length,
+
+        overallProgress,
+      },
+
+      projects: {
+        total: totalProjects,
+
+        completed:
+          completedProjects,
+
+        pending:
+          pendingProjects,
+
+        recent:
+          recentProjects,
+
+        progress:
+          projectProgress,
+      },
+
+      tasks: {
+        total: totalTasks,
+
+        completed:
+          completedTasks,
+
+        pending:
+          pendingTasks,
+
+        dueToday:
+          tasksDueToday,
+
+        overdue:
+          overdueTasks,
+
+        recent:
+          recentTasks,
+      },
+
       upcomingDeadlines,
     });
   } catch (error) {
@@ -173,16 +528,24 @@ const getDashboard = async (req, res) => {
 
     return res.status(500).json({
       success: false,
+
       message:
         "Failed to load dashboard data.",
+
+      error:
+        process.env.NODE_ENV ===
+        "production"
+          ? undefined
+          : error.message,
     });
   }
 };
+
 
 // =====================================================
 // EXPORT
 // =====================================================
 
 module.exports = {
-  getDashboard,
+  getDashboardSummary,
 };
