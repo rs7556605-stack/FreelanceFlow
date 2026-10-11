@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import {
   Plus,
@@ -8,15 +12,25 @@ import {
   X,
   CheckSquare,
   ArrowLeft,
+  Users,
+  FolderKanban,
 } from "lucide-react";
 
-import { useNavigate } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 import API from "../services/api";
 
 import "./Tasks.css";
 
+// ==================================================
+// EMPTY FORM
+// ==================================================
+
 const emptyForm = {
+  client: "",
   project: "",
   title: "",
   description: "",
@@ -25,42 +39,85 @@ const emptyForm = {
   dueDate: "",
 };
 
+// ==================================================
+// TASKS
+// ==================================================
+
 const Tasks = () => {
-  const navigate = useNavigate();
+  const location =
+    useLocation();
 
-  const [tasks, setTasks] = useState([]);
+  const navigate =
+    useNavigate();
 
-  const [projects, setProjects] = useState([]);
+  // ==================================================
+  // STATES
+  // ==================================================
 
-  const [form, setForm] = useState(emptyForm);
+  const [tasks, setTasks] =
+    useState([]);
 
-  const [search, setSearch] = useState("");
+  const [projects, setProjects] =
+    useState([]);
 
-  const [showForm, setShowForm] = useState(false);
+  const [clients, setClients] =
+    useState([]);
 
-  const [editingId, setEditingId] = useState(null);
+  const [form, setForm] =
+    useState({
+      ...emptyForm,
+    });
 
-  const [loading, setLoading] = useState(true);
+  const [search, setSearch] =
+    useState("");
 
-  const [saving, setSaving] = useState(false);
+  const [showForm, setShowForm] =
+    useState(false);
 
-  const [error, setError] = useState("");
+  const [editingId, setEditingId] =
+    useState(null);
 
-  // ==========================================
+  const [loading, setLoading] =
+    useState(true);
+
+  const [saving, setSaving] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  // ==================================================
   // FETCH TASKS
-  // ==========================================
+  // ==================================================
 
   const fetchTasks = async () => {
     try {
       setLoading(true);
       setError("");
 
-      const response = await API.get("/tasks");
+      const response =
+        await API.get(
+          "/tasks"
+        );
 
-      setTasks(response.data.tasks || []);
+      console.log(
+        "TASKS RESPONSE:",
+        response.data
+      );
+
+      setTasks(
+        response.data?.tasks ||
+          []
+      );
     } catch (error) {
+      console.error(
+        "FETCH TASKS ERROR:",
+        error
+      );
+
       setError(
-        error.response?.data?.message ||
+        error.response?.data
+          ?.message ||
           "Failed to load tasks"
       );
     } finally {
@@ -68,129 +125,143 @@ const Tasks = () => {
     }
   };
 
-  // ==========================================
+  // ==================================================
   // FETCH PROJECTS
-  // ==========================================
+  // ==================================================
 
-  const fetchProjects = async () => {
-    try {
-      const response = await API.get("/projects");
+  const fetchProjects =
+    async () => {
+      try {
+        const response =
+          await API.get(
+            "/projects"
+          );
 
-      setProjects(response.data.projects || []);
-    } catch (error) {
-      setError(
-        error.response?.data?.message ||
-          "Failed to load projects"
-      );
-    }
-  };
+        setProjects(
+          response.data
+            ?.projects || []
+        );
+      } catch (error) {
+        console.error(
+          "FETCH PROJECTS ERROR:",
+          error
+        );
 
-  // ==========================================
+        setError(
+          error.response?.data
+            ?.message ||
+            "Failed to load projects"
+        );
+      }
+    };
+
+  // ==================================================
+  // FETCH CLIENTS
+  // ==================================================
+
+  const fetchClients =
+    async () => {
+      try {
+        const response =
+          await API.get(
+            "/clients"
+          );
+
+        setClients(
+          response.data
+            ?.clients || []
+        );
+      } catch (error) {
+        console.error(
+          "FETCH CLIENTS ERROR:",
+          error
+        );
+
+        setError(
+          error.response?.data
+            ?.message ||
+            "Failed to load clients"
+        );
+      }
+    };
+
+  // ==================================================
   // INITIAL LOAD
-  // ==========================================
+  // ==================================================
 
   useEffect(() => {
     fetchTasks();
     fetchProjects();
+    fetchClients();
   }, []);
 
-  // ==========================================
-  // INPUT CHANGE
-  // ==========================================
+  // ==================================================
+  // PROJECT CLIENT ID
+  // ==================================================
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
+  const getProjectClientId =
+    (project) => {
+      if (!project) {
+        return "";
+      }
 
-    setForm((previous) => ({
-      ...previous,
-      [name]: value,
-    }));
-  };
+      if (
+        project.client &&
+        typeof project.client ===
+          "object"
+      ) {
+        return (
+          project.client._id ||
+          project.client.id ||
+          ""
+        );
+      }
 
-  // ==========================================
+      return (
+        project.client || ""
+      );
+    };
+
+  // ==================================================
+  // FILTER PROJECTS BY CLIENT
+  // ==================================================
+
+  const filteredProjects =
+    useMemo(() => {
+      if (!form.client) {
+        return [];
+      }
+
+      return projects.filter(
+        (project) => {
+          const clientId =
+            getProjectClientId(
+              project
+            );
+
+          return (
+            clientId?.toString() ===
+            form.client?.toString()
+          );
+        }
+      );
+    }, [
+      projects,
+      form.client,
+    ]);
+
+  // ==================================================
   // OPEN ADD FORM
-  // ==========================================
+  // ==================================================
 
   const openAddForm = () => {
     setEditingId(null);
 
-    setForm(emptyForm);
+    setForm({
+      ...emptyForm,
+    });
 
     setError("");
-
-    setShowForm(true);
-  };
-
-  // ==========================================
-  // CLOSE FORM
-  // ==========================================
-
-  const closeForm = () => {
-    setShowForm(false);
-
-    setEditingId(null);
-
-    setForm(emptyForm);
-  };
-
-  // ==========================================
-  // SAVE TASK
-  // ==========================================
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    try {
-      setSaving(true);
-      setError("");
-
-      if (editingId) {
-        await API.put(
-          `/tasks/${editingId}`,
-          form
-        );
-      } else {
-        await API.post("/tasks", form);
-      }
-
-      closeForm();
-
-      await fetchTasks();
-    } catch (error) {
-      setError(
-        error.response?.data?.message ||
-          "Failed to save task"
-      );
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // ==========================================
-  // EDIT TASK
-  // ==========================================
-
-  const handleEdit = (task) => {
-    setEditingId(task._id);
-
-    setForm({
-      project: task.project?._id || "",
-
-      title: task.title || "",
-
-      description:
-        task.description || "",
-
-      status:
-        task.status || "Pending",
-
-      priority:
-        task.priority || "Medium",
-
-      dueDate: task.dueDate
-        ? task.dueDate.split("T")[0]
-        : "",
-    });
 
     setShowForm(true);
 
@@ -200,109 +271,705 @@ const Tasks = () => {
     });
   };
 
-  // ==========================================
-  // DELETE TASK
-  // ==========================================
+  // ==================================================
+  // CLOSE FORM
+  // ==================================================
 
-  const handleDelete = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this task?"
-    );
+  const closeForm = () => {
+    setShowForm(false);
 
-    if (!confirmed) return;
+    setEditingId(null);
 
-    try {
-      setError("");
+    setForm({
+      ...emptyForm,
+    });
 
-      await API.delete(`/tasks/${id}`);
-
-      await fetchTasks();
-    } catch (error) {
-      setError(
-        error.response?.data?.message ||
-          "Failed to delete task"
-      );
-    }
+    setError("");
   };
 
-  // ==========================================
-  // SEARCH
-  // ==========================================
+  // ==================================================
+  // FORM CHANGE
+  // ==================================================
 
-  const filteredTasks = tasks.filter((task) => {
-    const query = search.toLowerCase();
+  const handleChange = (
+    event
+  ) => {
+    const {
+      name,
+      value,
+    } = event.target;
 
-    return (
-      task.title
-        ?.toLowerCase()
-        .includes(query) ||
-      task.description
-        ?.toLowerCase()
-        .includes(query) ||
-      task.project?.name
-        ?.toLowerCase()
-        .includes(query) ||
-      task.status
-        ?.toLowerCase()
-        .includes(query) ||
-      task.priority
-        ?.toLowerCase()
-        .includes(query)
+    // -----------------------------------------------
+    // CLIENT CHANGE
+    // -----------------------------------------------
+
+    if (
+      name === "client"
+    ) {
+      setForm(
+        (previous) => ({
+          ...previous,
+
+          client:
+            value,
+
+          project:
+            "",
+        })
+      );
+
+      return;
+    }
+
+    // -----------------------------------------------
+    // NORMAL
+    // -----------------------------------------------
+
+    setForm(
+      (previous) => ({
+        ...previous,
+        [name]:
+          value,
+      })
     );
-  });
+  };
 
-  // ==========================================
+  // ==================================================
+  // VALIDATE
+  // ==================================================
+
+  const validateForm =
+    () => {
+      if (!form.client) {
+        return "Please select a client.";
+      }
+
+      if (!form.project) {
+        return "Please select a project.";
+      }
+
+      if (
+        !form.title.trim()
+      ) {
+        return "Please enter task title.";
+      }
+
+      return "";
+    };
+
+  // ==================================================
+  // SAVE TASK
+  // ==================================================
+
+  const handleSubmit =
+    async (event) => {
+      event.preventDefault();
+
+      try {
+        setSaving(true);
+        setError("");
+
+        const validationError =
+          validateForm();
+
+        if (validationError) {
+          setError(
+            validationError
+          );
+
+          return;
+        }
+
+        // ==========================================
+        // NO TYPE
+        // ==========================================
+
+        const taskData = {
+          client:
+            form.client,
+
+          project:
+            form.project,
+
+          title:
+            form.title.trim(),
+
+          description:
+            form.description.trim(),
+
+          status:
+            form.status,
+
+          priority:
+            form.priority,
+
+          dueDate:
+            form.dueDate ||
+            null,
+        };
+
+        console.log(
+          "FINAL TASK DATA:",
+          taskData
+        );
+
+        // ==========================================
+        // UPDATE
+        // ==========================================
+
+        if (editingId) {
+          await API.put(
+            `/tasks/${editingId}`,
+            taskData
+          );
+        }
+
+        // ==========================================
+        // CREATE
+        // ==========================================
+
+        else {
+          await API.post(
+            "/tasks",
+            taskData
+          );
+        }
+
+        // ==========================================
+        // CLOSE
+        // ==========================================
+
+        closeForm();
+
+        // ==========================================
+        // REFRESH
+        // ==========================================
+
+        await fetchTasks();
+      } catch (error) {
+        console.error(
+          "SAVE TASK ERROR:",
+          error
+        );
+
+        console.error(
+          "SERVER RESPONSE:",
+          error.response?.data
+        );
+
+        setError(
+          error.response?.data
+            ?.message ||
+            "Failed to save task"
+        );
+      } finally {
+        setSaving(false);
+      }
+    };
+
+  // ==================================================
+  // EDIT TASK
+  // ==================================================
+
+  const handleEdit = (
+    task
+  ) => {
+    // -----------------------------------------------
+    // CLIENT
+    // -----------------------------------------------
+
+    let clientId = "";
+
+    if (
+      task.client &&
+      typeof task.client ===
+        "object"
+    ) {
+      clientId =
+        task.client._id ||
+        task.client.id ||
+        "";
+    } else {
+      clientId =
+        task.client || "";
+    }
+
+    // -----------------------------------------------
+    // OLD TASK FALLBACK
+    // -----------------------------------------------
+
+    if (
+      !clientId &&
+      task.project?.client
+    ) {
+      if (
+        typeof task.project.client ===
+          "object"
+      ) {
+        clientId =
+          task.project.client._id ||
+          task.project.client.id ||
+          "";
+      } else {
+        clientId =
+          task.project.client;
+      }
+    }
+
+    // -----------------------------------------------
+    // PROJECT
+    // -----------------------------------------------
+
+    let projectId = "";
+
+    if (
+      task.project &&
+      typeof task.project ===
+        "object"
+    ) {
+      projectId =
+        task.project._id ||
+        task.project.id ||
+        "";
+    } else {
+      projectId =
+        task.project || "";
+    }
+
+    // -----------------------------------------------
+    // SET
+    // -----------------------------------------------
+
+    setEditingId(
+      task._id
+    );
+
+    setForm({
+      client:
+        clientId,
+
+      project:
+        projectId,
+
+      title:
+        task.title || "",
+
+      description:
+        task.description || "",
+
+      status:
+        task.status ||
+        "Pending",
+
+      priority:
+        task.priority ||
+        "Medium",
+
+      dueDate:
+        task.dueDate
+          ? task.dueDate.split(
+              "T"
+            )[0]
+          : "",
+    });
+
+    setError("");
+
+    setShowForm(true);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  // ==================================================
+  // DELETE
+  // ==================================================
+
+  const handleDelete =
+    async (id) => {
+      const confirmed =
+        window.confirm(
+          "Are you sure you want to delete this task?"
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        setError("");
+
+        await API.delete(
+          `/tasks/${id}`
+        );
+
+        await fetchTasks();
+      } catch (error) {
+        console.error(
+          "DELETE TASK ERROR:",
+          error
+        );
+
+        setError(
+          error.response?.data
+            ?.message ||
+            "Failed to delete task"
+        );
+      }
+    };
+
+  // ==================================================
+  // CLIENT NAME
+  // ==================================================
+
+  const getClientName =
+    (task) => {
+      // -----------------------------------------------
+      // DIRECT CLIENT OBJECT
+      // -----------------------------------------------
+
+      if (
+        task?.client &&
+        typeof task.client ===
+          "object"
+      ) {
+        return (
+          task.client.name ||
+          task.client.clientName ||
+          task.client.company ||
+          "No client"
+        );
+      }
+
+      // -----------------------------------------------
+      // CLIENT ID
+      // -----------------------------------------------
+
+      if (
+        task?.client
+      ) {
+        const client =
+          clients.find(
+            (item) =>
+              item?._id
+                ?.toString() ===
+              task.client?.toString()
+          );
+
+        if (client) {
+          return (
+            client.name ||
+            client.clientName ||
+            client.company ||
+            "No client"
+          );
+        }
+      }
+
+      // -----------------------------------------------
+      // PROJECT CLIENT OBJECT
+      // -----------------------------------------------
+
+      if (
+        task?.project?.client &&
+        typeof task.project
+          .client ===
+          "object"
+      ) {
+        return (
+          task.project.client.name ||
+          task.project.client
+            .clientName ||
+          task.project.client
+            .company ||
+          "No client"
+        );
+      }
+
+      // -----------------------------------------------
+      // PROJECT CLIENT ID
+      // -----------------------------------------------
+
+      if (
+        task?.project?.client
+      ) {
+        const clientId =
+          typeof task.project
+            .client ===
+          "object"
+            ? task.project
+                .client._id
+            : task.project
+                .client;
+
+        const client =
+          clients.find(
+            (item) =>
+              item?._id
+                ?.toString() ===
+              clientId?.toString()
+          );
+
+        if (client) {
+          return (
+            client.name ||
+            client.clientName ||
+            client.company ||
+            "No client"
+          );
+        }
+      }
+
+      return "No client";
+    };
+
+  // ==================================================
+  // PROJECT NAME
+  // ==================================================
+
+  const getProjectName =
+    (task) => {
+      // -----------------------------------------------
+      // PROJECT OBJECT
+      // -----------------------------------------------
+
+      if (
+        task?.project &&
+        typeof task.project ===
+          "object"
+      ) {
+        return (
+          task.project.name ||
+          "No project"
+        );
+      }
+
+      // -----------------------------------------------
+      // PROJECT ID
+      // -----------------------------------------------
+
+      if (
+        task?.project
+      ) {
+        const project =
+          projects.find(
+            (item) =>
+              item?._id
+                ?.toString() ===
+              task.project?.toString()
+          );
+
+        if (project) {
+          return (
+            project.name ||
+            "No project"
+          );
+        }
+      }
+
+      return "No project";
+    };
+
+  // ==================================================
+  // SEARCH
+  // ==================================================
+
+  const filteredTasks =
+    tasks.filter(
+      (task) => {
+        const query =
+          search
+            .toLowerCase()
+            .trim();
+
+        if (!query) {
+          return true;
+        }
+
+        const clientName =
+          getClientName(
+            task
+          ).toLowerCase();
+
+        const projectName =
+          getProjectName(
+            task
+          ).toLowerCase();
+
+        return (
+          task.title
+            ?.toLowerCase()
+            .includes(query) ||
+
+          task.description
+            ?.toLowerCase()
+            .includes(query) ||
+
+          clientName.includes(
+            query
+          ) ||
+
+          projectName.includes(
+            query
+          ) ||
+
+          task.status
+            ?.toLowerCase()
+            .includes(query) ||
+
+          task.priority
+            ?.toLowerCase()
+            .includes(query)
+        );
+      }
+    );
+
+  // ==================================================
+  // HIGHLIGHT TASK
+  // ==================================================
+
+  useEffect(() => {
+    const taskId =
+      location.state
+        ?.highlightTaskId;
+
+    if (
+      !taskId ||
+      !tasks.length
+    ) {
+      return;
+    }
+
+    const timer =
+      window.setTimeout(
+        () => {
+          const element =
+            document.getElementById(
+              `task-card-${taskId}`
+            );
+
+          if (!element) {
+            return;
+          }
+
+          element.scrollIntoView(
+            {
+              behavior:
+                "smooth",
+              block:
+                "center",
+            }
+          );
+
+          element.classList.add(
+            "task-deadline-highlight"
+          );
+
+          window.setTimeout(
+            () => {
+              element.classList.remove(
+                "task-deadline-highlight"
+              );
+            },
+            8000
+          );
+
+          navigate(
+            "/tasks",
+            {
+              replace:
+                true,
+              state: {},
+            }
+          );
+        },
+        200
+      );
+
+    return () =>
+      window.clearTimeout(
+        timer
+      );
+  }, [
+    tasks,
+    location.state
+      ?.highlightTaskId,
+    navigate,
+  ]);
+
+  // ==================================================
   // UI
-  // ==========================================
+  // ==================================================
 
   return (
     <div className="tasks-page">
 
       <div className="tasks-container">
 
-        {/* BACK */}
+        {/* ==========================================
+            BACK
+        ========================================== */}
 
         <button
           className="tasks-back-btn"
-          onClick={() => navigate("/")}
+          type="button"
+          onClick={() =>
+            navigate("/")
+          }
         >
-          <ArrowLeft size={18} />
+          <ArrowLeft
+            size={18}
+          />
 
           <span>
             Back to Dashboard
           </span>
         </button>
 
-        {/* HEADER */}
+        {/* ==========================================
+            HEADER
+        ========================================== */}
 
         <div className="tasks-header">
 
           <div>
-
             <h1 className="tasks-title">
               Tasks
             </h1>
 
             <p className="tasks-subtitle">
-              Manage your project tasks.
+              Manage your project
+              tasks.
             </p>
+          </div>
+
+          <div className="tasks-header-actions">
+
+            <button
+              className="add-task-btn"
+              type="button"
+              onClick={
+                openAddForm
+              }
+            >
+              <Plus
+                size={18}
+              />
+
+              <span>
+                Add Task
+              </span>
+            </button>
 
           </div>
 
-          <button
-            className="add-task-btn"
-            onClick={openAddForm}
-          >
-            <Plus size={18} />
-
-            <span>
-              Add Task
-            </span>
-          </button>
-
         </div>
 
-        {/* ERROR */}
+        {/* ==========================================
+            ERROR
+        ========================================== */}
 
         {error && (
           <div className="tasks-error">
@@ -310,7 +977,9 @@ const Tasks = () => {
           </div>
         )}
 
-        {/* SEARCH */}
+        {/* ==========================================
+            SEARCH
+        ========================================== */}
 
         <div className="tasks-search-box">
 
@@ -324,10 +993,17 @@ const Tasks = () => {
             <input
               type="text"
               className="tasks-search-input"
-              placeholder="Search tasks..."
-              value={search}
-              onChange={(event) =>
-                setSearch(event.target.value)
+              placeholder="Search tasks, clients, projects..."
+              value={
+                search
+              }
+              onChange={(
+                event
+              ) =>
+                setSearch(
+                  event.target
+                    .value
+                )
               }
             />
 
@@ -335,7 +1011,9 @@ const Tasks = () => {
 
         </div>
 
-        {/* FORM */}
+        {/* ==========================================
+            FORM
+        ========================================== */}
 
         {showForm && (
           <div className="task-form">
@@ -351,19 +1029,74 @@ const Tasks = () => {
               <button
                 type="button"
                 className="close-task-form-btn"
-                onClick={closeForm}
+                onClick={
+                  closeForm
+                }
               >
-                <X size={22} />
+                <X
+                  size={22}
+                />
               </button>
 
             </div>
 
             <form
-              onSubmit={handleSubmit}
               className="task-form-grid"
+              onSubmit={
+                handleSubmit
+              }
             >
 
-              {/* PROJECT */}
+              {/* ======================================
+                  CLIENT
+              ====================================== */}
+
+              <div className="task-form-group">
+
+                <label className="task-form-label">
+                  Client *
+                </label>
+
+                <select
+                  className="task-form-input"
+                  name="client"
+                  value={
+                    form.client
+                  }
+                  onChange={
+                    handleChange
+                  }
+                  required
+                >
+                  <option value="">
+                    Select Client
+                  </option>
+
+                  {clients.map(
+                    (client) => (
+                      <option
+                        key={
+                          client._id
+                        }
+                        value={
+                          client._id
+                        }
+                      >
+                        {client.name ||
+                          client.clientName ||
+                          client.company ||
+                          "Unnamed Client"}
+                      </option>
+                    )
+                  )}
+
+                </select>
+
+              </div>
+
+              {/* ======================================
+                  PROJECT
+              ====================================== */}
 
               <div className="task-form-group">
 
@@ -374,27 +1107,47 @@ const Tasks = () => {
                 <select
                   className="task-form-input"
                   name="project"
-                  value={form.project}
-                  onChange={handleChange}
+                  value={
+                    form.project
+                  }
+                  onChange={
+                    handleChange
+                  }
                   required
+                  disabled={
+                    !form.client
+                  }
                 >
                   <option value="">
-                    Select Project
+                    {!form.client
+                      ? "First Select Client"
+                      : "Select Project"}
                   </option>
 
-                  {projects.map((project) => (
-                    <option
-                      key={project._id}
-                      value={project._id}
-                    >
-                      {project.name}
-                    </option>
-                  ))}
+                  {filteredProjects.map(
+                    (project) => (
+                      <option
+                        key={
+                          project._id
+                        }
+                        value={
+                          project._id
+                        }
+                      >
+                        {
+                          project.name
+                        }
+                      </option>
+                    )
+                  )}
+
                 </select>
 
               </div>
 
-              {/* TITLE */}
+              {/* ======================================
+                  TITLE
+              ====================================== */}
 
               <div className="task-form-group">
 
@@ -404,35 +1157,23 @@ const Tasks = () => {
 
                 <input
                   className="task-form-input"
+                  type="text"
                   name="title"
-                  value={form.title}
-                  onChange={handleChange}
+                  value={
+                    form.title
+                  }
+                  onChange={
+                    handleChange
+                  }
+                  placeholder="Enter task title"
                   required
-                  placeholder="Design homepage"
                 />
 
               </div>
 
-              {/* DESCRIPTION */}
-
-              <div className="task-form-group task-full-width">
-
-                <label className="task-form-label">
-                  Description
-                </label>
-
-                <textarea
-                  className="task-form-input task-form-textarea"
-                  name="description"
-                  value={form.description}
-                  onChange={handleChange}
-                  placeholder="Describe the task..."
-                  rows="4"
-                />
-
-              </div>
-
-              {/* STATUS */}
+              {/* ======================================
+                  STATUS
+              ====================================== */}
 
               <div className="task-form-group">
 
@@ -443,8 +1184,12 @@ const Tasks = () => {
                 <select
                   className="task-form-input"
                   name="status"
-                  value={form.status}
-                  onChange={handleChange}
+                  value={
+                    form.status
+                  }
+                  onChange={
+                    handleChange
+                  }
                 >
                   <option value="Pending">
                     Pending
@@ -461,7 +1206,34 @@ const Tasks = () => {
 
               </div>
 
-              {/* PRIORITY */}
+              {/* ======================================
+                  DESCRIPTION
+              ====================================== */}
+
+              <div className="task-form-group task-full-width">
+
+                <label className="task-form-label">
+                  Description
+                </label>
+
+                <textarea
+                  className="task-form-input task-form-textarea"
+                  name="description"
+                  value={
+                    form.description
+                  }
+                  onChange={
+                    handleChange
+                  }
+                  placeholder="Describe the task..."
+                  rows="4"
+                />
+
+              </div>
+
+              {/* ======================================
+                  PRIORITY
+              ====================================== */}
 
               <div className="task-form-group">
 
@@ -472,8 +1244,12 @@ const Tasks = () => {
                 <select
                   className="task-form-input"
                   name="priority"
-                  value={form.priority}
-                  onChange={handleChange}
+                  value={
+                    form.priority
+                  }
+                  onChange={
+                    handleChange
+                  }
                 >
                   <option value="Low">
                     Low
@@ -490,7 +1266,9 @@ const Tasks = () => {
 
               </div>
 
-              {/* DUE DATE */}
+              {/* ======================================
+                  DUE DATE
+              ====================================== */}
 
               <div className="task-form-group">
 
@@ -502,20 +1280,28 @@ const Tasks = () => {
                   className="task-form-input"
                   type="date"
                   name="dueDate"
-                  value={form.dueDate}
-                  onChange={handleChange}
+                  value={
+                    form.dueDate
+                  }
+                  onChange={
+                    handleChange
+                  }
                 />
 
               </div>
 
-              {/* BUTTONS */}
+              {/* ======================================
+                  BUTTONS
+              ====================================== */}
 
               <div className="task-form-actions">
 
                 <button
                   type="button"
                   className="cancel-task-btn"
-                  onClick={closeForm}
+                  onClick={
+                    closeForm
+                  }
                 >
                   Cancel
                 </button>
@@ -523,7 +1309,9 @@ const Tasks = () => {
                 <button
                   type="submit"
                   className="save-task-btn"
-                  disabled={saving}
+                  disabled={
+                    saving
+                  }
                 >
                   {saving
                     ? "Saving..."
@@ -539,20 +1327,18 @@ const Tasks = () => {
           </div>
         )}
 
-        {/* TASK LIST */}
+        {/* ==========================================
+            TASK LIST
+        ========================================== */}
 
         {loading ? (
-
           <div className="tasks-empty">
-
             <p>
               Loading tasks...
             </p>
-
           </div>
-
-        ) : filteredTasks.length === 0 ? (
-
+        ) : filteredTasks.length ===
+          0 ? (
           <div className="tasks-empty">
 
             <CheckSquare
@@ -565,114 +1351,227 @@ const Tasks = () => {
             </h3>
 
             <p className="tasks-empty-text">
-              Add your first task to get started.
+              Add your first
+              task to get
+              started.
             </p>
 
           </div>
-
         ) : (
-
           <div className="tasks-grid">
 
-            {filteredTasks.map((task) => (
+            {filteredTasks.map(
+              (task) => (
+                <div
+                  key={
+                    task._id
+                  }
+                  id={`task-card-${task._id}`}
+                  className="task-card"
+                >
 
-              <div
-                key={task._id}
-                className="task-card"
-              >
+                  {/* ==================================
+                      HEADER
+                  ================================== */}
 
-                {/* HEADER */}
+                  <div className="task-card-header">
 
-                <div className="task-card-header">
+                    <div className="task-card-main">
 
-                  <div className="task-card-main">
+                      <h3 className="task-card-title">
+                        {
+                          task.title
+                        }
+                      </h3>
 
-                    <h3 className="task-card-title">
-                      {task.title}
-                    </h3>
+                      {/* CLIENT */}
 
-                    <p className="task-card-project">
-                      {task.project?.name ||
-                        "No project"}
-                    </p>
+                      <p className="task-card-client">
+
+                        <span>
+                          Client:
+                        </span>{" "}
+
+                        <strong>
+                          {
+                            getClientName(
+                              task
+                            )
+                          }
+                        </strong>
+
+                      </p>
+
+                      {/* PROJECT */}
+
+                      <p className="task-card-project">
+
+                        <span>
+                          Project:
+                        </span>{" "}
+
+                        <strong>
+                          {
+                            getProjectName(
+                              task
+                            )
+                          }
+                        </strong>
+
+                      </p>
+
+                    </div>
+
+                    {/* ACTIONS */}
+
+                    <div className="task-card-actions">
+
+                      <button
+                        type="button"
+                        className="task-action-btn task-edit-btn"
+                        onClick={() =>
+                          handleEdit(
+                            task
+                          )
+                        }
+                        title="Edit Task"
+                      >
+                        <Pencil
+                          size={17}
+                        />
+                      </button>
+
+                      <button
+                        type="button"
+                        className="task-action-btn task-delete-btn"
+                        onClick={() =>
+                          handleDelete(
+                            task._id
+                          )
+                        }
+                        title="Delete Task"
+                      >
+                        <Trash2
+                          size={17}
+                        />
+                      </button>
+
+                    </div>
 
                   </div>
 
-                  <div className="task-card-actions">
+                  {/* ==================================
+                      BADGES
+                  ================================== */}
 
-                    <button
-                      type="button"
-                      className="task-action-btn task-edit-btn"
-                      onClick={() =>
-                        handleEdit(task)
-                      }
+                  <div className="task-badges">
+
+                    <span
+                      className={`task-status task-status-${task.status
+                        ?.toLowerCase()
+                        .replace(
+                          /\s+/g,
+                          "-"
+                        )}`}
                     >
-                      <Pencil size={17} />
-                    </button>
+                      {
+                        task.status
+                      }
+                    </span>
+
+                    <span
+                      className={`task-priority task-priority-${task.priority?.toLowerCase()}`}
+                    >
+                      {
+                        task.priority
+                      }
+                    </span>
+
+                  </div>
+
+                  {/* ==================================
+                      DESCRIPTION
+                  ================================== */}
+
+                  {task.description && (
+                    <p className="task-card-description">
+                      {
+                        task.description
+                      }
+                    </p>
+                  )}
+
+                  {/* ==================================
+                      DUE DATE
+                  ================================== */}
+
+                  {task.dueDate && (
+                    <div className="task-due-date">
+
+                      Due:{" "}
+
+                      {new Date(
+                        task.dueDate
+                      ).toLocaleDateString(
+                        "en-IN"
+                      )}
+
+                    </div>
+                  )}
+
+                  {/* ==================================
+                      BOTTOM BUTTONS
+                  ================================== */}
+
+                  <div className="task-card-bottom-actions">
+
+                    {/* CLIENT */}
 
                     <button
                       type="button"
-                      className="task-action-btn task-delete-btn"
+                      className="tasks-header-btn client-btn"
                       onClick={() =>
-                        handleDelete(
-                          task._id
+                        navigate(
+                          "/clients"
                         )
                       }
                     >
-                      <Trash2 size={17} />
+                      <Users
+                        size={18}
+                      />
+
+                      <span>
+                        Client
+                      </span>
+                    </button>
+
+                    {/* PROJECT */}
+
+                    <button
+                      type="button"
+                      className="tasks-header-btn project-btn"
+                      onClick={() =>
+                        navigate(
+                          "/projects"
+                        )
+                      }
+                    >
+                      <FolderKanban
+                        size={18}
+                      />
+
+                      <span>
+                        Project
+                      </span>
                     </button>
 
                   </div>
 
                 </div>
-
-                {/* STATUS + PRIORITY */}
-
-                <div className="task-badges">
-
-                  <span
-                    className={`task-status task-status-${task.status
-                      ?.toLowerCase()
-                      .replace(" ", "-")}`}
-                  >
-                    {task.status}
-                  </span>
-
-                  <span
-                    className={`task-priority task-priority-${task.priority?.toLowerCase()}`}
-                  >
-                    {task.priority}
-                  </span>
-
-                </div>
-
-                {/* DESCRIPTION */}
-
-                {task.description && (
-                  <p className="task-card-description">
-                    {task.description}
-                  </p>
-                )}
-
-                {/* DUE DATE */}
-
-                {task.dueDate && (
-                  <div className="task-due-date">
-                    Due:{" "}
-                    {new Date(
-                      task.dueDate
-                    ).toLocaleDateString(
-                      "en-IN"
-                    )}
-                  </div>
-                )}
-
-              </div>
-
-            ))}
+              )
+            )}
 
           </div>
-
         )}
 
       </div>

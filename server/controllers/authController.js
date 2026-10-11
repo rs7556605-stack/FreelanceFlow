@@ -1,149 +1,225 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
 const User = require("../models/User");
 
-// ==========================================
-// REGISTER
-// ==========================================
-
-const register = async (req, res) => {
+const changePassword = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    // ==========================================
+    // GET REQUEST DATA
+    // ==========================================
 
-    // Validation
-    if (!name || !email || !password) {
+    const {
+      currentPassword,
+      newPassword,
+    } = req.body || {};
+
+    // ==========================================
+    // BASIC VALIDATION
+    // ==========================================
+
+    if (
+      !currentPassword ||
+      !newPassword
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Name, email and password are required",
+        message:
+          "Current password and new password are required.",
       });
     }
 
-    if (password.length < 6) {
+    // ==========================================
+    // PASSWORD LENGTH
+    // ==========================================
+
+    if (newPassword.length < 6) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 6 characters",
+        message:
+          "New password must be at least 6 characters.",
       });
     }
 
-    // Check existing user
-    const existingUser = await User.findOne({
-      email: email.toLowerCase(),
-    });
+    // ==========================================
+    // PASSWORD DIFFERENCE
+    // ==========================================
 
-    if (existingUser) {
-      return res.status(409).json({
-        success: false,
-        message: "User already exists",
-      });
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create user
-    const user = await User.create({
-      name,
-      email: email.toLowerCase(),
-      password: hashedPassword,
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "Registration successful",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        plan: user.plan,
-      },
-    });
-  } catch (error) {
-    console.error("Register Error:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server error during registration",
-    });
-  }
-};
-
-// ==========================================
-// LOGIN
-// ==========================================
-
-const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Validation
-    if (!email || !password) {
+    if (
+      currentPassword === newPassword
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Email and password are required",
+        message:
+          "New password must be different from current password.",
       });
     }
 
-    // Find user
-    const user = await User.findOne({
-      email: email.toLowerCase(),
-    });
+    // ==========================================
+    // GET USER ID FROM AUTH MIDDLEWARE
+    // ==========================================
+
+    let userId =
+      req.user?.id ||
+      req.user?._id ||
+      req.user?.userId;
+
+    // ==========================================
+    // FALLBACK JWT VERIFICATION
+    // ==========================================
+
+    if (!userId) {
+      const authHeader =
+        req.headers.authorization;
+
+      if (
+        !authHeader ||
+        !authHeader.startsWith("Bearer ")
+      ) {
+        return res.status(401).json({
+          success: false,
+          message:
+            "Authentication required.",
+        });
+      }
+
+      const token =
+        authHeader.split(" ")[1];
+
+      try {
+        const decoded =
+          jwt.verify(
+            token,
+            process.env.JWT_SECRET
+          );
+
+        userId =
+          decoded.id ||
+          decoded._id ||
+          decoded.userId;
+
+      } catch (tokenError) {
+        console.error(
+          "❌ JWT Verification Error:",
+          tokenError.message
+        );
+
+        return res.status(401).json({
+          success: false,
+          message:
+            "Invalid or expired authentication token.",
+        });
+      }
+    }
+
+    // ==========================================
+    // FINAL USER ID CHECK
+    // ==========================================
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message:
+          "User authentication failed.",
+      });
+    }
+
+    // ==========================================
+    // FIND USER
+    // ==========================================
+
+    const user =
+      await User.findById(userId);
 
     if (!user) {
-      return res.status(401).json({
+      return res.status(404).json({
         success: false,
-        message: "Invalid email or password",
+        message:
+          "User not found.",
       });
     }
 
-    // Compare password
-    const isPasswordCorrect = await bcrypt.compare(
-      password,
-      user.password
-    );
+    // ==========================================
+    // CHECK PASSWORD FIELD
+    // ==========================================
 
-    if (!isPasswordCorrect) {
-      return res.status(401).json({
+    if (!user.password) {
+      return res.status(400).json({
         success: false,
-        message: "Invalid email or password",
+        message:
+          "Password authentication is not available for this account.",
       });
     }
 
-    // Create JWT
-    const token = jwt.sign(
-      {
-        id: user._id,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "7d",
-      }
+    // ==========================================
+    // CHECK CURRENT PASSWORD
+    // ==========================================
+
+    const passwordMatches =
+      await bcrypt.compare(
+        currentPassword,
+        user.password
+      );
+
+    if (!passwordMatches) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Current password is incorrect.",
+      });
+    }
+
+    // ==========================================
+    // HASH NEW PASSWORD
+    // ==========================================
+
+    const hashedPassword =
+      await bcrypt.hash(
+        newPassword,
+        12
+      );
+
+    // ==========================================
+    // UPDATE PASSWORD
+    // ==========================================
+
+    user.password =
+      hashedPassword;
+
+    await user.save();
+
+    // ==========================================
+    // SUCCESS
+    // ==========================================
+
+    console.log(
+      `✅ Password changed successfully for user: ${user._id}`
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "Login successful",
-
-      token,
-
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        plan: user.plan,
-      },
+      message:
+        "Password changed successfully.",
     });
-  } catch (error) {
-    console.error("Login Error:", error);
 
-    res.status(500).json({
+  } catch (error) {
+
+    // ==========================================
+    // SERVER ERROR
+    // ==========================================
+
+    console.error(
+      "❌ Change Password Error:",
+      error
+    );
+
+    return res.status(500).json({
       success: false,
-      message: "Server error during login",
+      message:
+        "Failed to change password.",
     });
   }
 };
 
 module.exports = {
-  register,
-  login,
+  changePassword,
 };

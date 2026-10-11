@@ -2,11 +2,7 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    // ==============================
-    // BASIC ACCOUNT INFORMATION
-    // ==============================
-
-    name: {
+    username: {
       type: String,
       required: true,
       trim: true,
@@ -23,112 +19,40 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      minlength: 6,
     },
 
-    // ==============================
-    // PLAN
-    // ==============================
+    // ================================
+    // PASSWORD RESET
+    // ================================
 
-    plan: {
+    resetPasswordOTP: {
       type: String,
-      enum: ["Free", "Pro"],
-      default: "Free",
+      default: null,
     },
 
-    // ==============================
-    // PROFILE INFORMATION
-    // ==============================
+    resetPasswordOTPExpires: {
+      type: Date,
+      default: null,
+    },
 
-    profession: {
+    resetPasswordOTPAttempts: {
+      type: Number,
+      default: 0,
+    },
+
+    resetPasswordVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    resetPasswordToken: {
       type: String,
-      default: "",
-      trim: true,
+      default: null,
     },
 
-    bio: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    // ==============================
-    // SKILLS
-    // ==============================
-
-    skills: {
-      type: [String],
-      default: [],
-    },
-
-    // ==============================
-    // EXPERIENCE
-    // ==============================
-
-    experience: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    // ==============================
-    // EDUCATION
-    // ==============================
-
-    education: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    // ==============================
-    // PROFILE IMAGE
-    // ==============================
-
-    profileImage: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    // ==============================
-    // RESUME
-    // ==============================
-
-    resumeUrl: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    // ==============================
-    // SOCIAL LINKS
-    // ==============================
-
-    socialLinks: {
-      github: {
-        type: String,
-        default: "",
-        trim: true,
-      },
-
-      linkedin: {
-        type: String,
-        default: "",
-        trim: true,
-      },
-
-      twitter: {
-        type: String,
-        default: "",
-        trim: true,
-      },
-
-      website: {
-        type: String,
-        default: "",
-        trim: true,
-      },
+    resetPasswordTokenExpires: {
+      type: Date,
+      default: null,
     },
   },
   {

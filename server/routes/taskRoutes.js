@@ -16,20 +16,53 @@ const router = express.Router();
 // AUTHENTICATION
 // ==========================================
 
-router.use(authMiddleware);
+router.use(
+  authMiddleware
+);
 
 // ==========================================
-// TASK ROUTES
+// GET ALL TASKS
 // ==========================================
 
-router.get("/", getTasks);
+router.get(
+  "/",
+  getTasks
+);
 
-router.get("/:id", getTask);
+// ==========================================
+// GET SINGLE TASK
+// ==========================================
 
-router.post("/", createTask);
+router.get(
+  "/:id",
+  getTask
+);
 
-router.put("/:id", updateTask);
+// ==========================================
+// CREATE TASK
+// ==========================================
 
-router.delete("/:id", deleteTask);
+router.post(
+  "/",
+  createTask
+);
+
+// ==========================================
+// UPDATE TASK
+// ==========================================
+
+router.put(
+  "/:id",
+  updateTask
+);
+
+// ==========================================
+// DELETE TASK
+// ==========================================
+
+router.delete(
+  "/:id",
+  deleteTask
+);
 
 module.exports = router;

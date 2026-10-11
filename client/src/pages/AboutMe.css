@@ -500,7 +500,7 @@ html[data-theme="dark"] .about-me-empty {
 
   .about-me-profile-card {
     flex-direction: column;
-    text-align: center;
+    text-align: left;
   }
 
   .about-me-profile-info {
@@ -509,7 +509,7 @@ html[data-theme="dark"] .about-me-empty {
 
   .about-me-profile-info > span,
   .about-me-email {
-    justify-content: center;
+    justify-content: left;
   }
 
   .about-me-header h1 {
@@ -809,23 +809,610 @@ html[data-theme="dark"] .about-me-empty {
   }
 }
 
-/* ==========================================
-   SMALL MOBILE
-========================================== */
 
-@media (max-width: 400px) {
-  .about-me-avatar-wrapper {
-    width: 78px;
-    height: 78px;
+
+
+
+
+
+/* =========================================================
+   ABOUT ME PROFILE - MOBILE UI
+   INFORMATION LEFT + IMAGE RIGHT
+========================================================= */
+
+@media (max-width: 520px) {
+
+  /* -----------------------------------------
+     PROFILE CARD
+  ----------------------------------------- */
+
+  .about-me-profile-card {
+    width: 100% !important;
+
+    min-width: 0 !important;
+
+    min-height: 155px !important;
+
+    display: flex !important;
+
+    flex-direction: row !important;
+
+    align-items: center !important;
+
+    justify-content: space-between !important;
+
+    gap: 10px !important;
+
+    padding: 20px 18px !important;
+
+    text-align: left !important;
+
+    box-sizing: border-box !important;
+
+    overflow: visible !important;
   }
+
+
+  /* -----------------------------------------
+     INFORMATION - LEFT SIDE
+  ----------------------------------------- */
+
+  .about-me-profile-info {
+    order: 1 !important;
+
+    flex: 1 1 auto !important;
+
+    width: auto !important;
+
+    max-width: calc(100% - 105px) !important;
+
+    min-width: 0 !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    text-align: left !important;
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    align-items: flex-start !important;
+
+    justify-content: center !important;
+  }
+
+
+  /* -----------------------------------------
+     NAME
+  ----------------------------------------- */
+
+  .about-me-profile-info h2 {
+    width: 100% !important;
+
+    margin: 0 0 7px !important;
+
+    padding: 0 !important;
+
+    font-size: 22px !important;
+
+    line-height: 1.2 !important;
+
+    font-weight: 600 !important;
+
+    text-align: left !important;
+
+    white-space: normal !important;
+
+    overflow-wrap: anywhere !important;
+
+    word-break: break-word !important;
+  }
+
+
+  /* -----------------------------------------
+     DESIGNATION
+  ----------------------------------------- */
+
+  .about-me-profile-info > p {
+    width: 100% !important;
+
+    margin: 0 0 9px !important;
+
+    padding: 0 !important;
+
+    font-size: 14px !important;
+
+    line-height: 1.4 !important;
+
+    text-align: left !important;
+
+    overflow-wrap: anywhere !important;
+
+    word-break: break-word !important;
+  }
+
+
+  /* -----------------------------------------
+     EMAIL
+  ----------------------------------------- */
+
+  .about-me-profile-info > span,
+  .about-me-email {
+    width: 100% !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    justify-content: flex-start !important;
+
+    gap: 7px !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    font-size: 13px !important;
+
+    line-height: 1.4 !important;
+
+    text-align: left !important;
+
+    overflow-wrap: anywhere !important;
+
+    word-break: break-word !important;
+  }
+
+
+  /* -----------------------------------------
+     EMAIL ICON
+  ----------------------------------------- */
+
+  .about-me-email svg {
+    flex-shrink: 0 !important;
+
+    width: 18px !important;
+
+    height: 18px !important;
+  }
+
+
+  /* -----------------------------------------
+     AVATAR WRAPPER - RIGHT
+  ----------------------------------------- */
+
+  .about-me-avatar-wrapper {
+    order: 2 !important;
+
+    position: relative !important;
+
+    flex: 0 0 90px !important;
+
+    width: 90px !important;
+
+    height: 90px !important;
+
+    margin: 0 !important;
+
+    margin-left: auto !important;
+
+    flex-shrink: 0 !important;
+  }
+
+
+  /* -----------------------------------------
+     AVATAR
+  ----------------------------------------- */
 
   .about-me-avatar {
-    width: 78px;
-    height: 78px;
+    width: 90px !important;
+
+    height: 90px !important;
+
+    margin: 0 !important;
+
+    border-radius: 50% !important;
+
+    box-sizing: border-box !important;
   }
 
-  .about-me-photo-menu {
-    top: 86px;
-    width: 155px;
+
+  /* -----------------------------------------
+     PROFILE IMAGE
+  ----------------------------------------- */
+
+  .about-me-avatar img {
+    width: 100% !important;
+
+    height: 100% !important;
+
+    display: block !important;
+
+    object-fit: cover !important;
+
+    border-radius: 50% !important;
   }
+
+
+  /* -----------------------------------------
+     PHOTO MENU
+  ----------------------------------------- */
+
+  .about-me-photo-menu {
+    position: absolute !important;
+
+    top: calc(100% + 8px) !important;
+
+    right: 0 !important;
+
+    left: auto !important;
+
+    transform: none !important;
+
+    width: 155px !important;
+
+    z-index: 1000 !important;
+  }
+
+
+  /* -----------------------------------------
+     EDIT BUTTONS
+  ----------------------------------------- */
+
+  .about-me-edit-btn,
+  .about-me-save-btn,
+  .about-me-cancel-btn {
+    min-height: 40px;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+
+  .about-me-profile-card {
+    min-height: 145px !important;
+
+    padding: 17px 14px !important;
+
+    gap: 8px !important;
+  }
+
+
+  /* INFORMATION */
+
+  .about-me-profile-info {
+    max-width: calc(100% - 88px) !important;
+
+    min-width: 0 !important;
+  }
+
+
+  .about-me-profile-info h2 {
+    font-size: 20px !important;
+
+    margin-bottom: 6px !important;
+  }
+
+
+  .about-me-profile-info > p {
+    font-size: 13px !important;
+
+    margin-bottom: 7px !important;
+  }
+
+
+  .about-me-profile-info > span,
+  .about-me-email {
+    font-size: 12px !important;
+
+    gap: 6px !important;
+  }
+
+
+  /* IMAGE */
+
+  .about-me-avatar-wrapper {
+    flex: 0 0 78px !important;
+
+    width: 78px !important;
+
+    height: 78px !important;
+
+    margin: 0 !important;
+
+    margin-left: auto !important;
+  }
+
+
+  .about-me-avatar {
+    width: 78px !important;
+
+    height: 78px !important;
+
+    margin: 0 !important;
+  }
+
+
+  .about-me-avatar img {
+    width: 100% !important;
+
+    height: 100% !important;
+  }
+
+
+  .about-me-photo-menu {
+    top: calc(100% + 8px) !important;
+
+    right: 0 !important;
+
+    left: auto !important;
+
+    width: 150px !important;
+
+    transform: none !important;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 350px) {
+
+  .about-me-profile-card {
+    padding: 15px 12px !important;
+
+    gap: 7px !important;
+  }
+
+
+  .about-me-profile-info {
+    max-width: calc(100% - 80px) !important;
+  }
+
+
+  .about-me-profile-info h2 {
+    font-size: 18px !important;
+  }
+
+
+  .about-me-profile-info > p {
+    font-size: 12px !important;
+  }
+
+
+  .about-me-profile-info > span,
+  .about-me-email {
+    font-size: 11px !important;
+  }
+
+
+  .about-me-avatar-wrapper {
+    flex: 0 0 70px !important;
+
+    width: 70px !important;
+
+    height: 70px !important;
+  }
+
+
+  .about-me-avatar {
+    width: 70px !important;
+
+    height: 70px !important;
+  }
+
+}
+
+
+
+
+/* =========================================================
+   MOBILE TOP BAR
+   BACK LEFT + SMALL EDIT RIGHT
+========================================================= */
+
+@media (max-width: 520px) {
+
+  /* TOP BAR */
+  .about-me-topbar {
+    width: 100% !important;
+
+    display: flex !important;
+
+    flex-direction: row !important;
+
+    align-items: center !important;
+
+    justify-content: space-between !important;
+
+    gap: 10px !important;
+
+    margin-bottom: 28px !important;
+
+    box-sizing: border-box !important;
+  }
+
+
+  /* ==========================================
+     BACK BUTTON - LEFT
+  ========================================== */
+
+  .about-me-back-btn {
+    width: auto !important;
+
+    min-width: 0 !important;
+
+    height: 40px !important;
+
+    padding: 8px 12px !important;
+
+    display: inline-flex !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    gap: 6px !important;
+
+    flex-shrink: 0 !important;
+
+    font-size: 14px !important;
+
+    border-radius: 8px !important;
+  }
+
+
+  /* ==========================================
+     EDIT PROFILE - SMALL RIGHT
+  ========================================== */
+
+  .about-me-edit-btn {
+    width: auto !important;
+
+    min-width: 0 !important;
+
+    height: 40px !important;
+
+    padding: 8px 12px !important;
+
+    display: inline-flex !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    gap: 6px !important;
+
+    flex-shrink: 0 !important;
+
+    font-size: 13px !important;
+
+    border-radius: 8px !important;
+  }
+
+
+  /* EDIT ICON */
+  .about-me-edit-btn svg {
+    width: 15px !important;
+
+    height: 15px !important;
+
+    flex-shrink: 0 !important;
+  }
+
+
+  /* BACK ICON */
+  .about-me-back-btn svg {
+    width: 17px !important;
+
+    height: 17px !important;
+
+    flex-shrink: 0 !important;
+  }
+
+
+  /* ==========================================
+     EDITING MODE
+     CANCEL + SAVE RIGHT SIDE
+  ========================================== */
+
+  .about-me-edit-actions {
+    width: auto !important;
+
+    display: flex !important;
+
+    flex-direction: row !important;
+
+    align-items: center !important;
+
+    justify-content: flex-end !important;
+
+    gap: 7px !important;
+
+    margin-left: auto !important;
+  }
+
+
+  .about-me-cancel-btn,
+  .about-me-save-btn {
+    width: auto !important;
+
+    min-width: 0 !important;
+
+    height: 40px !important;
+
+    padding: 8px 11px !important;
+
+    font-size: 13px !important;
+
+    flex-shrink: 0 !important;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 380px) {
+
+  .about-me-topbar {
+    gap: 7px !important;
+
+    margin-bottom: 24px !important;
+  }
+
+
+  .about-me-back-btn {
+    height: 37px !important;
+
+    padding: 7px 10px !important;
+
+    font-size: 13px !important;
+  }
+
+
+  .about-me-edit-btn {
+    height: 37px !important;
+
+    padding: 7px 10px !important;
+
+    font-size: 12px !important;
+  }
+
+
+  .about-me-edit-btn svg {
+    width: 14px !important;
+
+    height: 14px !important;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 330px) {
+
+  .about-me-back-btn {
+    padding: 7px 9px !important;
+  }
+
+  .about-me-edit-btn {
+    padding: 7px 9px !important;
+  }
+
 }

@@ -1,0 +1,717 @@
+/* =========================================================
+   UPCOMING DEADLINES PAGE
+========================================================= */
+
+.upcoming-deadlines-page {
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  background: #f1f5f9;
+  color: #0f172a;
+  padding: 30px;
+}
+
+.upcoming-deadlines-container {
+  width: 100%;
+  max-width: 1250px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.upcoming-deadlines-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.upcoming-deadlines-title-area {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+}
+
+.upcoming-deadlines-title-icon {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #dbeafe;
+}
+
+.upcoming-deadlines-title-area h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 28px;
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+.upcoming-deadlines-title-area p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.upcoming-deadlines-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.upcoming-deadlines-back:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+/* =========================================================
+   REFRESH
+========================================================= */
+
+.upcoming-deadlines-refresh {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 9px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.upcoming-deadlines-refresh:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   LIST
+========================================================= */
+
+.upcoming-deadlines-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.upcoming-deadline-card {
+  width: 100%;
+  min-height: 130px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px;
+  box-sizing: border-box;
+
+  background: #ffffff;
+  border: 1px solid #dbe3ed;
+  border-radius: 16px;
+
+  box-shadow: 0 5px 18px rgba(15, 23, 42, 0.05);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.upcoming-deadline-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.09);
+  border-color: #bfdbfe;
+}
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.upcoming-deadline-icon {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 15px;
+}
+
+.upcoming-deadline-icon.project {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.upcoming-deadline-icon.task {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.upcoming-deadline-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.upcoming-deadline-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.upcoming-deadline-title-row h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.upcoming-deadline-type {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.upcoming-deadline-type.project {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.upcoming-deadline-type.task {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.upcoming-deadline-related {
+  margin: 7px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* =========================================================
+   RIGHT SIDE
+========================================================= */
+
+.upcoming-deadline-right {
+  min-width: 190px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 9px;
+}
+
+.upcoming-deadline-date span {
+  display: inline-flex;
+  padding: 9px 13px;
+  border-radius: 10px;
+  background: #e2e8f0;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.upcoming-deadline-countdown {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.countdown-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.upcoming-deadline-countdown.normal {
+  color: #16a34a;
+}
+
+.upcoming-deadline-countdown.normal .countdown-dot {
+  background: #22c55e;
+}
+
+.upcoming-deadline-countdown.soon {
+  color: #ca8a04;
+}
+
+.upcoming-deadline-countdown.soon .countdown-dot {
+  background: #eab308;
+}
+
+.upcoming-deadline-countdown.urgent {
+  color: #ea580c;
+}
+
+.upcoming-deadline-countdown.urgent .countdown-dot {
+  background: #f97316;
+}
+
+.upcoming-deadline-countdown.today {
+  color: #dc2626;
+}
+
+.upcoming-deadline-countdown.today .countdown-dot {
+  background: #ef4444;
+}
+
+.upcoming-deadline-countdown.overdue {
+  color: #dc2626;
+}
+
+.upcoming-deadline-countdown.overdue .countdown-dot {
+  background: #ef4444;
+}
+
+/* =========================================================
+   OPEN BUTTON
+========================================================= */
+
+.upcoming-deadline-open {
+  padding: 7px 13px;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.upcoming-deadline-open:hover {
+  background: #dbeafe;
+}
+
+/* =========================================================
+   MOBILE DATE
+========================================================= */
+
+.upcoming-deadline-date-mobile {
+  display: none;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.upcoming-deadlines-loading {
+  min-height: 300px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  color: #64748b;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.upcoming-deadlines-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  margin-bottom: 20px;
+  padding: 18px;
+
+  border: 1px solid #fecaca;
+  border-radius: 14px;
+
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.upcoming-deadlines-error strong {
+  display: block;
+  font-size: 15px;
+}
+
+.upcoming-deadlines-error p {
+  margin: 5px 0 12px;
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.upcoming-deadlines-error button {
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.upcoming-deadlines-empty {
+  padding: 60px 20px;
+  text-align: center;
+
+  background: #ffffff;
+  border: 1px solid #dbe3ed;
+  border-radius: 16px;
+}
+
+.upcoming-deadlines-empty-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 15px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 18px;
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.upcoming-deadlines-empty h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 20px;
+}
+
+.upcoming-deadlines-empty p {
+  margin: 8px 0 20px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.upcoming-deadlines-empty-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.upcoming-deadlines-empty-actions a {
+  padding: 9px 14px;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.upcoming-deadlines-footer {
+  margin-top: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  color: #64748b;
+  font-size: 12px;
+}
+
+.upcoming-deadlines-footer div {
+  display: flex;
+  gap: 15px;
+}
+
+.upcoming-deadlines-footer a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+/* =========================================================
+   DARK THEME
+========================================================= */
+
+html[data-theme="dark"] .upcoming-deadlines-page {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+html[data-theme="dark"] .upcoming-deadlines-title-icon {
+  background: #172554;
+  border-color: #1e40af;
+  color: #60a5fa;
+}
+
+html[data-theme="dark"] .upcoming-deadlines-title-area h1 {
+  color: #f8fafc;
+}
+
+html[data-theme="dark"] .upcoming-deadlines-title-area p {
+  color: #94a3b8;
+}
+
+html[data-theme="dark"] .upcoming-deadlines-back {
+  background: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+html[data-theme="dark"] .upcoming-deadlines-back:hover {
+  background: #263449;
+}
+
+html[data-theme="dark"] .upcoming-deadline-card {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: none;
+}
+
+html[data-theme="dark"] .upcoming-deadline-card:hover {
+  background: #223047;
+  border-color: #475569;
+  box-shadow: none;
+}
+
+html[data-theme="dark"] .upcoming-deadline-title-row h2 {
+  color: #f8fafc;
+}
+
+html[data-theme="dark"] .upcoming-deadline-related {
+  color: #94a3b8;
+}
+
+html[data-theme="dark"] .upcoming-deadline-date span {
+  background: #334155;
+  color: #f1f5f9;
+}
+
+html[data-theme="dark"] .upcoming-deadline-icon.project {
+  background: #172554;
+  color: #60a5fa;
+}
+
+html[data-theme="dark"] .upcoming-deadline-icon.task {
+  background: #2e1065;
+  color: #c4b5fd;
+}
+
+html[data-theme="dark"] .upcoming-deadline-open {
+  background: #172554;
+  border-color: #1d4ed8;
+  color: #60a5fa;
+}
+
+html[data-theme="dark"] .upcoming-deadline-open:hover {
+  background: #1e3a8a;
+}
+
+html[data-theme="dark"] .upcoming-deadlines-empty {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+html[data-theme="dark"] .upcoming-deadlines-empty-icon {
+  background: #334155;
+  color: #94a3b8;
+}
+
+html[data-theme="dark"] .upcoming-deadlines-empty h2 {
+  color: #f8fafc;
+}
+
+html[data-theme="dark"] .upcoming-deadlines-empty p {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+  .upcoming-deadlines-page {
+    padding: 18px 12px;
+  }
+
+  .upcoming-deadlines-header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .upcoming-deadlines-title-area {
+    order: 3;
+    width: 100%;
+  }
+
+  .upcoming-deadlines-title-area h1 {
+    font-size: 23px;
+  }
+
+  .upcoming-deadlines-title-area p {
+    font-size: 12px;
+  }
+
+  .upcoming-deadline-card {
+    align-items: flex-start;
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .upcoming-deadline-icon {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 12px;
+  }
+
+  .upcoming-deadline-title-row h2 {
+    font-size: 15px;
+  }
+
+  .upcoming-deadline-related {
+    font-size: 12px;
+  }
+
+  .upcoming-deadline-right {
+    min-width: auto;
+    align-items: flex-end;
+  }
+
+  .upcoming-deadline-date {
+    display: none;
+  }
+
+  .upcoming-deadline-date-mobile {
+    margin-top: 8px;
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    color: #64748b;
+    font-size: 11px;
+  }
+
+  .upcoming-deadline-open {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .upcoming-deadline-countdown {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .upcoming-deadlines-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 430px) {
+  .upcoming-deadlines-page {
+    padding: 14px 10px;
+  }
+
+  .upcoming-deadlines-back span {
+    display: none;
+  }
+
+  .upcoming-deadlines-refresh {
+    padding: 8px 11px;
+  }
+
+  .upcoming-deadlines-title-icon {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+  }
+
+  .upcoming-deadlines-title-area h1 {
+    font-size: 20px;
+  }
+
+  .upcoming-deadlines-title-area p {
+    font-size: 11px;
+  }
+
+  .upcoming-deadline-card {
+    padding: 12px;
+  }
+
+  .upcoming-deadline-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+
+  .upcoming-deadline-title-row h2 {
+    font-size: 14px;
+  }
+
+  .upcoming-deadline-type {
+    padding: 4px 7px;
+    font-size: 9px;
+  }
+
+  .upcoming-deadline-related {
+    font-size: 11px;
+  }
+
+  .upcoming-deadline-countdown {
+    font-size: 10px;
+  }
+
+  .upcoming-deadline-open {
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+}

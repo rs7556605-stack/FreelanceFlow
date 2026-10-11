@@ -1,374 +1,147 @@
-const Client = require("../models/Client");
-const Project = require("../models/Project");
-const Invoice = require("../models/Invoice");
-const Task = require("../models/Task");
-
 // =====================================================
-// GET DASHBOARD SUMMARY
+// UPCOMING PROJECT DEADLINES
 // =====================================================
 
-const getDashboardSummary = async (req, res) => {
-  try {
-    const userId = req.user.id;
+const upcomingProjectDeadlines =
+  await Project.find({
+    user: userId,
 
-    // =================================================
-    // TOTAL CLIENTS
-    // =================================================
+    status: {
+      $ne: "Completed",
+    },
 
-    const totalClients =
-      await Client.countDocuments({
-        user: userId,
-      });
+    deadline: {
+      $ne: null,
+      $gte: new Date(),
+    },
+  })
+    .populate(
+      "client",
+      "name"
+    )
+    .sort({
+      deadline: 1,
+    })
 
-    // =================================================
-    // ACTIVE PROJECTS
-    // =================================================
+    // IMPORTANT:
+    // NO .limit(5)
 
-    const activeProjects =
-      await Project.countDocuments({
-        user: userId,
-        status: "Active",
-      });
+    .select(
+      "name status deadline client"
+    )
+    .lean();
 
-    // =================================================
-    // PAID INVOICES
-    // =================================================
 
-    const paidInvoices =
-      await Invoice.find({
-        user: userId,
-        status: "Paid",
-      }).select(
-        "total invoiceDate paymentDate"
-      );
+// =====================================================
+// UPCOMING TASK DEADLINES
+// =====================================================
 
-    // =================================================
-    // PENDING + OVERDUE
-    // =================================================
+const upcomingTaskDeadlines =
+  await Task.find({
+    user: userId,
 
-    const pendingInvoices =
-      await Invoice.find({
-        user: userId,
-        status: {
-          $in: [
-            "Pending",
-            "Overdue",
-          ],
-        },
-      }).select(
-        "total invoiceDate dueDate status"
-      );
+    status: {
+      $ne: "Completed",
+    },
 
-    // =================================================
-    // TOTAL REVENUE
-    // =================================================
+    dueDate: {
+      $ne: null,
+      $gte: new Date(),
+    },
+  })
+    .populate(
+      "project",
+      "name"
+    )
+    .sort({
+      dueDate: 1,
+    })
 
-    const totalRevenue =
-      paidInvoices.reduce(
-        (sum, invoice) =>
-          sum +
-          Number(
-            invoice.total || 0
-          ),
-        0
-      );
+    // IMPORTANT:
+    // NO .limit(5)
 
-    // =================================================
-    // OUTSTANDING
-    // =================================================
+    .select(
+      "title status dueDate project type customType"
+    )
+    .lean();
 
-    const outstandingAmount =
-      pendingInvoices.reduce(
-        (sum, invoice) =>
-          sum +
-          Number(
-            invoice.total || 0
-          ),
-        0
-      );
 
-    // =================================================
-    // INVOICE COUNTS
-    // =================================================
+// =====================================================
+// COMBINE PROJECT + TASK DEADLINES
+// =====================================================
 
-    const paidInvoiceCount =
-      paidInvoices.length;
+const upcomingDeadlines = [
 
-    const pendingInvoiceCount =
-      pendingInvoices.length;
+  // ---------------------------------------------------
+  // PROJECT DEADLINES
+  // ---------------------------------------------------
 
-    // =================================================
-    // CURRENT YEAR
-    // =================================================
+  ...upcomingProjectDeadlines.map(
+    (project) => ({
+      type: "Project",
 
-    const currentYear =
-      new Date().getFullYear();
+      _id: project._id,
 
-    // =================================================
-    // MONTHS
-    // =================================================
+      title: project.name,
 
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
+      date: project.deadline,
 
-    // =================================================
-    // INITIALIZE 12 MONTHS
-    // =================================================
+      status: project.status,
 
-    const monthlyRevenue =
-      months.map(
-        (month) => ({
-          month,
-          revenue: 0,
-        })
-      );
+      clientId:
+        project.client?._id ||
+        null,
 
-    // =================================================
-    // CALCULATE MONTHLY PAID REVENUE
-    // =================================================
+      clientName:
+        project.client?.name ||
+        "Unknown Client",
+    })
+  ),
 
-    paidInvoices.forEach(
-      (invoice) => {
-        const revenueDate =
-          invoice.paymentDate ||
-          invoice.invoiceDate;
 
-        if (!revenueDate) {
-          return;
-        }
+  
 
-        const date =
-          new Date(revenueDate);
+  // ---------------------------------------------------
+  // TASK DEADLINES
+  // ---------------------------------------------------
 
-        const year =
-          date.getFullYear();
+  ...upcomingTaskDeadlines.map(
+    (task) => ({
+      type: "Task",
 
-        const monthIndex =
-          date.getMonth();
+      _id: task._id,
 
-        if (
-          year === currentYear
-        ) {
-          monthlyRevenue[
-            monthIndex
-          ].revenue += Number(
-            invoice.total || 0
-          );
-        }
-      }
-    );
+      title: task.title,
 
-    // =================================================
-    // ROUND MONTHLY VALUES
-    // =================================================
+      date: task.dueDate,
 
-    const revenueByMonth =
-      monthlyRevenue.map(
-        (item) => ({
-          month: item.month,
+      status: task.status,
 
-          revenue: Number(
-            item.revenue.toFixed(2)
-          ),
-        })
-      );
+      projectId:
+        task.project?._id ||
+        null,
 
-    // =================================================
-    // RECENT PROJECTS
-    // =================================================
+      projectName:
+        task.project?.name ||
+        "Unknown Project",
 
-    const recentProjects =
-      await Project.find({
-        user: userId,
-      })
-        .populate(
-          "client",
-          "name"
-        )
-        .sort({
-          createdAt: -1,
-        })
-        .limit(5)
-        .select(
-          "name status deadline client createdAt"
-        )
-        .lean();
+      taskType:
+        task.type || "",
 
-    // =================================================
-    // RECENT INVOICES
-    // =================================================
+      customType:
+        task.customType || "",
+    })
+  ),
 
-    const recentInvoices =
-      await Invoice.find({
-        user: userId,
-      })
-        .populate(
-          "client",
-          "name"
-        )
-        .sort({
-          createdAt: -1,
-        })
-        .limit(5)
-        .select(
-          "invoiceNumber total status dueDate invoiceDate client createdAt"
-        )
-        .lean();
+];
 
-    // =================================================
-    // UPCOMING PROJECT DEADLINES
-    // =================================================
 
-    const upcomingProjectDeadlines =
-      await Project.find({
-        user: userId,
-        status: {
-          $ne: "Completed",
-        },
-        deadline: {
-          $ne: null,
-          $gte: new Date(),
-        },
-      })
-        .populate(
-          "client",
-          "name"
-        )
-        .sort({
-          deadline: 1,
-        })
-        .limit(5)
-        .select(
-          "name status deadline client"
-        )
-        .lean();
+// =====================================================
+// SORT ALL DEADLINES BY DATE
+// =====================================================
 
-    // =================================================
-    // UPCOMING TASK DEADLINES
-    // =================================================
-
-    const upcomingTaskDeadlines =
-      await Task.find({
-        user: userId,
-        status: {
-          $ne: "Completed",
-        },
-        dueDate: {
-          $ne: null,
-          $gte: new Date(),
-        },
-      })
-        .populate(
-          "project",
-          "name"
-        )
-        .sort({
-          dueDate: 1,
-        })
-        .limit(5)
-        .select(
-          "title status dueDate project"
-        )
-        .lean();
-
-    // =================================================
-    // COMBINE PROJECT + TASK DEADLINES
-    // =================================================
-
-    const upcomingDeadlines = [
-      ...upcomingProjectDeadlines.map(
-        (project) => ({
-          type: "Project",
-          _id: project._id,
-          title: project.name,
-          date: project.deadline,
-          status: project.status,
-          clientName:
-            project.client?.name ||
-            "Unknown Client",
-        })
-      ),
-
-      ...upcomingTaskDeadlines.map(
-        (task) => ({
-          type: "Task",
-          _id: task._id,
-          title: task.title,
-          date: task.dueDate,
-          status: task.status,
-          projectName:
-            task.project?.name ||
-            "Unknown Project",
-        })
-      ),
-    ]
-      .sort(
-        (a, b) =>
-          new Date(a.date) -
-          new Date(b.date)
-      )
-      .slice(0, 5);
-
-    // =================================================
-    // RESPONSE
-    // =================================================
-
-    return res.status(200).json({
-      success: true,
-
-      stats: {
-        totalClients,
-
-        activeProjects,
-
-        pendingInvoiceCount,
-
-        paidInvoiceCount,
-
-        totalRevenue: Number(
-          totalRevenue.toFixed(2)
-        ),
-
-        outstandingAmount:
-          Number(
-            outstandingAmount.toFixed(2)
-          ),
-      },
-
-      revenueByMonth,
-
-      recentProjects,
-
-      recentInvoices,
-
-      upcomingDeadlines,
-    });
-  } catch (error) {
-    console.error(
-      "Dashboard Summary Error:",
-      error
-    );
-
-    return res.status(500).json({
-      success: false,
-      message:
-        "Failed to fetch dashboard summary",
-    });
-  }
-};
-
-module.exports = {
-  getDashboardSummary,
-};
+upcomingDeadlines.sort(
+  (a, b) =>
+    new Date(a.date) -
+    new Date(b.date)
+);

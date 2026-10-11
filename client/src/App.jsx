@@ -25,6 +25,12 @@ import EditInvoice from "./pages/EditInvoice";
 import Contact from "./components/Contact";
 import Settings from "./pages/Settings";
 import AboutMe from "./pages/AboutMe";
+import UpcomingDeadlines from "./pages/UpcomingDeadlines";
+import TimeLogDetails from "./pages/TimeLogDetails";
+import TimeLogs from "./pages/TimeLogs";
+import ForgotPassword from "./pages/ForgotPassword";
+import VerifyOTP from "./pages/VerifyOTP";
+import ResetPassword from "./pages/ResetPassword";
 
 const App = () => {
   // ==========================================
@@ -43,7 +49,13 @@ const App = () => {
 
   return (
   <AuthProvider>
-    <BrowserRouter basename="/FreelanceFlow">
+    <BrowserRouter
+  basename={
+    window.location.hostname === "rs7556605-stack.github.io"
+      ? "/FreelanceFlow"
+      : "/"
+  }
+>
       <Routes>
           {/* ==========================================
               PUBLIC ROUTES
@@ -112,6 +124,12 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route path="/time-logs" element={<TimeLogs />} />
+
+<Route
+  path="/time-log/:id"
+  element={<TimeLogDetails />}
+/>
 
           <Route
             path="/invoices"
@@ -166,6 +184,29 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
+
+
+          <Route
+  path="/upcoming-deadlines"
+  element={<UpcomingDeadlines />}
+/>
+
+
+<Route
+  path="/forgot-password"
+  element={<ForgotPassword />}
+/>
+
+<Route
+  path="/verify-otp"
+  element={<VerifyOTP />}
+/>
+
+<Route
+  path="/reset-password"
+  element={<ResetPassword />}
+/>
 
         </Routes>
       </BrowserRouter>

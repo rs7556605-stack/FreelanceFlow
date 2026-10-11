@@ -1,42 +1,223 @@
 const Task = require("../models/Task");
 const Project = require("../models/Project");
+const Client = require("../models/Client");
 
-// ==========================================
+// =====================================================
+// POPULATE TASK
+// =====================================================
+// Client ko direct populate karega
+// Project ko populate karega
+// Project ke andar client ko bhi populate karega
+// =====================================================
+
+const populateTask = (query) => {
+  return query
+    .populate({
+      path: "client",
+      select: "name clientName company email phone",
+    })
+    .populate({
+      path: "project",
+      select: "name status client",
+      populate: {
+        path: "client",
+        select: "name clientName company email phone",
+      },
+    });
+};
+
+// =====================================================
+// VALIDATE CLIENT + PROJECT
+// =====================================================
+
+const validateClientAndProject = async ({
+  clientId,
+  projectId,
+  userId,
+}) => {
+  // ===================================================
+  // CLIENT
+  // ===================================================
+
+  const client = clientId
+    ? await Client.findOne({
+        _id: clientId,
+        user: userId,
+      }).select(
+        "name clientName company email phone"
+      )
+    : null;
+
+  if (clientId && !client) {
+    return {
+      error: {
+        status: 403,
+        message: "Invalid client",
+      },
+    };
+  }
+
+  // ===================================================
+  // PROJECT
+  // ===================================================
+
+  const project = await Project.findOne({
+    _id: projectId,
+    user: userId,
+  }).select(
+    "name status client"
+  );
+
+  if (!project) {
+    return {
+      error: {
+        status: 403,
+        message: "Invalid project",
+      },
+    };
+  }
+
+  // ===================================================
+  // PROJECT MUST BELONG TO CLIENT
+  // ===================================================
+
+  if (
+    clientId &&
+    project.client &&
+    project.client.toString() !==
+      clientId.toString()
+  ) {
+    return {
+      error: {
+        status: 400,
+        message:
+          "Selected project does not belong to selected client",
+      },
+    };
+  }
+
+  // ===================================================
+  // RETURN
+  // ===================================================
+
+  return {
+    client,
+    project,
+  };
+};
+
+// =====================================================
 // GET ALL TASKS
-// ==========================================
+// =====================================================
 
 const getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find({
-      user: req.user.id,
-    })
-      .populate("project", "name status")
-      .sort({ createdAt: -1 });
+    const tasks = await populateTask(
+      Task.find({
+        user: req.user.id,
+      }).sort({
+        createdAt: -1,
+      })
+    ).lean();
 
-    res.status(200).json({
+    // =================================================
+    // IMPORTANT
+    // OLD TASKS:
+    // Agar task.client empty hai,
+    // project.client se client set karo
+    // =================================================
+
+    const fixedTasks = tasks.map(
+      (task) => {
+        // ---------------------------------------------
+        // DIRECT CLIENT AVAILABLE
+        // ---------------------------------------------
+
+        if (
+          task.client &&
+          typeof task.client === "object"
+        ) {
+          return task;
+        }
+
+        // ---------------------------------------------
+        // PROJECT CLIENT AVAILABLE
+        // ---------------------------------------------
+
+        if (
+          task.project &&
+          task.project.client &&
+          typeof task.project.client ===
+            "object"
+        ) {
+          return {
+            ...task,
+
+            client:
+              task.project.client,
+          };
+        }
+
+        // ---------------------------------------------
+        // NO CLIENT
+        // ---------------------------------------------
+
+        return task;
+      }
+    );
+
+    console.log(
+      "======================================"
+    );
+
+    console.log(
+      "TASKS RESPONSE:"
+    );
+
+    console.log(
+      JSON.stringify(
+        fixedTasks,
+        null,
+        2
+      )
+    );
+
+    console.log(
+      "======================================"
+    );
+
+    return res.status(200).json({
       success: true,
-      tasks,
+      tasks: fixedTasks,
     });
   } catch (error) {
-    console.error("Get Tasks Error:", error);
+    console.error(
+      "GET TASKS ERROR:",
+      error
+    );
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: "Failed to fetch tasks",
+      message:
+        error.message ||
+        "Failed to fetch tasks",
     });
   }
 };
 
-// ==========================================
+// =====================================================
 // GET SINGLE TASK
-// ==========================================
+// =====================================================
 
 const getTask = async (req, res) => {
   try {
-    const task = await Task.findOne({
-      _id: req.params.id,
-      user: req.user.id,
-    }).populate("project", "name status");
+    const task =
+      await populateTask(
+        Task.findOne({
+          _id: req.params.id,
+          user: req.user.id,
+        })
+      ).lean();
 
     if (!task) {
       return res.status(404).json({
@@ -45,27 +226,51 @@ const getTask = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    // =================================================
+    // OLD TASK FALLBACK
+    // =================================================
+
+    if (
+      !task.client &&
+      task.project &&
+      task.project.client &&
+      typeof task.project.client ===
+        "object"
+    ) {
+      task.client =
+        task.project.client;
+    }
+
+    return res.status(200).json({
       success: true,
       task,
     });
   } catch (error) {
-    console.error("Get Task Error:", error);
+    console.error(
+      "GET TASK ERROR:",
+      error
+    );
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: "Failed to fetch task",
+      message:
+        error.message ||
+        "Failed to fetch task",
     });
   }
 };
 
-// ==========================================
+// =====================================================
 // CREATE TASK
-// ==========================================
+// =====================================================
 
-const createTask = async (req, res) => {
+const createTask = async (
+  req,
+  res
+) => {
   try {
     const {
+      client,
       project,
       title,
       description,
@@ -74,85 +279,194 @@ const createTask = async (req, res) => {
       dueDate,
     } = req.body;
 
-    // ========================================
-    // VALIDATE TITLE
-    // ========================================
+    console.log(
+      "======================================"
+    );
 
-    if (!title || !title.trim()) {
+    console.log(
+      "CREATE TASK BODY:"
+    );
+
+    console.log(req.body);
+
+    console.log(
+      "======================================"
+    );
+
+    // =================================================
+    // TITLE
+    // =================================================
+
+    if (
+      !title ||
+      !title.trim()
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Task title is required",
+        message:
+          "Task title is required",
       });
     }
 
-    // ========================================
-    // VALIDATE PROJECT
-    // ========================================
+    // =================================================
+    // CLIENT
+    // =================================================
+
+    if (!client) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Client is required",
+      });
+    }
+
+    // =================================================
+    // PROJECT
+    // =================================================
 
     if (!project) {
       return res.status(400).json({
         success: false,
-        message: "Project is required",
+        message:
+          "Project is required",
       });
     }
 
-    // ========================================
-    // IMPORTANT:
-    // PROJECT MUST BELONG TO CURRENT USER
-    // ========================================
+    // =================================================
+    // VALIDATE RELATION
+    // =================================================
 
-    const projectExists = await Project.findOne({
-      _id: project,
-      user: req.user.id,
-    });
-
-    if (!projectExists) {
-      return res.status(403).json({
-        success: false,
-        message: "Invalid project",
+    const relation =
+      await validateClientAndProject({
+        clientId: client,
+        projectId: project,
+        userId: req.user.id,
       });
+
+    if (relation.error) {
+      return res
+        .status(
+          relation.error.status
+        )
+        .json({
+          success: false,
+          message:
+            relation.error.message,
+        });
     }
 
-    // ========================================
+    // =================================================
+    // FINAL CLIENT
+    // =================================================
+
+    const finalClient =
+      relation.client?._id ||
+      relation.project.client ||
+      client;
+
+    // =================================================
     // CREATE TASK
-    // ========================================
+    // =================================================
 
-    const task = await Task.create({
-      user: req.user.id,
-      project,
-      title: title.trim(),
-      description: description?.trim() || "",
-      status: status || "Pending",
-      priority: priority || "Medium",
-      dueDate: dueDate || null,
-    });
+    const task =
+      await Task.create({
+        user: req.user.id,
 
-    const populatedTask = await Task.findById(
-      task._id
-    ).populate("project", "name status");
+        client:
+          finalClient,
 
-    res.status(201).json({
+        project:
+          relation.project._id,
+
+        title:
+          title.trim(),
+
+        description:
+          description?.trim() || "",
+
+        status:
+          status || "Pending",
+
+        priority:
+          priority || "Medium",
+
+        dueDate:
+          dueDate || null,
+      });
+
+    // =================================================
+    // POPULATE CREATED TASK
+    // =================================================
+
+    let populatedTask =
+      await populateTask(
+        Task.findById(
+          task._id
+        )
+      ).lean();
+
+    // =================================================
+    // FALLBACK
+    // =================================================
+
+    if (
+      populatedTask &&
+      !populatedTask.client &&
+      populatedTask.project?.client
+    ) {
+      populatedTask.client =
+        populatedTask.project.client;
+    }
+
+    console.log(
+      "TASK CREATED:"
+    );
+
+    console.log(
+      JSON.stringify(
+        populatedTask,
+        null,
+        2
+      )
+    );
+
+    // =================================================
+    // RESPONSE
+    // =================================================
+
+    return res.status(201).json({
       success: true,
-      message: "Task created successfully",
-      task: populatedTask,
+      message:
+        "Task created successfully",
+      task:
+        populatedTask,
     });
   } catch (error) {
-    console.error("Create Task Error:", error);
+    console.error(
+      "CREATE TASK ERROR:",
+      error
+    );
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: "Failed to create task",
+      message:
+        error.message ||
+        "Failed to create task",
     });
   }
 };
 
-// ==========================================
+// =====================================================
 // UPDATE TASK
-// ==========================================
+// =====================================================
 
-const updateTask = async (req, res) => {
+const updateTask = async (
+  req,
+  res
+) => {
   try {
     const {
+      client,
       project,
       title,
       description,
@@ -161,129 +475,304 @@ const updateTask = async (req, res) => {
       dueDate,
     } = req.body;
 
-    // ========================================
+    // =================================================
     // FIND TASK
-    // ========================================
+    // =================================================
 
-    const task = await Task.findOne({
-      _id: req.params.id,
-      user: req.user.id,
-    });
-
-    if (!task) {
-      return res.status(404).json({
-        success: false,
-        message: "Task not found",
-      });
-    }
-
-    // ========================================
-    // VALIDATE PROJECT
-    // ========================================
-
-    if (project) {
-      const projectExists = await Project.findOne({
-        _id: project,
+    const task =
+      await Task.findOne({
+        _id: req.params.id,
         user: req.user.id,
       });
 
-      if (!projectExists) {
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message:
+          "Task not found",
+      });
+    }
+
+    // =================================================
+    // FINAL CLIENT
+    // =================================================
+
+    const finalClient =
+      client !== undefined
+        ? client
+        : task.client;
+
+    // =================================================
+    // FINAL PROJECT
+    // =================================================
+
+    const finalProject =
+      project !== undefined
+        ? project
+        : task.project;
+
+    // =================================================
+    // PROJECT VALIDATION
+    // =================================================
+
+    const projectExists =
+      await Project.findOne({
+        _id: finalProject,
+        user: req.user.id,
+      }).select(
+        "name status client"
+      );
+
+    if (!projectExists) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Invalid project",
+      });
+    }
+
+    // =================================================
+    // CLIENT VALIDATION
+    // =================================================
+
+    if (finalClient) {
+      const clientExists =
+        await Client.findOne({
+          _id: finalClient,
+          user: req.user.id,
+        }).select(
+          "name clientName company email phone"
+        );
+
+      if (!clientExists) {
         return res.status(403).json({
           success: false,
-          message: "Invalid project",
+          message:
+            "Invalid client",
         });
       }
 
-      task.project = project;
-    }
+      // -----------------------------------------------
+      // PROJECT MUST BELONG TO CLIENT
+      // -----------------------------------------------
 
-    // ========================================
-    // UPDATE TITLE
-    // ========================================
-
-    if (title !== undefined) {
-      if (!title.trim()) {
+      if (
+        projectExists.client &&
+        projectExists.client.toString() !==
+          finalClient.toString()
+      ) {
         return res.status(400).json({
           success: false,
-          message: "Task title is required",
+          message:
+            "Selected project does not belong to selected client",
+        });
+      }
+    }
+
+    // =================================================
+    // CLIENT
+    // =================================================
+
+    if (
+      client !== undefined
+    ) {
+      task.client =
+        client || undefined;
+    }
+
+    // =================================================
+    // PROJECT
+    // =================================================
+
+    if (
+      project !== undefined
+    ) {
+      task.project =
+        project;
+    }
+
+    // =================================================
+    // TITLE
+    // =================================================
+
+    if (
+      title !== undefined
+    ) {
+      if (
+        !title ||
+        !title.trim()
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Task title is required",
         });
       }
 
-      task.title = title.trim();
+      task.title =
+        title.trim();
     }
 
-    // ========================================
-    // UPDATE OTHER FIELDS
-    // ========================================
+    // =================================================
+    // DESCRIPTION
+    // =================================================
 
-    if (description !== undefined) {
-      task.description = description.trim();
+    if (
+      description !==
+      undefined
+    ) {
+      task.description =
+        description?.trim() ||
+        "";
     }
 
-    if (status !== undefined) {
-      task.status = status;
+    // =================================================
+    // STATUS
+    // =================================================
+
+    if (
+      status !== undefined
+    ) {
+      task.status =
+        status;
     }
 
-    if (priority !== undefined) {
-      task.priority = priority;
+    // =================================================
+    // PRIORITY
+    // =================================================
+
+    if (
+      priority !== undefined
+    ) {
+      task.priority =
+        priority;
     }
 
-    if (dueDate !== undefined) {
-      task.dueDate = dueDate || null;
+    // =================================================
+    // DUE DATE
+    // =================================================
+
+    if (
+      dueDate !== undefined
+    ) {
+      task.dueDate =
+        dueDate || null;
     }
+
+    // =================================================
+    // SAVE
+    // =================================================
 
     await task.save();
 
-    const updatedTask = await Task.findById(
-      task._id
-    ).populate("project", "name status");
+    // =================================================
+    // POPULATED TASK
+    // =================================================
 
-    res.status(200).json({
+    let updatedTask =
+      await populateTask(
+        Task.findById(
+          task._id
+        )
+      ).lean();
+
+    // =================================================
+    // OLD TASK FALLBACK
+    // =================================================
+
+    if (
+      updatedTask &&
+      !updatedTask.client &&
+      updatedTask.project?.client
+    ) {
+      updatedTask.client =
+        updatedTask.project.client;
+    }
+
+    console.log(
+      "TASK UPDATED:"
+    );
+
+    console.log(
+      JSON.stringify(
+        updatedTask,
+        null,
+        2
+      )
+    );
+
+    // =================================================
+    // RESPONSE
+    // =================================================
+
+    return res.status(200).json({
       success: true,
-      message: "Task updated successfully",
-      task: updatedTask,
+      message:
+        "Task updated successfully",
+      task:
+        updatedTask,
     });
   } catch (error) {
-    console.error("Update Task Error:", error);
+    console.error(
+      "UPDATE TASK ERROR:",
+      error
+    );
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: "Failed to update task",
+      message:
+        error.message ||
+        "Failed to update task",
     });
   }
 };
 
-// ==========================================
+// =====================================================
 // DELETE TASK
-// ==========================================
+// =====================================================
 
-const deleteTask = async (req, res) => {
+const deleteTask = async (
+  req,
+  res
+) => {
   try {
-    const task = await Task.findOneAndDelete({
-      _id: req.params.id,
-      user: req.user.id,
-    });
+    const task =
+      await Task.findOneAndDelete({
+        _id: req.params.id,
+        user: req.user.id,
+      });
 
     if (!task) {
       return res.status(404).json({
         success: false,
-        message: "Task not found",
+        message:
+          "Task not found",
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "Task deleted successfully",
+      message:
+        "Task deleted successfully",
     });
   } catch (error) {
-    console.error("Delete Task Error:", error);
+    console.error(
+      "DELETE TASK ERROR:",
+      error
+    );
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: "Failed to delete task",
+      message:
+        error.message ||
+        "Failed to delete task",
     });
   }
 };
+
+// =====================================================
+// EXPORT
+// =====================================================
 
 module.exports = {
   getTasks,

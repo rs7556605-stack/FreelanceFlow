@@ -1,0 +1,202 @@
+
+/* ==========================================
+   SOCIAL LOGIN AREA
+========================================== */
+
+.social-login-btn {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  position: relative;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+
+  outline: none;
+}
+
+
+/* ==========================================
+   SOCIAL ICON
+========================================== */
+
+.social-icon {
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  font-weight: 700;
+}
+
+
+/* ==========================================
+   GOOGLE
+========================================== */
+
+.google-login-btn {
+  background: #ffffff;
+
+  color: #202124;
+
+  border: 1px solid #dadce0;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.google-login-btn:hover {
+  background: #f8faff;
+
+  border-color: #c7d2fe;
+
+  box-shadow:
+    0 6px 18px rgba(66, 133, 244, 0.15);
+
+  transform: translateY(-1px);
+}
+
+.google-login-btn:active {
+  transform: translateY(0);
+}
+
+
+/* GOOGLE G */
+
+.google-icon {
+  font-family: Arial, sans-serif;
+
+  font-size: 21px;
+
+  font-weight: 700;
+
+  background: conic-gradient(
+    from -45deg,
+    #4285f4 0deg 90deg,
+    #34a853 90deg 180deg,
+    #fbbc05 180deg 270deg,
+    #ea4335 270deg 360deg
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  color: transparent;
+}
+
+
+/* ==========================================
+   GITHUB
+========================================== */
+
+.github-login-btn {
+  background: #171717;
+
+  color: #ffffff;
+
+  border: 1px solid #171717;
+
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.github-login-btn:hover {
+  background: #242424;
+
+  border-color: #242424;
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.22);
+
+  transform: translateY(-1px);
+}
+
+.github-login-btn:active {
+  transform: translateY(0);
+}
+
+.github-icon {
+  color: #ffffff;
+}
+
+
+/* ==========================================
+   TEXT
+========================================== */
+
+.social-login-text {
+  letter-spacing: 0.1px;
+}
+
+
+/* ==========================================
+   DIVIDER
+========================================== */
+
+.login-divider {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin: 24px 0;
+}
+
+.login-divider span {
+  flex: 1;
+
+  height: 1px;
+
+  background: #e2e8f0;
+}
+
+.login-divider p {
+  margin: 0;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  color: #94a3b8;
+
+  letter-spacing: 1px;
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 480px) {
+
+  .social-login-btn {
+    min-height: 50px;
+
+    border-radius: 11px;
+
+    font-size: 14px;
+  }
+
+  .social-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+}

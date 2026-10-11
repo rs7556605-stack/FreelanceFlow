@@ -295,37 +295,6 @@ const InvoiceDetails = () => {
 
             </div>
 
-            <div className="invoice-date-box">
-
-              <div>
-
-                <div>
-                  <span>
-                    Invoice Date
-                  </span>
-
-                  <strong>
-                    {formatDate(
-                      invoice.invoiceDate
-                    )}
-                  </strong>
-                </div>
-
-                <div>
-                  <span>
-                    Due Date
-                  </span>
-
-                  <strong>
-                    {formatDate(
-                      invoice.dueDate
-                    )}
-                  </strong>
-                </div>
-
-              </div>
-
-            </div>
 
           </div>
 
@@ -333,78 +302,131 @@ const InvoiceDetails = () => {
               CLIENT
           ================================================= */}
 
-          <div className="invoice-client-section">
+          {/* =========================================================
+    INVOICE DATE + DUE DATE
+========================================================= */}
 
-            <div className="invoice-client-box">
+<div className="invoice-date-box">
 
-              <div className="invoice-section-icon">
-                <User size={19} />
-              </div>
+  <div>
+    <span>INVOICE DATE</span>
 
-              <div>
+    <strong>
+      {formatDate(invoice.invoiceDate)}
+    </strong>
+  </div>
 
-                <span className="invoice-label">
-                  BILL TO
-                </span>
+  <div>
+    <span>DUE DATE</span>
 
-                <h3>
-                  {invoice.client?.name ||
-                    "Client"}
-                </h3>
+    <strong>
+      {formatDate(invoice.dueDate)}
+    </strong>
+  </div>
 
-                {invoice.client?.company && (
-                  <p>
-                    {invoice.client.company}
-                  </p>
-                )}
+</div>
 
-                {invoice.client?.email && (
-                  <p>
-                    {invoice.client.email}
-                  </p>
-                )}
 
-                {invoice.client?.address && (
-                  <p>
-                    {invoice.client.address}
-                  </p>
-                )}
+{/* =========================================================
+    BILL TO + BILLING PERIOD
+========================================================= */}
 
-              </div>
+<div className="invoice-client-section">
 
-            </div>
+  {/* =========================
+      BILL TO
+  ========================= */}
 
-            {/* BILLING PERIOD */}
+  <div className="invoice-client-box">
 
-            <div className="invoice-period-box">
+    <div className="invoice-section-icon">
+      <User size={19} />
+    </div>
 
-              <div className="invoice-section-icon">
-                <CalendarDays size={19} />
-              </div>
+    <div>
 
-              <div>
+      <span className="invoice-label">
+        BILL TO
+      </span>
 
-                <span className="invoice-label">
-                  BILLING PERIOD
-                </span>
+      <h3>
+        {invoice.client?.name || "Client"}
+      </h3>
 
-                <p>
-                  {formatDate(
-                    invoice.periodStart
-                  )}
+      {invoice.client?.company && (
+        <p>
+          {invoice.client.company}
+        </p>
+      )}
 
-                  {" — "}
+      {invoice.client?.email && (
+        <p>
+          {invoice.client.email}
+        </p>
+      )}
 
-                  {formatDate(
-                    invoice.periodEnd
-                  )}
-                </p>
+      {invoice.client?.phone && (
+        <p>
+          {invoice.client.phone}
+        </p>
+      )}
 
-              </div>
+      {invoice.client?.address && (
+        <p>
+          {invoice.client.address}
+        </p>
+      )}
 
-            </div>
+    </div>
 
-          </div>
+  </div>
+
+
+  {/* =========================
+      BILLING PERIOD
+  ========================= */}
+
+  <div className="invoice-period-box">
+
+    <div className="invoice-section-icon">
+      <CalendarDays size={19} />
+    </div>
+
+    <div>
+
+      <span className="invoice-label">
+        BILLING PERIOD
+      </span>
+
+      <div className="invoice-period-row">
+
+        <span>
+          Start Date
+        </span>
+
+        <strong>
+          {formatDate(invoice.periodStart)}
+        </strong>
+
+      </div>
+
+      <div className="invoice-period-row">
+
+        <span>
+          End Date
+        </span>
+
+        <strong>
+          {formatDate(invoice.periodEnd)}
+        </strong>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 
           {/* =================================================
               ITEMS

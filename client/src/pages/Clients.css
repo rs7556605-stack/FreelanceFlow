@@ -11,6 +11,7 @@
 .clients-container {
   max-width: 1280px;
   margin: 0 auto;
+
 }
 
 /* ==========================================
@@ -574,6 +575,7 @@
 
   .add-client-btn {
     width: 100%;
+    
   }
 
   .client-form-grid {
@@ -613,7 +615,7 @@
   }
 
   .clients-back-btn {
-    width: 100%;
+    width: 60%;
     justify-content: center;
   }
 
@@ -932,4 +934,1100 @@ html[data-theme="dark"] .add-client-btn {
 
 html[data-theme="dark"] .add-client-btn:hover {
   background: #1d4ed8 !important;
+}
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   CLIENT STATUS
+========================================================= */
+
+.client-status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  margin-bottom: 16px;
+}
+
+.client-status-label {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.client-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.client-status-badge.completed {
+  background: #064e3b;
+  color: #34d399;
+}
+
+.client-status-badge.active {
+  background: #064e3b;
+  color: #34d399;
+}
+
+.client-status-badge.in-progress {
+  background: #172554;
+  color: #60a5fa;
+}
+
+.client-status-badge.on-hold {
+  background: #451a03;
+  color: #fbbf24;
+}
+
+
+/* =========================================================
+   CONTACT
+========================================================= */
+
+.client-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 18px;
+  margin-bottom: 18px;
+}
+
+.client-contact-grid .client-detail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  min-width: 0;
+}
+
+.client-contact-grid .client-detail svg {
+  flex-shrink: 0;
+  color: #60a5fa;
+}
+
+.client-contact-grid .client-detail span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   DEADLINE
+========================================================= */
+
+.client-deadline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 13px 0;
+  border-top: 1px solid #334155;
+  border-bottom: 1px solid #334155;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.client-deadline svg {
+  color: #60a5fa;
+}
+
+.client-deadline strong {
+  color: #f8fafc;
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.client-progress-section {
+  margin-top: 18px;
+}
+
+.client-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.client-progress-header span {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.client-progress-header strong {
+  color: #60a5fa;
+  font-size: 14px;
+}
+
+.client-progress-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #0f172a;
+  border: 1px solid #334155;
+}
+
+.client-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #2563eb;
+  transition: width 0.3s ease;
+}
+
+
+
+/* =========================================================
+   PENDING INPUT
+========================================================= */
+
+.client-pending-input {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .client-contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .client-financial-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .client-work-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .client-quick-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .client-quick-actions button {
+    width: 100%;
+  }
+
+}
+
+
+@media (max-width: 450px) {
+
+  .client-quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+
+/* =========================================================
+   CLIENT CONTACT
+========================================================= */
+
+.client-contact-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+
+  width: 100%;
+
+  margin: 20px 0 14px;
+
+  min-width: 0;
+}
+
+.client-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  min-width: 0;
+  flex: 1;
+
+  color: black;
+
+  text-decoration: none;
+
+  font-size: 15px;
+}
+
+.client-contact-item svg {
+  flex-shrink: 0;
+
+  color: #60a5fa;
+}
+
+.client-contact-item span {
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+}
+
+.client-contact-item:hover {
+  color: #60a5fa;
+}
+
+
+/* =========================================================
+   LOCATION
+========================================================= */
+
+.client-location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin: 10px 0 18px;
+
+  color: black;
+}
+
+.client-location svg {
+  flex-shrink: 0;
+
+  color: #60a5fa;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.client-status-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-top: 18px;
+}
+
+.client-status-label {
+  color: #94a3b8;
+
+  font-size: 14px;
+}
+
+.client-status-badge {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 34px;
+
+  padding: 6px 14px;
+
+  border-radius: 999px;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  background: #172554;
+  color: #60a5fa;
+}
+
+.client-status-badge.pending {
+  background: #422006;
+  color: #fbbf24;
+}
+
+.client-status-badge.in-progress {
+  background: #172554;
+  color: #60a5fa;
+}
+
+.client-status-badge.completed {
+  background: #052e16;
+  color: #4ade80;
+}
+
+
+/* =========================================================
+   EXTRA DETAILS
+========================================================= */
+
+.client-extra-details {
+  overflow: hidden;
+
+  transition:
+    max-height 0.3s ease,
+    opacity 0.25s ease,
+    margin 0.3s ease;
+}
+
+.client-extra-details.show {
+  max-height: 1000px;
+
+  opacity: 1;
+}
+
+.client-extra-details.hide {
+  max-height: 0;
+
+  opacity: 0;
+
+  margin: 0;
+}
+
+
+/* =========================================================
+   FINANCIAL GRID
+========================================================= */
+
+.client-financial-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+
+  gap: 12px;
+
+  margin-top: 18px;
+}
+
+.client-financial-item {
+  min-width: 0;
+
+  padding: 16px;
+
+  border: 1px solid #334155;
+
+  border-radius: 13px;
+
+  background: #172033;
+}
+
+.client-financial-item span {
+  display: block;
+
+  margin-bottom: 9px;
+
+  color: #8698b0;
+
+  font-size: 13px;
+}
+
+.client-financial-item strong {
+  color: #f8fafc;
+
+  font-size: 18px;
+}
+
+.client-financial-item .client-received,
+.client-received {
+  color: #4ade80;
+}
+
+.client-financial-item .client-pending,
+.client-pending {
+  color: #fbbf24;
+}
+
+
+/* =========================================================
+   DEADLINE
+========================================================= */
+
+.client-deadline {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-top: 16px;
+
+  padding: 13px 0;
+
+  border-bottom: 1px solid #334155;
+
+  color: rgb(247, 244, 244);
+
+  font-size: 14px;
+}
+
+.client-deadline svg {
+  color: #60a5fa;
+}
+
+.client-deadline strong {
+  color: rgb(245, 243, 243);
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.client-progress-section {
+  margin-top: 18px;
+}
+
+.client-progress-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 9px;
+
+  color: #94a3b8;
+
+  font-size: 14px;
+}
+
+.client-progress-header strong {
+  color: #60a5fa;
+
+  font-size: 14px;
+}
+
+.client-progress-bar {
+  width: 100%;
+
+  height: 9px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+
+  background: #0f172a;
+
+  border: 1px solid #334155;
+}
+
+.client-progress-fill {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: #2563eb;
+
+  transition:
+    width 0.35s ease;
+}
+
+.client-progress-text {
+  margin-top: 7px;
+
+  color: #64748b;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   TASK + TIME
+========================================================= */
+
+.client-work-summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+
+  margin-top: 18px;
+}
+
+
+/* =========================================================
+   SHOW / HIDE
+========================================================= */
+
+.client-show-more-btn {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 6px;
+
+  margin-top: 15px;
+
+  padding: 10px 14px;
+
+  border: 1px solid #334155;
+
+  border-radius: 9px;
+
+  background: #172033;
+
+  color: #60a5fa;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.client-show-more-btn:hover {
+  background: #1e293b;
+
+  border-color: #2563eb;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.client-quick-actions {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 9px;
+
+  margin-top: 15px;
+
+  padding-top: 15px;
+
+  border-top: 1px solid #334155;
+}
+
+.client-quick-actions button {
+  min-width: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 10px 7px;
+
+  border: 1px solid #334155;
+
+  border-radius: 9px;
+
+  background: #172033;
+
+  color: #cbd5e1;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.client-quick-actions button:hover {
+  background: #2563eb;
+
+  border-color: #2563eb;
+
+  color: #ffffff;
+}
+
+.client-quick-actions button svg {
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   FORM EXTRA FIELDS
+========================================================= */
+
+.client-form-full-width {
+  grid-column: 1 / -1;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .client-contact-row {
+    gap: 12px;
+  }
+
+  .client-contact-item {
+    font-size: 13px;
+  }
+
+  .client-financial-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .client-work-summary {
+    grid-template-columns:
+      1fr;
+  }
+
+  .client-quick-actions {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+  .client-quick-actions button {
+    font-size: 10px;
+
+    padding: 9px 4px;
+  }
+
+}
+
+
+@media (max-width: 450px) {
+
+  .client-contact-row {
+    gap: 8px;
+  }
+
+  .client-contact-item {
+    font-size: 11px;
+  }
+
+  .client-contact-item svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .client-quick-actions {
+    grid-template-columns:
+      repeat(3, 1fr);
+  }
+
+  .client-quick-actions button {
+    font-size: 9px;
+
+    padding: 8px 2px;
+  }
+
+  .client-quick-actions button svg {
+    width: 13px;
+    height: 13px;
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   MOBILE QUICK ACTIONS - 2 COLUMNS
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .client-quick-actions {
+    width: 100% !important;
+
+    display: grid !important;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+
+    gap: 12px !important;
+
+    box-sizing: border-box !important;
+  }
+
+  .client-quick-actions button {
+    width: 100% !important;
+
+    min-width: 0 !important;
+
+    min-height: 58px !important;
+
+    padding: 10px 8px !important;
+
+    display: flex !important;
+
+    flex-direction: row !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    gap: 7px !important;
+
+    white-space: nowrap !important;
+
+    font-size: 14px !important;
+
+    box-sizing: border-box !important;
+  }
+
+  .client-quick-actions button svg {
+    width: 18px !important;
+    height: 18px !important;
+
+    flex-shrink: 0 !important;
+  }
+
+  .client-quick-actions button span {
+    white-space: nowrap !important;
+
+    overflow: hidden !important;
+
+    text-overflow: ellipsis !important;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 430px) {
+
+  .client-quick-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+
+    gap: 10px !important;
+  }
+
+  .client-quick-actions button {
+    min-height: 55px !important;
+
+    padding: 8px 6px !important;
+
+    font-size: 13px !important;
+
+    gap: 6px !important;
+  }
+
+  .client-quick-actions button svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+/* ==========================================
+   MOBILE BACK BUTTON
+========================================== */
+
+@media (max-width: 600px) {
+
+  .projects-back-btn {
+    width: auto;
+    max-width: 190px;
+
+    min-height: 48px;
+
+    padding: 10px 18px;
+
+    margin-left: 0;
+    margin-right: auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    border-radius: 10px;
+  }
+
+  .projects-back-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+}
+
+
+
+
+
+/* =========================================
+   CLIENT TIME TRACKED
+========================================= */
+
+.client-work-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.client-work-item > svg {
+  flex-shrink: 0;
+  width: 19px;
+  height: 19px;
+}
+
+.client-work-item > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.client-work-item > div > span {
+  display: inline-block;
+  font-size: 16px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.client-work-item > div > strong {
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 640px) {
+  .client-work-item {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    gap: 9px;
+    box-sizing: border-box;
+  }
+
+  .client-work-item > svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .client-work-item > div {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  .client-work-item > div > span {
+    font-size: 16px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .client-work-item > div > strong {
+    font-size: 16px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 400px) {
+  .client-work-item {
+    gap: 8px;
+  }
+
+  .client-work-item > svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .client-work-item > div {
+    gap: 5px;
+  }
+
+  .client-work-item > div > span,
+  .client-work-item > div > strong {
+    font-size: 15px;
+  }
+}
+
+
+
+
+
+
+
+
+/* =========================================
+   CLIENT DARK THEME - CONTACT DETAILS
+========================================= */
+
+.client-contact-row {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  box-sizing: border-box;
+}
+
+.client-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  color: #94a3b8 !important;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.client-contact-item svg {
+  flex-shrink: 0;
+  color: #60a5fa !important;
+  stroke: #60a5fa !important;
+}
+
+.client-contact-item span {
+  color: #94a3b8 !important;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.client-contact-item:hover span {
+  color: #0a428b !important;
+}
+
+/* =========================================
+   CLIENT LOCATION
+========================================= */
+
+.client-location {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #94a3b8 !important;
+}
+
+.client-location svg {
+  flex-shrink: 0;
+  color: #60a5fa !important;
+  stroke: #60a5fa !important;
+}
+
+.client-location span {
+  color: #94a3b8 !important;
+  font-size: 15px;
+}
+
+
+.client-location:hover span {
+  color: #0a428b !important;
+}
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 640px) {
+  .client-contact-row {
+    width: 100%;
+    max-width: 100%;
+    gap: 18px;
+    flex-wrap: wrap;
+    overflow: hidden;
+  }
+
+  .client-contact-item {
+    max-width: 100%;
+  }
+
+  .client-contact-item span {
+    color: #94a3b8 !important;
+    font-size: 14px;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .client-location {
+    width: 100%;
+    color: #94a3b8 !important;
+  }
+
+  .client-location span {
+    color: #94a3b8 !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .client-contact-row {
+    gap: 14px;
+  }
+
+  .client-contact-item span {
+    font-size: 13px;
+    max-width: 145px;
+  }
+
+  .client-location span {
+    font-size: 14px;
+  }
 }

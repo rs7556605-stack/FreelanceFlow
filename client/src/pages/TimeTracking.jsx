@@ -13,9 +13,16 @@ import {
   Plus,
   X,
   Pencil,
+  MoreVertical,
+  Eye,
+  Users,
+  FolderKanban,
 } from "lucide-react";
 
-import { useNavigate } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 import API from "../services/api";
 
@@ -23,6 +30,7 @@ import "./TimeTracking.css";
 
 const TimeTracking = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // ==========================================
   // STATES
@@ -34,28 +42,24 @@ const TimeTracking = () => {
 
   const [activeTimer, setActiveTimer] = useState(null);
 
-  const [selectedProject, setSelectedProject] =
-    useState("");
+  const [selectedProject, setSelectedProject] = useState("");
+  const [selectedTask, setSelectedTask] = useState("");
 
-  const [selectedTask, setSelectedTask] =
-    useState("");
-
-  const [elapsedSeconds, setElapsedSeconds] =
-    useState(0);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   const [loading, setLoading] = useState(false);
-
-  const [refreshing, setRefreshing] =
-    useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [error, setError] = useState("");
-
   const [message, setMessage] = useState("");
 
   const [showManualForm, setShowManualForm] =
     useState(false);
 
   const [editingLogId, setEditingLogId] =
+    useState(null);
+
+  const [openActionMenu, setOpenActionMenu] =
     useState(null);
 
   const [manualForm, setManualForm] = useState({
@@ -74,6 +78,66 @@ const TimeTracking = () => {
   useEffect(() => {
     loadInitialData();
   }, []);
+
+  // ==========================================
+  // HANDLE MESSAGE + EDIT FROM OTHER PAGE
+  // ==========================================
+
+  useEffect(() => {
+    const state = location.state;
+
+    if (!state) return;
+
+    // Message
+    if (state.message) {
+      setMessage(state.message);
+
+      setTimeout(() => {
+        setMessage("");
+      }, 2500);
+    }
+
+    // Edit request from Time Log Details / All Logs
+    if (state.editLogId && state.log) {
+      handleEditLog(state.log);
+    }
+
+    // Clear navigation state
+    window.history.replaceState(
+      {},
+      document.title
+    );
+  }, [location.state]);
+
+  // ==========================================
+  // CLOSE ACTION MENU OUTSIDE
+  // ==========================================
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        !event.target.closest(".log-menu-wrapper")
+      ) {
+        setOpenActionMenu(null);
+      }
+    };
+
+    document.addEventListener(
+      "mousedown",
+      handleOutsideClick
+    );
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleOutsideClick
+      );
+    };
+  }, []);
+
+  // ==========================================
+  // LOAD INITIAL DATA
+  // ==========================================
 
   const loadInitialData = async () => {
     setError("");
@@ -102,8 +166,7 @@ const TimeTracking = () => {
   // ==========================================
 
   const loadProjects = async () => {
-    const response =
-      await API.get("/projects");
+    const response = await API.get("/projects");
 
     if (response.data.success) {
       setProjects(
@@ -123,10 +186,9 @@ const TimeTracking = () => {
     }
 
     try {
-      const response =
-        await API.get(
-          `/tasks?project=${projectId}`
-        );
+      const response = await API.get(
+        `/tasks?project=${projectId}`
+      );
 
       if (response.data.success) {
         setTasks(
@@ -150,8 +212,7 @@ const TimeTracking = () => {
   // ==========================================
 
   const loadTimeLogs = async () => {
-    const response =
-      await API.get("/time");
+    const response = await API.get("/time");
 
     if (response.data.success) {
       setTimeLogs(
@@ -165,15 +226,15 @@ const TimeTracking = () => {
   // ==========================================
 
   const loadActiveTimer = async () => {
-    const response =
-      await API.get("/time/active");
+    const response = await API.get(
+      "/time/active"
+    );
 
     if (
       response.data.success &&
       response.data.timer
     ) {
-      const timer =
-        response.data.timer;
+      const timer = response.data.timer;
 
       setActiveTimer(timer);
 
@@ -245,20 +306,19 @@ const TimeTracking = () => {
       clearInterval(interval);
   }, [activeTimer]);
 
-  // ==========================================
-  // BACK
-  // ==========================================
+
 
   const handleBack = () => {
-    navigate(-1);
-  };
-
+  navigate("/", { replace: true });
+};
   // ==========================================
   // REFRESH
   // ==========================================
 
   const handleRefresh = async () => {
-    if (refreshing) return;
+    if (refreshing) {
+      return;
+    }
 
     try {
       setRefreshing(true);
@@ -274,10 +334,9 @@ const TimeTracking = () => {
         "Data refreshed successfully"
       );
 
-      setTimeout(
-        () => setMessage(""),
-        2500
-      );
+      setTimeout(() => {
+        setMessage("");
+      }, 2500);
     } catch (error) {
       setError(
         error.response?.data?.message ||
@@ -313,11 +372,11 @@ const TimeTracking = () => {
   // ==========================================
 
   const handleStartTimer = async () => {
-    // Project validation
     if (!selectedProject) {
       setError(
         "Please select a project first."
       );
+
       return;
     }
 
@@ -326,14 +385,13 @@ const TimeTracking = () => {
       setError("");
       setMessage("");
 
-      const response =
-        await API.post(
-          "/time/start",
-          {
-            project: selectedProject,
-            task: selectedTask || null,
-          }
-        );
+      const response = await API.post(
+        "/time/start",
+        {
+          project: selectedProject,
+          task: selectedTask || null,
+        }
+      );
 
       if (response.data.success) {
         setActiveTimer(
@@ -372,24 +430,45 @@ const TimeTracking = () => {
       return;
     }
 
-    try {
-      setLoading(true);
-      setError("");
-      setMessage("");
+    const timerId =
+      activeTimer._id;
 
+    const previousTimer =
+      activeTimer;
+
+    const previousElapsed =
+      elapsedSeconds;
+
+    // Immediate UI stop
+    setActiveTimer(null);
+    setElapsedSeconds(0);
+    setError("");
+    setLoading(false);
+
+    setMessage(
+      "Stopping timer..."
+    );
+
+    try {
       const response =
         await API.put(
-          `/time/stop/${activeTimer._id}`
+          `/time/stop/${timerId}`
         );
 
       if (response.data.success) {
-        setActiveTimer(null);
-        setElapsedSeconds(0);
-
         await loadTimeLogs();
 
         setMessage(
           "Timer stopped successfully"
+        );
+
+        setTimeout(() => {
+          setMessage("");
+        }, 2500);
+      } else {
+        throw new Error(
+          response.data.message ||
+            "Failed to stop timer"
         );
       }
     } catch (error) {
@@ -398,12 +477,21 @@ const TimeTracking = () => {
         error
       );
 
+      // Restore timer if API failed
+      setActiveTimer(
+        previousTimer
+      );
+
+      setElapsedSeconds(
+        previousElapsed
+      );
+
       setError(
         error.response?.data?.message ||
           "Failed to stop timer"
       );
-    } finally {
-      setLoading(false);
+
+      setMessage("");
     }
   };
 
@@ -422,6 +510,10 @@ const TimeTracking = () => {
       })
     );
   };
+
+  // ==========================================
+  // MANUAL PROJECT
+  // ==========================================
 
   const handleManualProjectChange =
     async (event) => {
@@ -444,13 +536,15 @@ const TimeTracking = () => {
     };
 
   // ==========================================
-  // DATE FORMAT
+  // DATE FORMAT LOCAL
   // ==========================================
 
   const formatDateTimeLocal = (
     date
   ) => {
-    if (!date) return "";
+    if (!date) {
+      return "";
+    }
 
     const d = new Date(date);
 
@@ -477,20 +571,48 @@ const TimeTracking = () => {
   };
 
   // ==========================================
+  // VIEW LOG
+  // ==========================================
+
+  const handleViewLog = (log) => {
+    setOpenActionMenu(null);
+
+    navigate(
+      `/time-log/${log._id}`,
+      {
+        state: {
+          log,
+        },
+      }
+    );
+  };
+
+  // ==========================================
+  // VIEW ALL LOGS
+  // ==========================================
+
+  const handleViewAllLogs = () => {
+    setOpenActionMenu(null);
+    navigate("/time-logs");
+  };
+
+  // ==========================================
   // EDIT LOG
   // ==========================================
 
   const handleEditLog = async (
     log
   ) => {
-    if (!log.endTime) {
+    if (!log?.endTime) {
       setError(
         "Stop the timer before editing."
       );
+
       return;
     }
 
     setError("");
+    setOpenActionMenu(null);
 
     setEditingLogId(log._id);
 
@@ -575,6 +697,7 @@ const TimeTracking = () => {
         setError(
           "Please select a project."
         );
+
         return;
       }
 
@@ -582,6 +705,7 @@ const TimeTracking = () => {
         setError(
           "Start time and end time are required."
         );
+
         return;
       }
 
@@ -595,6 +719,7 @@ const TimeTracking = () => {
         setError(
           "End time must be after start time."
         );
+
         return;
       }
 
@@ -606,12 +731,10 @@ const TimeTracking = () => {
           task: task || null,
           startTime,
           endTime,
-
           hourlyRate:
             hourlyRate === ""
               ? undefined
               : Number(hourlyRate),
-
           billed,
         };
 
@@ -641,8 +764,17 @@ const TimeTracking = () => {
           handleCancelManual();
 
           await loadTimeLogs();
+
+          setTimeout(() => {
+            setMessage("");
+          }, 2500);
         }
       } catch (error) {
+        console.error(
+          "Manual Time Error:",
+          error
+        );
+
         setError(
           error.response?.data?.message ||
             "Failed to save time log"
@@ -659,16 +791,18 @@ const TimeTracking = () => {
   const handleDeleteLog = async (
     id
   ) => {
-    if (
-      !window.confirm(
+    const confirmed =
+      window.confirm(
         "Are you sure you want to delete this time log?"
-      )
-    ) {
+      );
+
+    if (!confirmed) {
       return;
     }
 
     try {
       setLoading(true);
+      setOpenActionMenu(null);
 
       await API.delete(
         `/time/${id}`
@@ -679,7 +813,16 @@ const TimeTracking = () => {
       setMessage(
         "Time log deleted successfully"
       );
+
+      setTimeout(() => {
+        setMessage("");
+      }, 2500);
     } catch (error) {
+      console.error(
+        "Delete Time Log Error:",
+        error
+      );
+
       setError(
         error.response?.data?.message ||
           "Failed to delete time log"
@@ -696,16 +839,19 @@ const TimeTracking = () => {
   const formatTime = (
     seconds
   ) => {
+    const total =
+      Number(seconds) || 0;
+
     const hrs = Math.floor(
-      seconds / 3600
+      total / 3600
     );
 
     const mins = Math.floor(
-      (seconds % 3600) / 60
+      (total % 3600) / 60
     );
 
     const secs =
-      seconds % 60;
+      total % 60;
 
     return [
       hrs,
@@ -728,7 +874,9 @@ const TimeTracking = () => {
   const formatDate = (
     date
   ) => {
-    if (!date) return "-";
+    if (!date) {
+      return "-";
+    }
 
     return new Date(
       date
@@ -749,7 +897,9 @@ const TimeTracking = () => {
     <div className="time-page">
       <div className="time-container">
 
-        {/* TOP BAR */}
+        {/* ======================================
+            TOP BAR
+        ====================================== */}
 
         <div className="time-topbar">
 
@@ -784,9 +934,12 @@ const TimeTracking = () => {
 
         </div>
 
-        {/* HEADER */}
+        {/* ======================================
+            HEADER
+        ====================================== */}
 
         <div className="time-header">
+
           <div>
             <h1>
               Time Tracking
@@ -798,9 +951,12 @@ const TimeTracking = () => {
               your earnings.
             </p>
           </div>
+
         </div>
 
-        {/* ERROR */}
+        {/* ======================================
+            ERROR
+        ====================================== */}
 
         {error && (
           <div className="time-error">
@@ -808,7 +964,9 @@ const TimeTracking = () => {
           </div>
         )}
 
-        {/* MESSAGE */}
+        {/* ======================================
+            MESSAGE
+        ====================================== */}
 
         {message && (
           <div className="time-success">
@@ -816,7 +974,9 @@ const TimeTracking = () => {
           </div>
         )}
 
-        {/* TIMER */}
+        {/* ======================================
+            TIMER
+        ====================================== */}
 
         <div className="timer-card">
 
@@ -927,7 +1087,7 @@ const TimeTracking = () => {
 
               </div>
 
-              {/* START TIMER */}
+              {/* START */}
 
               <button
                 type="button"
@@ -935,15 +1095,6 @@ const TimeTracking = () => {
                 onClick={
                   handleStartTimer
                 }
-
-                /*
-                 * IMPORTANT:
-                 * Project ki wajah se
-                 * button disable nahi hoga.
-                 *
-                 * Sirf API request ke time
-                 * button disabled rahega.
-                 */
                 disabled={loading}
               >
                 <Play
@@ -955,7 +1106,6 @@ const TimeTracking = () => {
                   ? "Starting..."
                   : "Start Timer"}
               </button>
-
             </>
           ) : (
 
@@ -1003,16 +1153,14 @@ const TimeTracking = () => {
                 onClick={
                   handleStopTimer
                 }
-                disabled={loading}
+                disabled={false}
               >
                 <Square
                   size={18}
                   fill="currentColor"
                 />
 
-                {loading
-                  ? "Stopping..."
-                  : "Stop Timer"}
+                Stop Timer
               </button>
 
             </div>
@@ -1020,7 +1168,9 @@ const TimeTracking = () => {
 
         </div>
 
-        {/* MANUAL TIME */}
+        {/* ======================================
+            MANUAL TIME
+        ====================================== */}
 
         <div className="manual-log-section">
 
@@ -1044,10 +1194,14 @@ const TimeTracking = () => {
               type="button"
               className="manual-log-toggle"
               onClick={() => {
-                if (showManualForm) {
+                if (
+                  showManualForm
+                ) {
                   handleCancelManual();
                 } else {
-                  setShowManualForm(true);
+                  setShowManualForm(
+                    true
+                  );
                 }
               }}
             >
@@ -1161,7 +1315,7 @@ const TimeTracking = () => {
 
               </div>
 
-              {/* START TIME */}
+              {/* START */}
 
               <div className="manual-field">
 
@@ -1185,7 +1339,7 @@ const TimeTracking = () => {
 
               </div>
 
-              {/* END TIME */}
+              {/* END */}
 
               <div className="manual-field">
 
@@ -1209,7 +1363,7 @@ const TimeTracking = () => {
 
               </div>
 
-              {/* HOURLY RATE */}
+              {/* RATE */}
 
               <div className="manual-field">
 
@@ -1260,7 +1414,7 @@ const TimeTracking = () => {
 
               </div>
 
-              {/* FORM ACTION */}
+              {/* ACTION */}
 
               <div className="manual-form-actions">
 
@@ -1270,9 +1424,13 @@ const TimeTracking = () => {
                   disabled={loading}
                 >
                   {editingLogId ? (
-                    <Pencil size={18} />
+                    <Pencil
+                      size={18}
+                    />
                   ) : (
-                    <Plus size={18} />
+                    <Plus
+                      size={18}
+                    />
                   )}
 
                   {loading
@@ -1289,7 +1447,9 @@ const TimeTracking = () => {
 
         </div>
 
-        {/* LOGS */}
+        {/* ======================================
+            LOGS
+        ====================================== */}
 
         <div className="logs-card">
 
@@ -1306,9 +1466,25 @@ const TimeTracking = () => {
               </p>
             </div>
 
-            <span className="logs-count">
-              {timeLogs.length}
-            </span>
+            <div className="logs-header-actions">
+
+             
+
+              {/* VIEW ALL */}
+
+              {timeLogs.length > 0 && (
+                <button
+                  type="button"
+                  className="view-all-logs-btn"
+                  onClick={
+                    handleViewAllLogs
+                  }
+                >
+                  View All
+                </button>
+              )}
+
+            </div>
 
           </div>
 
@@ -1337,6 +1513,7 @@ const TimeTracking = () => {
 
                 <thead>
                   <tr>
+
                     <th>
                       Project
                     </th>
@@ -1368,142 +1545,246 @@ const TimeTracking = () => {
                     <th>
                       Action
                     </th>
+
                   </tr>
                 </thead>
 
                 <tbody>
 
-                  {timeLogs.map(
-                    (log) => (
-                      <tr
-                        key={
-                          log._id
+                  {/* ONLY 2 LOGS ON MAIN PAGE */}
+
+                  {timeLogs
+                    .slice(0, 2)
+                    .map((log) => (
+
+                    <tr
+                      key={
+                        log._id
+                      }
+                    >
+
+                      <td>
+                        {
+                          log.project
+                            ?.name ||
+                          "-"
                         }
-                      >
+                      </td>
 
-                        <td>
-                          {
-                            log.project
-                              ?.name ||
-                            "-"
-                          }
-                        </td>
+                      <td>
+                        {
+                          log.task
+                            ?.title ||
+                          "-"
+                        }
+                      </td>
 
-                        <td>
-                          {
-                            log.task
-                              ?.title ||
-                            "-"
-                          }
-                        </td>
+                      <td>
+                        {formatDate(
+                          log.startTime
+                        )}
+                      </td>
 
-                        <td>
-                          {formatDate(
-                            log.startTime
-                          )}
-                        </td>
+                      <td>
+                        {formatTime(
+                          Number(
+                            log.duration ||
+                              0
+                          )
+                        )}
+                      </td>
 
-                        <td>
-                          {formatTime(
-                            Number(
-                              log.duration ||
-                                0
-                            )
-                          )}
-                        </td>
+                      <td>
+                        ₹
+                        {Number(
+                          log.hourlyRate ||
+                            0
+                        ).toFixed(2)}
+                      </td>
 
-                        <td>
+                      <td>
+                        <strong>
                           ₹
                           {Number(
-                            log.hourlyRate ||
+                            log.amount ||
                               0
                           ).toFixed(2)}
-                        </td>
+                        </strong>
+                      </td>
 
-                        <td>
-                          <strong>
-                            ₹
-                            {Number(
-                              log.amount ||
-                                0
-                            ).toFixed(2)}
-                          </strong>
-                        </td>
+                      <td>
 
-                        <td>
-                          <span
-                            className={
-                              log.billed
-                                ? "billed-badge"
-                                : "unbilled-badge"
+                        <span
+                          className={
+                            log.billed
+                              ? "billed-badge"
+                              : "unbilled-badge"
+                          }
+                        >
+                          {log.billed
+                            ? "Billed"
+                            : "Unbilled"}
+                        </span>
+
+                      </td>
+
+                      {/* ACTION */}
+
+                      <td>
+
+                        <div className="log-actions">
+
+                          {/* VIEW */}
+
+                          <button
+                            type="button"
+                            className="view-log-btn"
+                            onClick={() =>
+                              handleViewLog(
+                                log
+                              )
                             }
+                            title="View Details"
                           >
-                            {log.billed
-                              ? "Billed"
-                              : "Unbilled"}
-                          </span>
-                        </td>
+                            <Eye
+                              size={17}
+                            />
 
-                        <td>
+                            <span>
+                              View
+                            </span>
+                          </button>
 
-                          <div className="log-actions">
+                          {/* THREE DOT */}
 
-                            <button
-                              type="button"
-                              className="edit-log-btn"
-                              onClick={() =>
-                                handleEditLog(
-                                  log
-                                )
-                              }
-                              disabled={
-                                loading ||
-                                !log.endTime
-                              }
-                              title="Edit"
-                            >
-                              <Pencil
-                                size={17}
-                              />
-                            </button>
+                          <div className="log-menu-wrapper">
 
                             <button
                               type="button"
-                              className="delete-log-btn"
+                              className="log-menu-btn"
                               onClick={() =>
-                                handleDeleteLog(
-                                  log._id
+                                setOpenActionMenu(
+                                  openActionMenu ===
+                                    log._id
+                                    ? null
+                                    : log._id
                                 )
                               }
-                              disabled={
-                                loading
-                              }
-                              title="Delete"
+                              title="More"
                             >
-                              <Trash2
-                                size={17}
+                              <MoreVertical
+                                size={19}
                               />
                             </button>
+
+                            {openActionMenu ===
+                              log._id && (
+                              <div className="log-action-menu">
+
+                                {/* EDIT */}
+
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleEditLog(
+                                      log
+                                    )
+                                  }
+                                  disabled={
+                                    loading ||
+                                    !log.endTime
+                                  }
+                                >
+                                  <Pencil
+                                    size={16}
+                                  />
+
+                                  Edit
+                                </button>
+
+                                {/* DELETE */}
+
+                                <button
+                                  type="button"
+                                  className="danger"
+                                  onClick={() =>
+                                    handleDeleteLog(
+                                      log._id
+                                    )
+                                  }
+                                  disabled={
+                                    loading
+                                  }
+                                >
+                                  <Trash2
+                                    size={16}
+                                  />
+
+                                  Delete
+                                </button>
+
+                              </div>
+                            )}
 
                           </div>
 
-                        </td>
+                        </div>
 
-                      </tr>
-                    )
-                  )}
+                      </td>
+
+                    </tr>
+
+                  ))}
 
                 </tbody>
 
               </table>
 
             </div>
+
           )}
 
         </div>
 
       </div>
-    </div>
+      
+
+
+
+
+
+
+
+
+
+
+      
+
+ 
+
+ <div className="client-project-actions">
+  <button
+    type="button"
+    className="time-client-btn"
+    onClick={() => navigate("/clients")}
+  >
+    <Users size={18} />
+    <span>Client</span>
+  </button>
+
+  <button
+    type="button"
+    className="time-project-btn"
+    onClick={() => navigate("/projects")}
+  >
+    <FolderKanban size={18} />
+    <span>Project</span>
+  </button>
+</div>
+
+</div>
+    
+    
   );
 };
 

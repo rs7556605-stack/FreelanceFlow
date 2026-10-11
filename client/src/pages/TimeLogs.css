@@ -1,0 +1,346 @@
+/* =========================================
+   ALL TIME LOGS PAGE
+========================================= */
+
+.all-time-logs-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   TOP
+========================================= */
+
+.all-time-logs-top {
+  margin-bottom: 24px;
+}
+
+.all-time-logs-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 0;
+  margin-bottom: 20px;
+}
+
+.all-time-logs-back:hover {
+  color: #1d4ed8;
+}
+
+.all-time-logs-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.all-time-logs-title-row h1 {
+  margin: 0 0 7px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.all-time-logs-title-row p {
+  margin: 0;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.all-time-logs-count {
+  min-width: 45px;
+  height: 45px;
+  padding: 0 14px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+/* =========================================
+   CARD
+========================================= */
+
+.all-time-logs-card {
+  background: #ffffff;
+  border: 1px solid #dbe3ee;
+  border-radius: 18px;
+  overflow: visible;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+}
+
+.all-time-logs-card-header {
+  padding: 24px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5eaf1;
+}
+
+.all-time-logs-card-header h2 {
+  margin: 0 0 5px;
+  color: #111827;
+  font-size: 21px;
+}
+
+.all-time-logs-card-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.all-time-logs-card-header > span {
+  background: #eff6ff;
+  color: #2563eb;
+  border-radius: 20px;
+  padding: 7px 13px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* =========================================
+   TABLE
+========================================= */
+
+.all-time-logs-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.all-time-logs-table {
+  width: 100%;
+  min-width: 1100px;
+  border-collapse: collapse;
+}
+
+.all-time-logs-table th {
+  background: #f8fafc;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: left;
+  padding: 18px 22px;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.all-time-logs-table td {
+  padding: 21px 22px;
+  border-bottom: 1px solid #e8edf3;
+  color: #475569;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.all-time-logs-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.all-time-logs-table tbody tr:hover {
+  background: #fafcff;
+}
+
+.all-time-logs-table td strong {
+  color: #334155;
+}
+
+.duration-value {
+  color: #334155;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.amount-value {
+  color: #111827 !important;
+}
+
+/* =========================================
+   BILLED
+========================================= */
+
+.all-billed,
+.all-unbilled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.all-billed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.all-unbilled {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+/* =========================================
+   ACTIONS
+========================================= */
+
+.all-log-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.all-view-btn {
+  height: 42px;
+  padding: 0 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.all-view-btn:hover {
+  background: #dbeafe;
+}
+
+.all-menu-wrapper {
+  position: relative;
+}
+
+.all-menu-btn {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #dbe3ee;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.all-menu-btn:hover {
+  background: #f8fafc;
+}
+
+/* =========================================
+   DROPDOWN
+========================================= */
+
+.all-log-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: 150px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 6px;
+  z-index: 100;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
+.all-log-menu button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 11px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.all-log-menu button:hover {
+  background: #f1f5f9;
+}
+
+.all-log-menu .delete-action {
+  color: #dc2626;
+}
+
+.all-log-menu .delete-action:hover {
+  background: #fef2f2;
+}
+
+/* =========================================
+   EMPTY / ERROR / LOADING
+========================================= */
+
+.all-time-logs-empty {
+  background: #ffffff;
+  border: 1px solid #dbe3ee;
+  border-radius: 18px;
+  padding: 70px 30px;
+  text-align: center;
+}
+
+.all-time-logs-empty h3 {
+  margin: 0 0 8px;
+  color: #111827;
+}
+
+.all-time-logs-empty p {
+  margin: 0;
+  color: #64748b;
+}
+
+.time-logs-loading {
+  padding: 80px 20px;
+  text-align: center;
+  color: #64748b;
+}
+
+.time-logs-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 768px) {
+  .all-time-logs-page {
+    padding: 18px;
+  }
+
+  .all-time-logs-title-row {
+    align-items: flex-start;
+  }
+
+  .all-time-logs-title-row h1 {
+    font-size: 23px;
+  }
+
+  .all-time-logs-card-header {
+    padding: 20px;
+  }
+}

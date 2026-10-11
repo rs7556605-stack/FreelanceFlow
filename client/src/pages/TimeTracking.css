@@ -1190,7 +1190,8 @@ html[data-theme="dark"] .time-page ::-webkit-scrollbar-thumb:hover {
   }
 
   .manual-log-toggle {
-    width: 100%;
+    width: 40%;
+    margin-left: 190px;
   }
 
   .manual-log-form {
@@ -1219,7 +1220,7 @@ html[data-theme="dark"] .time-page ::-webkit-scrollbar-thumb:hover {
 
   .time-back-btn,
   .refresh-time-btn {
-    width: 100%;
+    width: 35%;
   }
 
   .time-header h1 {
@@ -1233,5 +1234,252 @@ html[data-theme="dark"] .time-page ::-webkit-scrollbar-thumb:hover {
 
   .active-project {
     flex-direction: column;
+  }
+}
+
+
+
+
+/* ==========================================
+   TOP BAR - MOBILE FIX
+========================================== */
+
+.time-topbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Back Button */
+.time-back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 24px;
+  border: 1px solid #dbe3ee;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Refresh Button */
+.refresh-time-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 24px;
+  border: 1px solid #dbe3ee;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Hover */
+.time-back-btn:hover,
+.refresh-time-btn:hover {
+  background: #f8fafc;
+}
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 600px) {
+
+  .time-topbar {
+    width: 100%;
+    display: flex;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .time-back-btn,
+  .refresh-time-btn {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+    min-height: 52px;
+    padding: 0 12px;
+    white-space: nowrap;
+  }
+
+  .time-back-btn {
+    justify-content: center;
+  }
+
+  .refresh-time-btn {
+    justify-content: center;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================
+   CLIENT + PROJECT ACTIONS
+========================================== */
+
+.client-project-actions {
+  width: 92%;
+  box-sizing: border-box;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  gap: 12px;
+  margin-bottom:54px;
+  padding: 0 8px;
+}
+
+.time-client-btn,
+.time-project-btn {
+  box-sizing: border-box;
+
+  min-height: 52px;
+  padding: 0 28px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Client */
+.time-client-btn {
+  color: #7c3aed;
+  background: #faf5ff;
+  border: 1px solid #ddd6fe;
+}
+
+/* Project */
+.time-project-btn {
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 600px) {
+
+  .client-project-actions {
+    width: 96% !important;
+    max-width: 100% !important;
+
+    box-sizing: border-box;
+
+    display: flex !important;
+    flex-direction: row !important;
+
+    justify-content: flex-end !important;
+    align-items: center !important;
+
+    gap: 8px !important;
+
+    margin-top: 16px !important;
+    padding: 0 10px !important;
+
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+  }
+
+  .time-client-btn,
+  .time-project-btn {
+    flex: 0 1 auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+
+    min-height: 44px !important;
+    height: 44px !important;
+
+    padding: 0 13px !important;
+
+    font-size: 13px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    white-space: nowrap !important;
+  }
+
+  .time-client-btn svg,
+  .time-project-btn svg {
+    width: 17px !important;
+    height: 17px !important;
+
+    flex-shrink: 0;
+  }
+}
+
+
+/* ==========================================
+   VERY SMALL MOBILE
+========================================== */
+
+@media (max-width: 400px) {
+
+  .client-project-actions {
+    justify-content: flex-end !important;
+    gap: 6px !important;
+    padding: 0 6px !important;
+  }
+
+  .time-client-btn,
+  .time-project-btn {
+    height: 42px !important;
+    min-height: 42px !important;
+
+    padding: 0 10px !important;
+
+    font-size: 12px !important;
+  }
+
+  .time-client-btn svg,
+  .time-project-btn svg {
+    width: 16px !important;
+    height: 16px !important;
   }
 }
