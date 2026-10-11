@@ -1,16 +1,8 @@
-/* ==========================================
-   DASHBOARD PAGE
-========================================== */
 
 .dashboard-page {
   min-height: 100vh;
   background: #f1f5f9;
 }
-
-
-/* ==========================================
-   HEADER
-========================================== */
 
 .dashboard-header {
   width: 100%;
@@ -31,11 +23,6 @@
   gap: 20px;
 }
 
-
-/* ==========================================
-   BRAND
-========================================== */
-
 .dashboard-brand h1 {
   margin: 0;
 
@@ -54,10 +41,6 @@
 }
 
 
-/* ==========================================
-   HEADER RIGHT
-========================================== */
-
 .dashboard-header-right {
   display: flex;
   align-items: center;
@@ -65,9 +48,6 @@
 }
 
 
-/* ==========================================
-   TOP NAVIGATION
-========================================== */
 
 .dashboard-top-nav {
   display: flex;
@@ -101,9 +81,7 @@
 }
 
 
-/* ==========================================
-   USER AREA
-========================================== */
+
 
 .dashboard-user-area {
   display: flex;
@@ -134,10 +112,6 @@
   color: #64748b;
 }
 
-
-/* ==========================================
-   LOGOUT BUTTON
-========================================== */
 
 .dashboard-logout-btn {
   display: flex;
@@ -174,10 +148,6 @@
 }
 
 
-/* ==========================================
-   DASHBOARD LAYOUT
-========================================== */
-
 .dashboard-layout {
   display: flex;
 
@@ -186,10 +156,6 @@
   min-height: calc(100vh - 77px);
 }
 
-
-/* ==========================================
-   SIDEBAR
-========================================== */
 
 .dashboard-sidebar {
   width: 240px;
@@ -204,11 +170,6 @@
 
   box-sizing: border-box;
 }
-
-
-/* ==========================================
-   SIDEBAR TITLE
-========================================== */
 
 .dashboard-sidebar-title {
   padding: 0 14px 12px;
@@ -226,10 +187,6 @@
   color: #94a3b8;
 }
 
-
-/* ==========================================
-   SIDEBAR LINKS
-========================================== */
 
 .dashboard-sidebar-link {
   display: flex;
@@ -275,10 +232,6 @@
 }
 
 
-/* ==========================================
-   MAIN
-========================================== */
-
 .dashboard-main {
   flex: 1;
 
@@ -294,9 +247,6 @@
 }
 
 
-/* ==========================================
-   WELCOME
-========================================== */
 
 .dashboard-welcome {
   margin-bottom: 32px;
@@ -363,9 +313,6 @@
     0 8px 25px rgba(15, 23, 42, 0.08);
 }
 
-/* ==========================================
-   STAT ICON
-========================================== */
 
 .dashboard-stat-icon {
   width: 22px;
@@ -374,9 +321,7 @@
   flex-shrink: 0;
 }
 
-/* ==========================================
-   STAT TEXT
-========================================== */
+
 
 .dashboard-stat-label {
   margin: 0;
@@ -402,9 +347,7 @@
 }
 
 
-/* ==========================================
-   MANAGE BUTTONS CONTAINER
-========================================== */
+
 
 .dashboard-manage-buttons,
 .dashboard-manage-links {
@@ -419,10 +362,6 @@
   margin-top: 30px;
 }
 
-
-/* ==========================================
-   COMMON MANAGE BUTTON
-========================================== */
 
 .manage-clients-btn,
 .manage-projects-btn,
@@ -468,10 +407,6 @@
 }
 
 
-/* ==========================================
-   HOVER
-========================================== */
-
 .manage-clients-btn:hover,
 .manage-projects-btn:hover,
 .manage-tasks-btn:hover,
@@ -486,10 +421,6 @@
 }
 
 
-/* ==========================================
-   ACTIVE
-========================================== */
-
 .manage-clients-btn:active,
 .manage-projects-btn:active,
 .manage-tasks-btn:active,
@@ -502,9 +433,7 @@
 }
 
 
-/* ==========================================
-   TABLET
-========================================== */
+
 
 @media (max-width: 1100px) {
 
@@ -538,10 +467,6 @@
 }
 
 
-/* ==========================================
-   TABLET
-========================================== */
-
 @media (max-width: 900px) {
 
   .dashboard-stats {
@@ -563,9 +488,6 @@
 }
 
 
-/* ==========================================
-   MOBILE HEADER
-========================================== */
 
 @media (max-width: 760px) {
 
@@ -599,10 +521,6 @@
 
 }
 
-
-/* ==========================================
-   MOBILE SIDEBAR
-========================================== */
 
 @media (max-width: 640px) {
 
@@ -670,9 +588,7 @@
 }
 
 
-/* ==========================================
-   SMALL MOBILE
-========================================== */
+
 
 @media (max-width: 400px) {
 
@@ -712,9 +628,6 @@
 
 }
 
-/* ==========================================
-   SIDEBAR BOTTOM
-========================================== */
 
 .dashboard-sidebar {
   display: flex;
@@ -729,9 +642,7 @@
 }
 
 
-/* ==========================================
-   SIDEBAR LOGOUT
-========================================== */
+
 
 .dashboard-sidebar-logout {
   display: flex;
@@ -776,9 +687,7 @@
 }
 
 
-/* ==========================================
-   MOBILE SIDEBAR LOGOUT
-========================================== */
+
 
 @media (max-width: 640px) {
 
@@ -797,14 +706,7 @@
 
 
 
-/* =========================================================
-   DASHBOARD THEME
-   Layout/design unchanged
-   ========================================================= */
 
-/* -------------------------
-   LIGHT THEME
-------------------------- */
 
 :root {
   --dashboard-bg: #f1f5f9;
@@ -820,9 +722,7 @@
 }
 
 
-/* -------------------------
-   DARK THEME
-------------------------- */
+
 
 html[data-theme="dark"] {
   --dashboard-bg: #0f172a;
@@ -838,9 +738,7 @@ html[data-theme="dark"] {
 }
 
 
-/* =========================
-   PAGE
-========================= */
+
 
 html[data-theme="dark"] .dashboard-page {
   background: var(--dashboard-bg) !important;
@@ -848,9 +746,7 @@ html[data-theme="dark"] .dashboard-page {
 }
 
 
-/* =========================
-   HEADER
-========================= */
+
 
 html[data-theme="dark"] .dashboard-header {
   background: var(--dashboard-surface) !important;
@@ -866,9 +762,7 @@ html[data-theme="dark"] .dashboard-brand p {
 }
 
 
-/* =========================
-   TOP NAVIGATION
-========================= */
+
 
 html[data-theme="dark"] .dashboard-top-nav a {
   color: var(--dashboard-text-secondary) !important;
@@ -883,10 +777,6 @@ html[data-theme="dark"] .dashboard-top-nav a.active {
 }
 
 
-/* =========================
-   USER INFO
-========================= */
-
 html[data-theme="dark"] .dashboard-user-name {
   color: var(--dashboard-text) !important;
 }
@@ -896,9 +786,7 @@ html[data-theme="dark"] .dashboard-user-plan {
 }
 
 
-/* =========================
-   SIDEBAR
-========================= */
+
 
 html[data-theme="dark"] .dashboard-sidebar {
   background: var(--dashboard-surface) !important;
@@ -924,9 +812,6 @@ html[data-theme="dark"] .dashboard-sidebar-link.active {
 }
 
 
-/* =========================
-   SIDEBAR BOTTOM
-========================= */
 
 html[data-theme="dark"] .dashboard-sidebar-bottom {
   border-color: var(--dashboard-border) !important;
@@ -943,18 +828,14 @@ html[data-theme="dark"] .dashboard-sidebar-logout:hover {
 }
 
 
-/* =========================
-   MAIN
-========================= */
+
 
 html[data-theme="dark"] .dashboard-main {
   background: var(--dashboard-bg) !important;
 }
 
 
-/* =========================
-   WELCOME
-========================= */
+
 
 html[data-theme="dark"] .dashboard-welcome h2 {
   color: var(--dashboard-text) !important;
@@ -965,9 +846,7 @@ html[data-theme="dark"] .dashboard-welcome p {
 }
 
 
-/* =========================
-   STAT CARDS
-========================= */
+
 
 html[data-theme="dark"] .dashboard-stat-card {
   background: var(--dashboard-surface) !important;
@@ -991,9 +870,6 @@ html[data-theme="dark"] .dashboard-stat-value {
 }
 
 
-/* =========================
-   STAT ICONS
-========================= */
 
 html[data-theme="dark"] .clients-icon {
   color: #60a5fa !important;
@@ -1008,9 +884,6 @@ html[data-theme="dark"] .invoices-icon {
 }
 
 
-/* =========================
-   MANAGE BUTTONS
-========================= */
 
 html[data-theme="dark"] .manage-clients-btn,
 html[data-theme="dark"] .manage-projects-btn,
@@ -1028,12 +901,6 @@ html[data-theme="dark"] .manage-time-btn:hover,
 html[data-theme="dark"] .manage-invoices-btn:hover {
   background: var(--dashboard-button-hover) !important;
 }
-
-
-
-/* ==========================================
-   DAY 17 - FINANCIAL DASHBOARD
-========================================== */
 
 
 .dashboard-error {
@@ -1168,10 +1035,7 @@ html[data-theme="dark"] .manage-invoices-btn:hover {
 }
 
 
-/* =====================================================
-   DASHBOARD OVERVIEW
-   Recent Projects + Recent Invoices
-===================================================== */
+
 
 .dashboard-overview-grid {
   display: grid;
@@ -1225,116 +1089,403 @@ html[data-theme="dark"] .manage-invoices-btn:hover {
 }
 
 
-/* =====================================================
-   OVERVIEW LIST
-===================================================== */
 
-.dashboard-overview-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 
-.dashboard-overview-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 64px;
-  padding: 11px 12px;
-  border: 1px solid var(--dashboard-border, #e5e7eb);
-  border-radius: 10px;
-  background: var(--dashboard-item-bg, #f9fafb);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
-}
+/* =========================================================
+   REVENUE OVERVIEW
+========================================================= */
 
-.dashboard-overview-item:hover {
-  transform: translateY(-1px);
+.dashboard-financial-section {
+  width: 100%;
+  margin-top: 28px;
+  padding: 30px 34px;
   background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #dbe3ee;
+  border-radius: 18px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.dashboard-financial-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.dashboard-financial-header h3 {
+  margin: 0;
+  font-size: 25px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.dashboard-financial-header p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.dashboard-financial-total {
+  font-size: 30px;
+  font-weight: 700;
+  color: #16a34a;
+  white-space: nowrap;
 }
 
 
-/* =====================================================
-   ITEM ICON
-===================================================== */
+/* =========================================================
+   REVENUE CHART
+   NO HORIZONTAL LINES
+   NO GRID
+========================================================= */
 
-.dashboard-overview-item-icon {
-  width: 38px;
-  height: 38px;
-  min-width: 38px;
+.dashboard-revenue-chart {
+  width: 100%;
+  height: 390px;
+  margin-top: 20px;
+  position: relative;
+  overflow: hidden;
+
+  /* IMPORTANT */
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   EMPTY / LOADING
+========================================================= */
+
+.dashboard-revenue-empty {
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 9px;
-}
 
-.dashboard-overview-item-icon.project {
-  background: #eff6ff;
-  color: #2563eb;
-}
-
-.dashboard-overview-item-icon.invoice {
-  background: #f0fdf4;
-  color: #16a34a;
+  color: #64748b;
+  font-size: 16px;
 }
 
 
-/* =====================================================
-   ITEM CONTENT
-===================================================== */
+/* =========================================================
+   BAR CONTAINER
+========================================================= */
 
-.dashboard-overview-item-content {
+.dashboard-revenue-bars {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 18px;
+  padding: 20px 20px 0;
+
+  box-sizing: border-box;
+
+  /* IMPORTANT:
+     NO GRID / NO BACKGROUND LINES */
+  background: transparent;
+  background-image: none;
+
+  border: none;
+}
+
+
+/* =========================================================
+   EACH MONTH
+========================================================= */
+
+.dashboard-revenue-column {
   flex: 1;
   min-width: 0;
-}
+  height: 100%;
 
-.dashboard-overview-item-content h4 {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 650;
-  color: var(--dashboard-heading, #111827);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.dashboard-overview-item-content p {
-  margin: 4px 0 0;
-  font-size: 12px;
-  color: var(--dashboard-muted, #6b7280);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-
-/* =====================================================
-   ITEM RIGHT
-===================================================== */
-
-.dashboard-overview-item-right {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+
+  position: relative;
+}
+
+
+/* =========================================================
+   BAR WRAPPER
+========================================================= */
+
+.dashboard-revenue-bar-wrapper {
+  width: 58px;
+  height: calc(100% - 42px);
+
+  display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 5px;
-  flex-shrink: 0;
+
+  position: relative;
+
+  /* IMPORTANT */
+  background: transparent;
+  background-image: none;
+  border: none;
 }
 
-.dashboard-overview-item-right strong {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--dashboard-heading, #111827);
+
+/* =========================================================
+   BAR
+========================================================= */
+
+.dashboard-revenue-bar {
+  width: 100%;
+  min-height: 4px;
+
+  border-radius: 10px 10px 3px 3px;
+
+  transition:
+    height 0.5s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  cursor: pointer;
+
+  position: relative;
+  z-index: 2;
 }
 
-.dashboard-overview-item-right small {
-  font-size: 11px;
-  color: var(--dashboard-muted, #6b7280);
+
+/* Revenue available */
+
+.dashboard-revenue-bar.has-revenue {
+  background: linear-gradient(
+    180deg,
+    #3b82f6 0%,
+    #2563eb 100%
+  );
+
+  box-shadow:
+    0 8px 18px rgba(
+      37,
+      99,
+      235,
+      0.18
+    );
 }
 
+
+/* No revenue */
+
+.dashboard-revenue-bar.empty {
+  background: #334155;
+}
+
+
+/* Hover */
+
+.dashboard-revenue-bar:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 12px 24px rgba(
+      37,
+      99,
+      235,
+      0.28
+    );
+}
+
+
+/* =========================================================
+   MONTH LABEL
+========================================================= */
+
+.dashboard-revenue-month {
+  display: block;
+
+  margin-top: 14px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  color: #64748b;
+
+  text-align: center;
+
+  line-height: 20px;
+}
+
+
+/* =========================================================
+   TOOLTIP
+========================================================= */
+
+.dashboard-revenue-tooltip {
+  position: absolute;
+
+  bottom: calc(
+    100% - 5px
+  );
+
+  left: 50%;
+
+  transform:
+    translateX(-50%)
+    translateY(8px);
+
+  background: #0f172a;
+  color: #ffffff;
+
+  padding: 7px 11px;
+
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  opacity: 0;
+  visibility: hidden;
+
+  pointer-events: none;
+
+  z-index: 20;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.dashboard-revenue-column:hover
+.dashboard-revenue-tooltip {
+  opacity: 1;
+  visibility: visible;
+
+  transform:
+    translateX(-50%)
+    translateY(0);
+}
+
+
+/* =========================================================
+   REMOVE POSSIBLE GRID LINES
+========================================================= */
+
+.dashboard-revenue-chart::before,
+.dashboard-revenue-chart::after,
+.dashboard-revenue-bars::before,
+.dashboard-revenue-bars::after,
+.dashboard-revenue-bar-wrapper::before,
+.dashboard-revenue-bar-wrapper::after {
+  display: none !important;
+  content: none !important;
+
+  background: none !important;
+  background-image: none !important;
+
+  border: none !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .dashboard-financial-section {
+    padding: 24px 20px;
+  }
+
+  .dashboard-revenue-chart {
+    height: 330px;
+  }
+
+  .dashboard-revenue-bars {
+    gap: 10px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .dashboard-revenue-bar-wrapper {
+    width: 46px;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .dashboard-financial-section {
+    margin-top: 20px;
+    padding: 20px 14px;
+
+    border-radius: 14px;
+  }
+
+  .dashboard-financial-header {
+    align-items: flex-start;
+  }
+
+  .dashboard-financial-header h3 {
+    font-size: 21px;
+  }
+
+  .dashboard-financial-header p {
+    font-size: 13px;
+  }
+
+  .dashboard-financial-total {
+    font-size: 21px;
+  }
+
+  .dashboard-revenue-chart {
+    height: 280px;
+    margin-top: 15px;
+  }
+
+  .dashboard-revenue-bars {
+    gap: 5px;
+    padding: 15px 2px 0;
+  }
+
+  .dashboard-revenue-bar-wrapper {
+    width: 24px;
+    height: calc(100% - 38px);
+  }
+
+  .dashboard-revenue-month {
+    margin-top: 10px;
+    font-size: 11px;
+  }
+
+  .dashboard-revenue-tooltip {
+    font-size: 10px;
+    padding: 5px 7px;
+  }
+
+}
+
+
+@media (max-width: 400px) {
+
+  .dashboard-revenue-bars {
+    gap: 3px;
+  }
+
+  .dashboard-revenue-bar-wrapper {
+    width: 20px;
+  }
+
+  .dashboard-revenue-month {
+    font-size: 10px;
+  }
+
+}
 
 /* =====================================================
    STATUS
