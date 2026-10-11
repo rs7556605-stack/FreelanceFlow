@@ -53,6 +53,9 @@ const Dashboard = () => {
   const [upcomingDeadlines, setUpcomingDeadlines] =
     useState([]);
 
+  const [allProjects, setAllProjects] =
+    useState([]);
+
   const [loading, setLoading] =
     useState(true);
 
@@ -67,14 +70,14 @@ const Dashboard = () => {
     useState(false);
 
   // =========================================================
-  // VIEW ALL DEADLINES
+  // DEADLINES
   // =========================================================
 
   const [showAllDeadlines, setShowAllDeadlines] =
     useState(false);
 
   // =========================================================
-  // TODAY'S TASKS
+  // TASKS
   // =========================================================
 
   const [todaysTasks, setTodaysTasks] =
@@ -89,22 +92,17 @@ const Dashboard = () => {
   const [taskProject, setTaskProject] =
     useState("");
 
-const [customProjectName, setCustomProjectName] =
-  useState("");
-
+  const [customProjectName, setCustomProjectName] =
+    useState("");
 
   const [taskType, setTaskType] =
     useState("Update");
 
-
-    const [customTaskType, setCustomTaskType] =
-  useState("");
+  const [customTaskType, setCustomTaskType] =
+    useState("");
 
   const [taskError, setTaskError] =
     useState("");
-
-  const [allProjects, setAllProjects] =
-    useState([]);
 
   // =========================================================
   // TODAY KEY
@@ -113,22 +111,21 @@ const [customProjectName, setCustomProjectName] =
   const getTodayKey = () => {
     const now = new Date();
 
-    const year =
-      now.getFullYear();
+    const year = now.getFullYear();
 
-    const month =
-      String(now.getMonth() + 1)
-        .padStart(2, "0");
+    const month = String(
+      now.getMonth() + 1
+    ).padStart(2, "0");
 
-    const day =
-      String(now.getDate())
-        .padStart(2, "0");
+    const day = String(
+      now.getDate()
+    ).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
   };
 
   // =========================================================
-  // TASK LOCAL STORAGE KEY
+  // TASK STORAGE KEY
   // =========================================================
 
   const getTaskStorageKey = () => {
@@ -147,24 +144,25 @@ const [customProjectName, setCustomProjectName] =
 
   const readLocalTasks = () => {
     try {
-      const saved =
-        JSON.parse(
-          localStorage.getItem(
-            getTaskStorageKey()
-          ) || "[]"
-        );
+      const saved = JSON.parse(
+        localStorage.getItem(
+          getTaskStorageKey()
+        ) || "[]"
+      );
 
-      return Array.isArray(saved)
-        ? saved.filter(
-            (task) =>
-              task.date ===
-              getTodayKey()
-          )
-        : [];
-    } catch (storageError) {
+      if (!Array.isArray(saved)) {
+        return [];
+      }
+
+      return saved.filter(
+        (task) =>
+          task.date ===
+          getTodayKey()
+      );
+    } catch (err) {
       console.error(
         "Task storage error:",
-        storageError
+        err
       );
 
       return [];
@@ -175,7 +173,9 @@ const [customProjectName, setCustomProjectName] =
   // SAVE LOCAL TASKS
   // =========================================================
 
-  const saveLocalTasks = (tasks) => {
+  const saveLocalTasks = (
+    tasks
+  ) => {
     try {
       localStorage.setItem(
         getTaskStorageKey(),
@@ -187,10 +187,10 @@ const [customProjectName, setCustomProjectName] =
           )
         )
       );
-    } catch (storageError) {
+    } catch (err) {
       console.error(
         "Task save error:",
-        storageError
+        err
       );
     }
   };
@@ -233,7 +233,9 @@ const [customProjectName, setCustomProjectName] =
       "Other",
 
     completed:
-      Boolean(task.completed) ||
+      Boolean(
+        task.completed
+      ) ||
       String(
         task.status || ""
       ).toLowerCase() ===
@@ -249,7 +251,9 @@ const [customProjectName, setCustomProjectName] =
   // =========================================================
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     setTodaysTasks(
       readLocalTasks()
@@ -290,7 +294,7 @@ const [customProjectName, setCustomProjectName] =
           }
         } catch (err) {
           console.warn(
-            "Could not load all projects:",
+            "Could not load projects:",
             err
           );
         }
@@ -299,146 +303,121 @@ const [customProjectName, setCustomProjectName] =
     fetchProjects();
   }, []);
 
-
-
-
   // =========================================================
-// ADD TASK
-// =========================================================
+  // ADD TASK
+  // =========================================================
 
-const addTask = () => {
-  const trimmedName = taskName.trim();
+  const addTask = () => {
+    const trimmedName =
+      taskName.trim();
 
-  if (!trimmedName) {
-    setTaskError("Please enter a task name.");
-    return;
-  }
+    if (!trimmedName) {
+      setTaskError(
+        "Please enter a task name."
+      );
+      return;
+    }
 
-  // =======================================================
-  // CUSTOM PROJECT VALIDATION
-  // =======================================================
+    if (
+      taskProject ===
+        "__OTHER_PROJECT__" &&
+      !customProjectName.trim()
+    ) {
+      setTaskError(
+        "Please enter a custom project name."
+      );
+      return;
+    }
 
-  if (
-    taskProject === "__OTHER_PROJECT__" &&
-    !customProjectName.trim()
-  ) {
-    setTaskError("Please enter a custom project name.");
-    return;
-  }
+    if (
+      taskType === "Other" &&
+      !customTaskType.trim()
+    ) {
+      setTaskError(
+        "Please enter a custom task type."
+      );
+      return;
+    }
 
-  // =======================================================
-  // CUSTOM TASK TYPE VALIDATION
-  // =======================================================
+    const selectedProject =
+      projectOptions.find(
+        (project) =>
+          String(
+            project.id
+          ) ===
+          String(
+            taskProject
+          )
+      );
 
-  if (
-    taskType === "Other" &&
-    !customTaskType.trim()
-  ) {
-    setTaskError("Please enter a custom task type.");
-    return;
-  }
+    const finalProjectName =
+      taskProject ===
+      "__OTHER_PROJECT__"
+        ? customProjectName.trim()
+        : selectedProject?.name ||
+          "No Project";
 
-  // =======================================================
-  // SELECTED NORMAL PROJECT
-  // =======================================================
+    const finalProjectId =
+      taskProject ===
+      "__OTHER_PROJECT__"
+        ? ""
+        : selectedProject?.id ||
+          "";
 
-  const selectedProject =
-    projectOptions.find(
-      (project) =>
-        String(project.id) ===
-        String(taskProject)
-    );
-
-  // =======================================================
-  // PROJECT NAME
-  // =======================================================
-
-  const finalProjectName =
-    taskProject === "__OTHER_PROJECT__"
-      ? customProjectName.trim()
-      : selectedProject?.name || "No Project";
-
-  // =======================================================
-  // PROJECT ID
-  // =======================================================
-
-  const finalProjectId =
-    taskProject === "__OTHER_PROJECT__"
-      ? ""
-      : selectedProject?.id || "";
-
-  // =======================================================
-  // TASK TYPE
-  // =======================================================
-
-  const finalTaskType =
-    taskType === "Other"
-      ? customTaskType.trim()
-      : taskType;
-
-  // =======================================================
-  // CREATE TASK
-  // =======================================================
-
-  const newTask = {
-    id: `task-${Date.now()}`,
-
-    name: trimmedName,
-
-    projectId: finalProjectId,
-
-    projectName: finalProjectName,
-
-    type: taskType,
-
-    customType:
+    const finalTaskType =
       taskType === "Other"
         ? customTaskType.trim()
-        : "",
+        : taskType;
 
-    displayType: finalTaskType,
+    const newTask = {
+      id: `task-${Date.now()}`,
 
-    completed: false,
+      name: trimmedName,
 
-    date: getTodayKey(),
+      projectId:
+        finalProjectId,
 
-    createdAt:
-      new Date().toISOString(),
+      projectName:
+        finalProjectName,
+
+      type:
+        finalTaskType,
+
+      displayType:
+        finalTaskType,
+
+      completed: false,
+
+      date: getTodayKey(),
+
+      createdAt:
+        new Date().toISOString(),
+    };
+
+    const updatedTasks = [
+      newTask,
+      ...todaysTasks,
+    ];
+
+    setTodaysTasks(
+      updatedTasks
+    );
+
+    saveLocalTasks(
+      updatedTasks
+    );
+
+    setTaskName("");
+    setTaskProject("");
+    setCustomProjectName("");
+    setTaskType("Update");
+    setCustomTaskType("");
+    setTaskError("");
+    setTaskFormOpen(false);
   };
 
-  // =======================================================
-  // UPDATE TASK LIST
-  // =======================================================
-
-  const updatedTasks = [
-    newTask,
-    ...todaysTasks,
-  ];
-
-  setTodaysTasks(updatedTasks);
-
-  saveLocalTasks(updatedTasks);
-
-  // =======================================================
-  // RESET FORM
-  // =======================================================
-
-  setTaskName("");
-
-  setTaskProject("");
-
-  setCustomProjectName("");
-
-  setTaskType("Update");
-
-  setCustomTaskType("");
-
-  setTaskError("");
-
-  setTaskFormOpen(false);
-};
   // =========================================================
-  // COMPLETE / UNCOMPLETE TASK
+  // TOGGLE TASK
   // =========================================================
 
   const toggleTask = (
@@ -447,7 +426,9 @@ const addTask = () => {
     const updatedTasks =
       todaysTasks.map(
         (task) =>
-          String(task.id) ===
+          String(
+            task.id
+          ) ===
           String(taskId)
             ? {
                 ...task,
@@ -476,7 +457,9 @@ const addTask = () => {
     const updatedTasks =
       todaysTasks.filter(
         (task) =>
-          String(task.id) !==
+          String(
+            task.id
+          ) !==
           String(taskId)
       );
 
@@ -490,116 +473,706 @@ const addTask = () => {
   };
 
   // =========================================================
-  // FETCH DASHBOARD DATA
+  // FETCH DASHBOARD
   // =========================================================
 
   useEffect(() => {
-    const fetchDashboardData =
+    const fetchDashboard =
       async () => {
         try {
           setLoading(true);
-
           setError("");
 
-          const response =
-            await API.get(
-              "/dashboard/summary"
-            );
+          const [
+            dashboardResult,
+            clientsResult,
+            projectsResult,
+            invoicesResult,
+          ] =
+            await Promise.allSettled([
+              API.get(
+                "/dashboard/summary"
+              ),
+
+              API.get(
+                "/clients"
+              ),
+
+              API.get(
+                "/projects"
+              ),
+
+              API.get(
+                "/invoices"
+              ),
+            ]);
+
+          // =================================================
+          // SUMMARY
+          // =================================================
+
+          let summaryData = {};
+          let summaryResponseData =
+            {};
 
           if (
-            response.data?.success
+            dashboardResult.status ===
+            "fulfilled"
           ) {
-            setDashboardData(
-              response.data.stats || {
-                totalClients: 0,
-                activeProjects: 0,
-                completedProjects: 0,
-                pendingInvoiceCount: 0,
-                paidInvoiceCount: 0,
-                totalRevenue: 0,
-                outstandingAmount: 0,
+            summaryResponseData =
+              dashboardResult
+                .value?.data ||
+              {};
+
+            summaryData =
+              summaryResponseData
+                .stats ||
+              {};
+          }
+
+          // =================================================
+          // LIST HELPER
+          // =================================================
+
+          const getList = (
+            result,
+            keys
+          ) => {
+            if (
+              result.status !==
+              "fulfilled"
+            ) {
+              return [];
+            }
+
+            const data =
+              result.value?.data;
+
+            for (
+              const key of keys
+            ) {
+              if (
+                Array.isArray(
+                  data?.[key]
+                )
+              ) {
+                return data[key];
+              }
+            }
+
+            if (
+              Array.isArray(
+                data
+              )
+            ) {
+              return data;
+            }
+
+            return [];
+          };
+
+          // =================================================
+          // CLIENTS
+          // =================================================
+
+          const clients =
+            getList(
+              clientsResult,
+              [
+                "clients",
+                "data",
+              ]
+            );
+
+          // =================================================
+          // PROJECTS
+          // =================================================
+
+          const projects =
+            getList(
+              projectsResult,
+              [
+                "projects",
+                "data",
+              ]
+            );
+
+          // =================================================
+          // INVOICES
+          // =================================================
+
+          const invoices =
+            getList(
+              invoicesResult,
+              [
+                "invoices",
+                "data",
+              ]
+            );
+
+          console.log(
+            "Dashboard Clients:",
+            clients
+          );
+
+          console.log(
+            "Dashboard Projects:",
+            projects
+          );
+
+          console.log(
+            "Dashboard Invoices:",
+            invoices
+          );
+
+          // =================================================
+          // CLIENT COUNT
+          // =================================================
+
+          const totalClients =
+            clients.length >
+            0
+              ? clients.length
+              : Number(
+                  summaryData.totalClients ||
+                    0
+                );
+
+          // =================================================
+          // PROJECT STATUS
+          // =================================================
+
+          const completedProjects =
+            projects.filter(
+              (project) => {
+                const status =
+                  String(
+                    project?.status ||
+                      project?.projectStatus ||
+                      project?.state ||
+                      ""
+                  )
+                    .trim()
+                    .toLowerCase();
+
+                return [
+                  "completed",
+                  "complete",
+                  "done",
+                  "finished",
+                ].includes(
+                  status
+                );
+              }
+            ).length;
+
+          const activeProjects =
+            projects.length >
+            0
+              ? Math.max(
+                  projects.length -
+                    completedProjects,
+                  0
+                )
+              : Number(
+                  summaryData.activeProjects ||
+                    0
+                );
+
+          // =================================================
+          // RECENT PROJECTS
+          // =================================================
+
+          const sortedProjects =
+            [
+              ...projects,
+            ].sort(
+              (a, b) => {
+                const dateA =
+                  new Date(
+                    a?.createdAt ||
+                      a?.updatedAt ||
+                      0
+                  ).getTime();
+
+                const dateB =
+                  new Date(
+                    b?.createdAt ||
+                      b?.updatedAt ||
+                      0
+                  ).getTime();
+
+                return (
+                  dateB -
+                  dateA
+                );
               }
             );
 
-            setRevenueByMonth(
-              response.data
-                .revenueByMonth ||
-                []
+          const recentProjectsData =
+            sortedProjects.length >
+            0
+              ? sortedProjects.slice(
+                  0,
+                  5
+                )
+              : Array.isArray(
+                  summaryData.recentProjects
+                )
+              ? summaryData.recentProjects
+              : [];
+
+          // =================================================
+          // RECENT INVOICES
+          // =================================================
+
+          const sortedInvoices =
+            [
+              ...invoices,
+            ].sort(
+              (a, b) => {
+                const dateA =
+                  new Date(
+                    a?.createdAt ||
+                      a?.invoiceDate ||
+                      a?.updatedAt ||
+                      0
+                  ).getTime();
+
+                const dateB =
+                  new Date(
+                    b?.createdAt ||
+                      b?.invoiceDate ||
+                      b?.updatedAt ||
+                      0
+                  ).getTime();
+
+                return (
+                  dateB -
+                  dateA
+                );
+              }
             );
 
-            setRecentProjects(
-              response.data
-                .recentProjects ||
-                []
+          const recentInvoicesData =
+            sortedInvoices.length >
+            0
+              ? sortedInvoices.slice(
+                  0,
+                  5
+                )
+              : Array.isArray(
+                  summaryData.recentInvoices
+                )
+              ? summaryData.recentInvoices
+              : [];
+
+          // =================================================
+          // INVOICE HELPERS
+          // =================================================
+
+          const getInvoiceStatus =
+            (invoice) =>
+              String(
+                invoice?.status ||
+                  ""
+              )
+                .trim()
+                .toLowerCase();
+
+          const isPending =
+            (invoice) => {
+              const status =
+                getInvoiceStatus(
+                  invoice
+                );
+
+              return [
+                "pending",
+                "unpaid",
+                "due",
+                "overdue",
+              ].includes(
+                status
+              );
+            };
+
+          const isPaid =
+            (invoice) => {
+              const status =
+                getInvoiceStatus(
+                  invoice
+                );
+
+              return [
+                "paid",
+                "payment received",
+                "payment_received",
+              ].includes(
+                status
+              );
+            };
+
+          const invoiceAmount =
+            (invoice) =>
+              Number(
+                invoice?.total ??
+                  invoice?.amount ??
+                  invoice?.grandTotal ??
+                  0
+              );
+
+          // =================================================
+          // INVOICE COUNTS
+          // =================================================
+
+          let pendingInvoiceCount =
+            Number(
+              summaryData.pendingInvoiceCount ||
+                0
             );
 
-            setRecentInvoices(
-              response.data
-                .recentInvoices ||
-                []
+          let paidInvoiceCount =
+            Number(
+              summaryData.paidInvoiceCount ||
+                0
             );
+
+          let totalRevenue =
+            Number(
+              summaryData.totalRevenue ||
+                0
+            );
+
+          let outstandingAmount =
+            Number(
+              summaryData.outstandingAmount ||
+                0
+            );
+
+          // =================================================
+          // CALCULATE FROM ACTUAL INVOICES
+          // =================================================
+
+          if (
+            invoices.length >
+            0
+          ) {
+            pendingInvoiceCount =
+              invoices.filter(
+                isPending
+              ).length;
+
+            paidInvoiceCount =
+              invoices.filter(
+                isPaid
+              ).length;
+
+            totalRevenue =
+              invoices
+                .filter(
+                  isPaid
+                )
+                .reduce(
+                  (
+                    total,
+                    invoice
+                  ) =>
+                    total +
+                    invoiceAmount(
+                      invoice
+                    ),
+                  0
+                );
+
+            outstandingAmount =
+              invoices
+                .filter(
+                  isPending
+                )
+                .reduce(
+                  (
+                    total,
+                    invoice
+                  ) =>
+                    total +
+                    invoiceAmount(
+                      invoice
+                    ),
+                  0
+                );
+          }
+
+          // =================================================
+          // MONTHLY REVENUE CHART
+          // =================================================
+
+          const currentYear =
+            new Date().getFullYear();
+
+          const monthNames = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
+
+          const monthlyRevenue =
+            monthNames.map(
+              (
+                month,
+                monthIndex
+              ) => ({
+                month,
+                monthIndex,
+                revenue: 0,
+              })
+            );
+
+          invoices.forEach(
+            (invoice) => {
+              if (
+                !isPaid(
+                  invoice
+                )
+              ) {
+                return;
+              }
+
+              const invoiceDate =
+                invoice?.invoiceDate ||
+                invoice?.createdAt ||
+                invoice?.updatedAt;
+
+              if (
+                !invoiceDate
+              ) {
+                return;
+              }
+
+              const date =
+                new Date(
+                  invoiceDate
+                );
+
+              if (
+                Number.isNaN(
+                  date.getTime()
+                )
+              ) {
+                return;
+              }
+
+              if (
+                date.getFullYear() !==
+                currentYear
+              ) {
+                return;
+              }
+
+              const amount =
+                invoiceAmount(
+                  invoice
+                );
+
+              if (
+                Number.isNaN(
+                  amount
+                )
+              ) {
+                return;
+              }
+
+              monthlyRevenue[
+                date.getMonth()
+              ].revenue +=
+                amount;
+            }
+          );
+
+          setRevenueByMonth(
+            monthlyRevenue
+          );
+
+          console.log(
+            "Monthly Revenue:",
+            monthlyRevenue
+          );
+
+          // =================================================
+          // SET DASHBOARD
+          // =================================================
+
+          setDashboardData({
+            totalClients,
+
+            activeProjects,
+
+            completedProjects,
+
+            pendingInvoiceCount,
+
+            paidInvoiceCount,
+
+            totalRevenue,
+
+            outstandingAmount,
+          });
+
+          // =================================================
+          // RECENT PROJECTS
+          // =================================================
+
+          setRecentProjects(
+            recentProjectsData
+          );
+
+          // =================================================
+          // RECENT INVOICES
+          // =================================================
+
+          setRecentInvoices(
+            recentInvoicesData
+          );
+
+          // =================================================
+          // UPCOMING DEADLINES
+          // =================================================
+
+          const summaryDeadlines =
+            summaryResponseData
+              ?.upcomingDeadlines;
+
+          if (
+            Array.isArray(
+              summaryDeadlines
+            ) &&
+            summaryDeadlines.length >
+              0
+          ) {
+            setUpcomingDeadlines(
+              summaryDeadlines
+            );
+          } else {
+            const projectDeadlines =
+              projects
+                .filter(
+                  (project) =>
+                    project?.deadline
+                )
+                .sort(
+                  (a, b) =>
+                    new Date(
+                      a.deadline
+                    ) -
+                    new Date(
+                      b.deadline
+                    )
+                )
+                .slice(
+                  0,
+                  5
+                )
+                .map(
+                  (project) => ({
+                    _id:
+                      project?._id ||
+                      project?.id,
+
+                    type:
+                      "Project",
+
+                    title:
+                      project?.name ||
+                      project?.title ||
+                      "Untitled Project",
+
+                    clientName:
+                      project
+                        ?.client
+                        ?.name ||
+                      project?.clientName ||
+                      "No client",
+
+                    projectName:
+                      project?.name ||
+                      project?.title ||
+                      "Untitled Project",
+
+                    date:
+                      project.deadline,
+                  })
+                );
 
             setUpcomingDeadlines(
-              response.data
-                .upcomingDeadlines ||
-                []
-            );
-
-            // ==========================================
-            // SERVER TASKS
-            // ==========================================
-
-            const serverTasks =
-              Array.isArray(
-                response.data
-                  .todaysTasks
-              )
-                ? response.data
-                    .todaysTasks
-                    .map(
-                      (
-                        task,
-                        index
-                      ) =>
-                        normalizeTask(
-                          task,
-                          index
-                        )
-                    )
-                : [];
-
-            // ==========================================
-            // LOCAL TASKS
-            // ==========================================
-
-            const localTasks =
-              readLocalTasks();
-
-            // ==========================================
-            // COMBINE TASKS
-            // ==========================================
-
-            const combinedTasks = [
-              ...localTasks,
-
-              ...serverTasks.filter(
-                (serverTask) =>
-                  !localTasks.some(
-                    (localTask) =>
-                      String(
-                        localTask.id
-                      ) ===
-                      String(
-                        serverTask.id
-                      )
-                  )
-              ),
-            ];
-
-            setTodaysTasks(
-              combinedTasks
+              projectDeadlines
             );
           }
+
+          // =================================================
+          // SERVER TASKS
+          // =================================================
+
+          const serverTaskList =
+            Array.isArray(
+              summaryResponseData
+                ?.todaysTasks
+            )
+              ? summaryResponseData
+                  .todaysTasks
+              : [];
+
+          const serverTasks =
+            serverTaskList.map(
+              (
+                task,
+                index
+              ) =>
+                normalizeTask(
+                  task,
+                  index
+                )
+            );
+
+          // =================================================
+          // LOCAL TASKS
+          // =================================================
+
+          const localTasks =
+            readLocalTasks();
+
+          // =================================================
+          // COMBINE
+          // =================================================
+
+          const combinedTasks = [
+            ...localTasks,
+
+            ...serverTasks.filter(
+              (serverTask) =>
+                !localTasks.some(
+                  (localTask) =>
+                    String(
+                      localTask.id
+                    ) ===
+                    String(
+                      serverTask.id
+                    )
+                )
+            ),
+          ];
+
+          setTodaysTasks(
+            combinedTasks
+          );
         } catch (err) {
           console.error(
             "Dashboard Error:",
@@ -629,7 +1202,7 @@ const addTask = () => {
         }
       };
 
-    fetchDashboardData();
+    fetchDashboard();
   }, [logout]);
 
   // =========================================================
@@ -642,7 +1215,11 @@ const addTask = () => {
     return `₹${Number(
       amount || 0
     ).toLocaleString(
-      "en-IN"
+      "en-IN",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }
     )}`;
   };
 
@@ -669,67 +1246,100 @@ const addTask = () => {
     );
   };
 
-  // ==========================================
-// DEADLINE DAYS LEFT
-// ==========================================
-
-const getDaysLeft = (date) => {
-  if (!date) {
-    return {
-      text: "No date",
-      className: "normal",
-    };
-  }
-
-  const today = new Date();
-  const deadline = new Date(date);
-
-  today.setHours(0, 0, 0, 0);
-  deadline.setHours(0, 0, 0, 0);
-
-  const difference =
-    deadline.getTime() - today.getTime();
-
-  const daysLeft = Math.ceil(
-    difference / (1000 * 60 * 60 * 24)
-  );
-
-  // Overdue
-  if (daysLeft < 0) {
-    const overdueDays = Math.abs(daysLeft);
-
-    return {
-      text: `🔴 ${overdueDays} ${
-        overdueDays === 1 ? "day" : "days"
-      } overdue`,
-      className: "overdue",
-    };
-  }
-
-  // Today
-  if (daysLeft === 0) {
-    return {
-      text: "⚠️ Due today",
-      className: "today",
-    };
-  }
-
-  // Tomorrow
-  if (daysLeft === 2) {
-    return {
-      text: "⚠️ 2 day left",
-      className: "urgent",
-    };
-  }
-
-  // Future
-  return {
-    text: `🟢 ${daysLeft} days left`,
-    className: "normal",
-  };
-};
   // =========================================================
-  // TASK PROJECT OPTIONS
+  // DAYS LEFT
+  // =========================================================
+
+  const getDaysLeft = (
+    date
+  ) => {
+    if (!date) {
+      return {
+        text: "No date",
+        className: "normal",
+      };
+    }
+
+    const today =
+      new Date();
+
+    const deadline =
+      new Date(date);
+
+    today.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+    deadline.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+    const difference =
+      deadline.getTime() -
+      today.getTime();
+
+    const daysLeft =
+      Math.ceil(
+        difference /
+          (1000 *
+            60 *
+            60 *
+            24)
+      );
+
+    if (
+      daysLeft < 0
+    ) {
+      const overdueDays =
+        Math.abs(
+          daysLeft
+        );
+
+      return {
+        text: `🔴 ${overdueDays} ${
+          overdueDays === 1
+            ? "day"
+            : "days"
+        } overdue`,
+
+        className:
+          "overdue",
+      };
+    }
+
+    if (
+      daysLeft === 0
+    ) {
+      return {
+        text: "⚠️ Due today",
+        className: "today",
+      };
+    }
+
+    if (
+      daysLeft === 1
+    ) {
+      return {
+        text: "⚠️ Tomorrow",
+        className: "urgent",
+      };
+    }
+
+    return {
+      text: `🟢 ${daysLeft} days left`,
+      className:
+        "normal",
+    };
+  };
+
+  // =========================================================
+  // PROJECT OPTIONS
   // =========================================================
 
   const projectOptions =
@@ -775,27 +1385,14 @@ const getDaysLeft = (date) => {
     })();
 
   // =========================================================
-  // REAL PROJECT STATISTICS
+  // PROJECT STATISTICS
   // =========================================================
-
-  /*
-    IMPORTANT:
-
-    Dashboard summary ka completedProjects
-    kabhi-kabhi 0 aa sakta hai.
-
-    Isliye actual /projects list se status
-    check karke count calculate kar rahe hain.
-  */
 
   const projectStatsSource =
-    allProjects.length > 0
+    allProjects.length >
+    0
       ? allProjects
       : recentProjects;
-
-  // =========================================================
-  // TOTAL PROJECTS
-  // =========================================================
 
   const actualTotalProjects =
     projectStatsSource.length >
@@ -809,10 +1406,6 @@ const getDaysLeft = (date) => {
           dashboardData.completedProjects ||
             0
         );
-
-  // =========================================================
-  // COMPLETED PROJECTS
-  // =========================================================
 
   const actualCompletedProjects =
     projectStatsSource.length >
@@ -829,15 +1422,13 @@ const getDaysLeft = (date) => {
                 .trim()
                 .toLowerCase();
 
-            return (
-              status ===
-                "completed" ||
-              status ===
-                "complete" ||
-              status ===
-                "done" ||
-              status ===
-                "finished"
+            return [
+              "completed",
+              "complete",
+              "done",
+              "finished",
+            ].includes(
+              status
             );
           }
         ).length
@@ -846,20 +1437,12 @@ const getDaysLeft = (date) => {
             0
         );
 
-  // =========================================================
-  // ACTIVE PROJECTS
-  // =========================================================
-
   const actualActiveProjects =
     Math.max(
       actualTotalProjects -
         actualCompletedProjects,
       0
     );
-
-  // =========================================================
-  // PROJECT COMPLETION %
-  // =========================================================
 
   const projectCompletionPercentage =
     actualTotalProjects >
@@ -872,7 +1455,7 @@ const getDaysLeft = (date) => {
       : 0;
 
   // =========================================================
-  // MAX REVENUE
+  // REVENUE CHART MAX
   // =========================================================
 
   const maxRevenue =
@@ -923,8 +1506,6 @@ const getDaysLeft = (date) => {
 
           <div className="dashboard-header-right">
 
-            {/* MOBILE MENU */}
-
             <button
               type="button"
               className="dashboard-menu-toggle"
@@ -934,10 +1515,6 @@ const getDaysLeft = (date) => {
                     !prev
                 )
               }
-              aria-label="Toggle sidebar"
-              aria-expanded={
-                sidebarOpen
-              }
             >
               {sidebarOpen ? (
                 <X size={22} />
@@ -946,13 +1523,10 @@ const getDaysLeft = (date) => {
               )}
             </button>
 
-            {/* TOP NAV */}
-
             <nav className="dashboard-top-nav">
 
               <Link to="/">
                 <Home size={17} />
-
                 <span>
                   Home
                 </span>
@@ -962,7 +1536,6 @@ const getDaysLeft = (date) => {
                 <UserRound
                   size={17}
                 />
-
                 <span>
                   About Me
                 </span>
@@ -970,7 +1543,6 @@ const getDaysLeft = (date) => {
 
               <Link to="/contact">
                 <Mail size={17} />
-
                 <span>
                   Contact
                 </span>
@@ -978,14 +1550,14 @@ const getDaysLeft = (date) => {
 
             </nav>
 
-            {/* USER */}
-
             <div className="dashboard-user-area">
 
               <div className="dashboard-user-info">
 
                 <p className="dashboard-user-name">
-                  {user?.name}
+                  {user?.name ||
+                    user?.username ||
+                    "User"}
                 </p>
 
                 <p className="dashboard-user-plan">
@@ -1005,7 +1577,7 @@ const getDaysLeft = (date) => {
       </header>
 
       {/* =====================================================
-          DASHBOARD LAYOUT
+          LAYOUT
       ===================================================== */}
 
       <div className="dashboard-layout">
@@ -1023,14 +1595,10 @@ const getDaysLeft = (date) => {
         >
 
           <div className="dashboard-sidebar-title">
-
             <span>
               Workspace
             </span>
-
           </div>
-
-          {/* DASHBOARD */}
 
           <NavLink
             to="/"
@@ -1047,7 +1615,6 @@ const getDaysLeft = (date) => {
               }`
             }
           >
-
             <LayoutDashboard
               size={18}
             />
@@ -1055,10 +1622,7 @@ const getDaysLeft = (date) => {
             <span>
               Dashboard
             </span>
-
           </NavLink>
-
-          {/* CLIENTS */}
 
           <NavLink
             to="/clients"
@@ -1075,16 +1639,12 @@ const getDaysLeft = (date) => {
               }`
             }
           >
-
             <Users size={18} />
 
             <span>
               Clients
             </span>
-
           </NavLink>
-
-          {/* PROJECTS */}
 
           <NavLink
             to="/projects"
@@ -1101,7 +1661,6 @@ const getDaysLeft = (date) => {
               }`
             }
           >
-
             <FolderKanban
               size={18}
             />
@@ -1109,10 +1668,7 @@ const getDaysLeft = (date) => {
             <span>
               Projects
             </span>
-
           </NavLink>
-
-          {/* TASKS */}
 
           <NavLink
             to="/tasks"
@@ -1129,7 +1685,6 @@ const getDaysLeft = (date) => {
               }`
             }
           >
-
             <CheckSquare
               size={18}
             />
@@ -1137,10 +1692,7 @@ const getDaysLeft = (date) => {
             <span>
               Tasks
             </span>
-
           </NavLink>
-
-          {/* TIME */}
 
           <NavLink
             to="/time"
@@ -1157,16 +1709,12 @@ const getDaysLeft = (date) => {
               }`
             }
           >
-
             <Clock3 size={18} />
 
             <span>
               Time Tracking
             </span>
-
           </NavLink>
-
-          {/* INVOICES */}
 
           <NavLink
             to="/invoices"
@@ -1183,16 +1731,12 @@ const getDaysLeft = (date) => {
               }`
             }
           >
-
             <Receipt size={18} />
 
             <span>
               Invoices
             </span>
-
           </NavLink>
-
-          {/* SIDEBAR BOTTOM */}
 
           <div className="dashboard-sidebar-bottom">
 
@@ -1204,7 +1748,6 @@ const getDaysLeft = (date) => {
               }}
               className="dashboard-sidebar-logout"
             >
-
               <LogOut
                 size={18}
               />
@@ -1212,7 +1755,6 @@ const getDaysLeft = (date) => {
               <span>
                 Logout
               </span>
-
             </button>
 
             <NavLink
@@ -1230,7 +1772,6 @@ const getDaysLeft = (date) => {
                 }`
               }
             >
-
               <Settings
                 size={18}
               />
@@ -1238,14 +1779,11 @@ const getDaysLeft = (date) => {
               <span>
                 Settings
               </span>
-
             </NavLink>
 
           </div>
 
         </aside>
-
-        {/* MOBILE OVERLAY */}
 
         {sidebarOpen && (
           <div
@@ -1253,7 +1791,6 @@ const getDaysLeft = (date) => {
             onClick={
               closeSidebar
             }
-            aria-hidden="true"
           />
         )}
 
@@ -1263,7 +1800,9 @@ const getDaysLeft = (date) => {
 
         <main className="dashboard-main">
 
-          {/* WELCOME */}
+          {/* =================================================
+              WELCOME
+          ================================================= */}
 
           <div className="dashboard-welcome">
 
@@ -1273,12 +1812,13 @@ const getDaysLeft = (date) => {
 
             <p>
               Welcome back,{" "}
-              {user?.name}.
+              {user?.name ||
+                user?.username ||
+                "User"}
+              .
             </p>
 
           </div>
-
-          {/* ERROR */}
 
           {error && (
             <div className="dashboard-error">
@@ -1292,7 +1832,7 @@ const getDaysLeft = (date) => {
 
           <div className="dashboard-stats">
 
-            {/* TOTAL CLIENTS */}
+            {/* CLIENTS */}
 
             <div className="dashboard-stat-card">
 
@@ -1328,19 +1868,15 @@ const getDaysLeft = (date) => {
 
             </div>
 
-            {/* =================================================
-                COMPLETED PROJECTS
-            ================================================= */}
+            {/* COMPLETED PROJECTS */}
 
-            <div className="dashboard-stat-card completed-project-card">
+            <div className="dashboard-stat-card">
 
               <CheckSquare className="dashboard-stat-icon completed-icon" />
 
               <p className="dashboard-stat-label">
                 Completed Projects
               </p>
-
-              {/* COMPLETED COUNT */}
 
               <h3 className="dashboard-stat-value">
                 {loading
@@ -1350,25 +1886,28 @@ const getDaysLeft = (date) => {
 
               {!loading && (
                 <>
-
-                  {/* COUNT + PERCENTAGE */}
-
                   <div className="project-completion-info">
 
                     <span>
-                      {actualCompletedProjects}{" "}
+                      {
+                        actualCompletedProjects
+                      }{" "}
                       of{" "}
-                      {actualTotalProjects}{" "}
-                      projects:-
+                      {
+                        actualTotalProjects
+                      }{" "}
+                      projects
                     </span>
 
                     <strong>
-                      ({projectCompletionPercentage}%)
+                      (
+                      {
+                        projectCompletionPercentage
+                      }
+                      %)
                     </strong>
 
                   </div>
-
-                  {/* PROGRESS BAR */}
 
                   <div className="project-completion-bar">
 
@@ -1380,13 +1919,12 @@ const getDaysLeft = (date) => {
                     />
 
                   </div>
-
                 </>
               )}
 
             </div>
 
-            {/* PENDING INVOICES */}
+            {/* PENDING */}
 
             <div className="dashboard-stat-card">
 
@@ -1406,23 +1944,20 @@ const getDaysLeft = (date) => {
 
               {!loading && (
                 <small className="dashboard-stat-extra">
-
                   {
                     dashboardData.pendingInvoiceCount
                   }{" "}
-
                   invoice
                   {dashboardData.pendingInvoiceCount !==
                   1
                     ? "s"
                     : ""}
-
                 </small>
               )}
 
             </div>
 
-            {/* TOTAL REVENUE */}
+            {/* REVENUE */}
 
             <div className="dashboard-stat-card">
 
@@ -1442,17 +1977,14 @@ const getDaysLeft = (date) => {
 
               {!loading && (
                 <small className="dashboard-stat-extra">
-
                   {
                     dashboardData.paidInvoiceCount
                   }{" "}
-
                   paid invoice
                   {dashboardData.paidInvoiceCount !==
                   1
                     ? "s"
                     : ""}
-
                 </small>
               )}
 
@@ -1481,7 +2013,7 @@ const getDaysLeft = (date) => {
           </div>
 
           {/* =================================================
-              TODAY'S TASKS
+              TODAY TASKS
           ================================================= */}
 
           <section className="dashboard-todays-tasks-card">
@@ -1541,23 +2073,22 @@ const getDaysLeft = (date) => {
 
                 <div className="dashboard-task-form-grid">
 
-                  {/* TASK NAME */}
-
                   <div className="dashboard-task-field dashboard-task-field-full">
 
-                    <label htmlFor="dashboard-task-name">
+                    <label>
                       Task Name
                     </label>
 
                     <input
-                      id="dashboard-task-name"
                       type="text"
-                      value={taskName}
+                      value={
+                        taskName
+                      }
                       onChange={(
-                        event
+                        e
                       ) => {
                         setTaskName(
-                          event.target
+                          e.target
                             .value
                         );
 
@@ -1570,132 +2101,186 @@ const getDaysLeft = (date) => {
 
                   </div>
 
-                  {/* PROJECT */}
-
                   <div className="dashboard-task-field">
 
-                    <label htmlFor="dashboard-task-project">
+                    <label>
                       Select Project
                     </label>
 
                     <select
-  id="dashboard-task-project"
-  value={taskProject}
-  onChange={(event) => {
-    const value = event.target.value;
+                      value={
+                        taskProject
+                      }
+                      onChange={(
+                        e
+                      ) => {
+                        const value =
+                          e.target
+                            .value;
 
-    setTaskProject(value);
+                        setTaskProject(
+                          value
+                        );
 
-    if (value !== "__OTHER_PROJECT__") {
-      setCustomProjectName("");
-    }
+                        if (
+                          value !==
+                          "__OTHER_PROJECT__"
+                        ) {
+                          setCustomProjectName(
+                            ""
+                          );
+                        }
 
-    setTaskError("");
-  }}
->
-  <option value="">
-    No Project
-  </option>
+                        setTaskError(
+                          ""
+                        );
+                      }}
+                    >
 
-  {projectOptions.map((project) => (
-    <option
-      key={String(project.id)}
-      value={String(project.id)}
-    >
-      {project.name}
-    </option>
-  ))}
+                      <option value="">
+                        No Project
+                      </option>
 
-  {/* CUSTOM PROJECT */}
-  <option value="__OTHER_PROJECT__">
-    Other
-  </option>
-</select>
+                      {projectOptions.map(
+                        (
+                          project
+                        ) => (
+                          <option
+                            key={String(
+                              project.id
+                            )}
+                            value={String(
+                              project.id
+                            )}
+                          >
+                            {
+                              project.name
+                            }
+                          </option>
+                        )
+                      )}
+
+                      <option value="__OTHER_PROJECT__">
+                        Other
+                      </option>
+
+                    </select>
 
                   </div>
 
+                  {taskProject ===
+                    "__OTHER_PROJECT__" && (
+                    <div className="dashboard-task-field">
 
+                      <label>
+                        Custom Project Name
+                      </label>
 
-                  {taskProject === "__OTHER_PROJECT__" && (
-  <div className="dashboard-task-field dashboard-task-custom-field">
-    <label htmlFor="dashboard-custom-project">
-      Custom Project Name
-    </label>
+                      <input
+                        type="text"
+                        value={
+                          customProjectName
+                        }
+                        onChange={(
+                          e
+                        ) => {
+                          setCustomProjectName(
+                            e.target
+                              .value
+                          );
 
-    <input
-      id="dashboard-custom-project"
-      type="text"
-      value={customProjectName}
-      onChange={(event) => {
-        setCustomProjectName(
-          event.target.value
-        );
+                          setTaskError(
+                            ""
+                          );
+                        }}
+                        placeholder="e.g. Client Website"
+                      />
 
-        setTaskError("");
-      }}
-      placeholder="e.g. Client Website"
-    />
-  </div>
-)}
-
-                  {/* TASK TYPE */}
+                    </div>
+                  )}
 
                   <div className="dashboard-task-field">
 
-                    <label htmlFor="dashboard-task-type">
+                    <label>
                       Task Type
                     </label>
 
                     <select
-  id="dashboard-task-type"
-  value={taskType}
-  onChange={(event) => {
-    const value = event.target.value;
+                      value={
+                        taskType
+                      }
+                      onChange={(
+                        e
+                      ) => {
+                        const value =
+                          e.target
+                            .value;
 
-    setTaskType(value);
+                        setTaskType(
+                          value
+                        );
 
-    if (value !== "Other") {
-      setCustomTaskType("");
-    }
+                        if (
+                          value !==
+                          "Other"
+                        ) {
+                          setCustomTaskType(
+                            ""
+                          );
+                        }
 
-    setTaskError("");
-  }}
->
-  <option value="Update">
-    Update
-  </option>
+                        setTaskError(
+                          ""
+                        );
+                      }}
+                    >
 
-  <option value="Create">
-    Create
-  </option>
+                      <option value="Update">
+                        Update
+                      </option>
 
-  <option value="Other">
-    Other
-  </option>
-</select>
+                      <option value="Create">
+                        Create
+                      </option>
+
+                      <option value="Other">
+                        Other
+                      </option>
+
+                    </select>
 
                   </div>
-                  {taskType === "Other" && (
-  <div className="dashboard-task-field dashboard-task-custom-field">
-    <label htmlFor="dashboard-custom-task-type">
-      Custom Task Type
-    </label>
 
-    <input
-      id="dashboard-custom-task-type"
-      type="text"
-      value={customTaskType}
-      onChange={(event) => {
-        setCustomTaskType(
-          event.target.value
-        );
+                  {taskType ===
+                    "Other" && (
+                    <div className="dashboard-task-field">
 
-        setTaskError("");
-      }}
-      placeholder="e.g. Client Discussion"
-    />
-  </div>
-)}
+                      <label>
+                        Custom Task Type
+                      </label>
+
+                      <input
+                        type="text"
+                        value={
+                          customTaskType
+                        }
+                        onChange={(
+                          e
+                        ) => {
+                          setCustomTaskType(
+                            e.target
+                              .value
+                          );
+
+                          setTaskError(
+                            ""
+                          );
+                        }}
+                        placeholder="e.g. Client Discussion"
+                      />
+
+                    </div>
+                  )}
 
                 </div>
 
@@ -1712,13 +2297,11 @@ const getDaysLeft = (date) => {
                     addTask
                   }
                 >
-
                   <CheckSquare
                     size={17}
                   />
 
                   Save Task
-
                 </button>
 
               </div>
@@ -1730,7 +2313,6 @@ const getDaysLeft = (date) => {
 
               {todaysTasks.length ===
               0 ? (
-
                 <div className="dashboard-tasks-empty">
 
                   <CheckSquare
@@ -1751,14 +2333,14 @@ const getDaysLeft = (date) => {
                   </div>
 
                 </div>
-
               ) : (
-
                 todaysTasks
-                  .slice(0, 5)
+                  .slice(
+                    0,
+                    5
+                  )
                   .map(
                     (task) => (
-
                       <div
                         className={`dashboard-task-item ${
                           task.completed
@@ -1769,8 +2351,6 @@ const getDaysLeft = (date) => {
                           task.id
                         }
                       >
-
-                        {/* CHECKBOX */}
 
                         <label className="dashboard-task-check-wrap">
 
@@ -1787,16 +2367,12 @@ const getDaysLeft = (date) => {
                           />
 
                           <span className="dashboard-custom-checkbox">
-
                             {task.completed
                               ? "✓"
                               : ""}
-
                           </span>
 
                         </label>
-
-                        {/* CONTENT */}
 
                         <div className="dashboard-task-content">
 
@@ -1809,7 +2385,8 @@ const getDaysLeft = (date) => {
                             </strong>
 
                             <span className="dashboard-task-type">
-                              {task.type ||
+                              {task.displayType ||
+                                task.type ||
                                 "Other"}
                             </span>
 
@@ -1830,8 +2407,6 @@ const getDaysLeft = (date) => {
 
                         </div>
 
-                        {/* DELETE */}
-
                         <button
                           type="button"
                           className="dashboard-task-delete"
@@ -1841,23 +2416,17 @@ const getDaysLeft = (date) => {
                             )
                           }
                         >
-
                           <Trash2
                             size={17}
                           />
-
                         </button>
 
                       </div>
-
                     )
                   )
-
               )}
 
             </div>
-
-            {/* ADD WORK */}
 
             <button
               type="button"
@@ -1872,127 +2441,118 @@ const getDaysLeft = (date) => {
                 );
               }}
             >
-
               <Plus size={18} />
 
               Add Work / Task
-
             </button>
 
           </section>
+{/* =================================================
+    REVENUE OVERVIEW
+================================================= */}
 
-          {/* =================================================
-              REVENUE OVERVIEW
-          ================================================= */}
+<section className="dashboard-financial-section">
 
-          <div className="dashboard-financial-section">
+  <div className="dashboard-financial-header">
 
-            <div className="dashboard-financial-header">
+    <div>
+      <h3>
+        Revenue Overview
+      </h3>
 
-              <div>
+      <p>
+        Paid invoice revenue for this year
+      </p>
+    </div>
 
-                <h3>
-                  Revenue Overview
-                </h3>
+    <div className="dashboard-financial-total">
+      {loading
+        ? "..."
+        : formatCurrency(
+            dashboardData.totalRevenue
+          )}
+    </div>
 
-                <p>
-                  Paid invoice revenue
-                  for this year
-                </p>
+  </div>
 
-              </div>
+  {/* =================================================
+      REVENUE CHART
+  ================================================= */}
 
-              <div className="dashboard-financial-total">
+  <div className="dashboard-revenue-chart">
 
-                {loading
-                  ? "..."
-                  : formatCurrency(
-                      dashboardData.totalRevenue
-                    )}
+    {loading ? (
 
-              </div>
+      <div className="dashboard-revenue-empty">
+        Loading revenue...
+      </div>
 
-            </div>
+    ) : (
 
-            <div className="dashboard-revenue-chart">
+      <div className="dashboard-revenue-bars">
 
-              {revenueByMonth.length ===
-                0 &&
-              !loading ? (
+        {revenueByMonth.map((item) => {
 
-                <div className="dashboard-revenue-empty">
-                  No revenue data
-                  available yet.
-                </div>
+          const revenue =
+            Number(item.revenue || 0);
 
-              ) : (
-
-                revenueByMonth.map(
-                  (
-                    item,
-                    index
-                  ) => {
-
-                    const revenue =
-                      Number(
-                        item.revenue ||
-                          0
-                      );
-
-                    const height =
-                      revenue > 0
-                        ? Math.max(
-                            (revenue /
-                              maxRevenue) *
-                              100,
-                            8
-                          )
-                        : 4;
-
-                    return (
-                      <div
-                        className="dashboard-revenue-column"
-                        key={`${item.month}-${index}`}
-                      >
-
-                        <div className="dashboard-revenue-value">
-
-                          {revenue >
-                          0
-                            ? formatCurrency(
-                                revenue
-                              )
-                            : ""}
-
-                        </div>
-
-                        <div className="dashboard-revenue-bar-wrapper">
-
-                          <div
-                            className="dashboard-revenue-bar"
-                            style={{
-                              height: `${height}%`,
-                            }}
-                          />
-
-                        </div>
-
-                        <span>
-                          {
-                            item.month
-                          }
-                        </span>
-
-                      </div>
-                    );
-                  }
+          const height =
+            revenue > 0
+              ? Math.max(
+                  (revenue / maxRevenue) * 100,
+                  8
                 )
+              : 3;
 
-              )}
+          return (
+
+            <div
+              className="dashboard-revenue-column"
+              key={item.month}
+            >
+
+              {/* TOOLTIP */}
+
+              <div className="dashboard-revenue-tooltip">
+                {formatCurrency(revenue)}
+              </div>
+
+              {/* BAR */}
+
+              <div className="dashboard-revenue-bar-wrapper">
+
+                <div
+                  className={`dashboard-revenue-bar ${
+                    revenue > 0
+                      ? "has-revenue"
+                      : "empty"
+                  }`}
+                  style={{
+                    height: `${height}%`,
+                  }}
+                />
+
+              </div>
+
+              {/* MONTH */}
+
+              <span className="dashboard-revenue-month">
+                {item.month}
+              </span>
 
             </div>
 
-          </div>
+          );
+
+        })}
+
+      </div>
+
+    )}
+
+  </div>
+
+</section>
 
           {/* =================================================
               RECENT PROJECTS + INVOICES
@@ -2031,50 +2591,48 @@ const getDaysLeft = (date) => {
               <div className="dashboard-overview-list">
 
                 {loading ? (
-
                   <div className="dashboard-overview-empty">
                     Loading
                     projects...
                   </div>
-
                 ) : recentProjects.length ===
                   0 ? (
-
                   <div className="dashboard-overview-empty">
                     No projects
                     found yet.
                   </div>
-
                 ) : (
-
                   recentProjects
-                    .slice(0, 2)
+                    .slice(
+                      0,
+                      2
+                    )
                     .map(
                       (
                         project
                       ) => (
-
                         <Link
                           to="/projects"
                           className="dashboard-overview-item dashboard-clickable-item"
                           key={
-                            project._id
+                            project._id ||
+                            project.id
                           }
                         >
 
                           <div className="dashboard-overview-item-icon project">
-
                             <FolderKanban
                               size={18}
                             />
-
                           </div>
 
                           <div className="dashboard-overview-item-content">
 
                             <h4>
                               {
-                                project.name
+                                project.name ||
+                                project.title ||
+                                "Untitled Project"
                               }
                             </h4>
 
@@ -2082,6 +2640,7 @@ const getDaysLeft = (date) => {
                               {project
                                 .client
                                 ?.name ||
+                                project.clientName ||
                                 "No client"}
                             </p>
 
@@ -2102,7 +2661,8 @@ const getDaysLeft = (date) => {
                               }`}
                             >
                               {
-                                project.status
+                                project.status ||
+                                "Active"
                               }
                             </span>
 
@@ -2117,10 +2677,8 @@ const getDaysLeft = (date) => {
                           </div>
 
                         </Link>
-
                       )
                     )
-
                 )}
 
               </div>
@@ -2158,50 +2716,51 @@ const getDaysLeft = (date) => {
               <div className="dashboard-overview-list">
 
                 {loading ? (
-
                   <div className="dashboard-overview-empty">
                     Loading
                     invoices...
                   </div>
-
                 ) : recentInvoices.length ===
                   0 ? (
-
                   <div className="dashboard-overview-empty">
                     No invoices
                     found yet.
                   </div>
-
                 ) : (
-
                   recentInvoices
-                    .slice(0, 2)
+                    .slice(
+                      0,
+                      2
+                    )
                     .map(
                       (
                         invoice
                       ) => (
-
                         <Link
-                          to={`/invoices/${invoice._id}`}
+                          to={`/invoices/${
+                            invoice._id ||
+                            invoice.id
+                          }`}
                           className="dashboard-overview-item dashboard-clickable-item"
                           key={
-                            invoice._id
+                            invoice._id ||
+                            invoice.id
                           }
                         >
 
                           <div className="dashboard-overview-item-icon invoice">
-
                             <Receipt
                               size={18}
                             />
-
                           </div>
 
                           <div className="dashboard-overview-item-content">
 
                             <h4>
                               {
-                                invoice.invoiceNumber
+                                invoice.invoiceNumber ||
+                                invoice.number ||
+                                "Invoice"
                               }
                             </h4>
 
@@ -2209,6 +2768,7 @@ const getDaysLeft = (date) => {
                               {invoice
                                 .client
                                 ?.name ||
+                                invoice.clientName ||
                                 "No client"}
                             </p>
 
@@ -2218,14 +2778,19 @@ const getDaysLeft = (date) => {
 
                             <strong>
                               {formatCurrency(
-                                invoice.total
+                                invoice.total ??
+                                  invoice.amount ??
+                                  0
                               )}
                             </strong>
 
                             <span
                               className={`dashboard-status ${
-                                invoice.status
-                                  ?.toLowerCase()
+                                String(
+                                  invoice.status ||
+                                    ""
+                                )
+                                  .toLowerCase()
                                   .replace(
                                     " ",
                                     "-"
@@ -2233,17 +2798,16 @@ const getDaysLeft = (date) => {
                               }`}
                             >
                               {
-                                invoice.status
+                                invoice.status ||
+                                "Pending"
                               }
                             </span>
 
                           </div>
 
                         </Link>
-
                       )
                     )
-
                 )}
 
               </div>
@@ -2274,38 +2838,37 @@ const getDaysLeft = (date) => {
 
               </div>
 
-              
-
-                <Link
-  to="/upcoming-deadlines"
-  className="dashboard-overview-link dashboard-view-all-button"
->
-  View All
-</Link>
-
-              
+              <button
+                type="button"
+                className="dashboard-overview-link dashboard-view-all-button"
+                onClick={() =>
+                  setShowAllDeadlines(
+                    (prev) =>
+                      !prev
+                  )
+                }
+              >
+                {showAllDeadlines
+                  ? "Show Less"
+                  : "View All"}
+              </button>
 
             </div>
 
             <div className="dashboard-deadlines-list">
 
               {loading ? (
-
                 <div className="dashboard-overview-empty">
                   Loading
                   deadlines...
                 </div>
-
               ) : upcomingDeadlines.length ===
                 0 ? (
-
                 <div className="dashboard-overview-empty">
                   No upcoming
                   deadlines.
                 </div>
-
               ) : (
-
                 (
                   showAllDeadlines
                     ? upcomingDeadlines
@@ -2315,7 +2878,6 @@ const getDaysLeft = (date) => {
                       )
                 ).map(
                   (item) => (
-
                     <Link
                       to={
                         item.type ===
@@ -2324,15 +2886,13 @@ const getDaysLeft = (date) => {
                           : "/tasks"
                       }
                       className="dashboard-deadline-item dashboard-clickable-deadline"
-                      key={`${item.type}-${item._id}`}
+                      key={`${item.type}-${item._id || item.id}`}
                     >
 
                       <div className="dashboard-deadline-icon">
-
                         <Clock3
                           size={18}
                         />
-
                       </div>
 
                       <div className="dashboard-deadline-content">
@@ -2358,71 +2918,51 @@ const getDaysLeft = (date) => {
                         </div>
 
                         <p>
-
                           {item.type ===
                           "Project"
                             ? item.clientName
                             : item.projectName}
-
                         </p>
 
                       </div>
 
-                      {/* ==========================================
-    RIGHT SIDE DEADLINE
-========================================== */}
+                      <div className="dashboard-deadline-right">
 
-<div className="dashboard-deadline-right">
+                        <span className="dashboard-deadline-due">
+                          Due:{" "}
+                          {new Date(
+                            item.date
+                          ).toLocaleDateString(
+                            "en-IN",
+                            {
+                              day: "numeric",
+                              month: "short",
+                            }
+                          )}
+                        </span>
 
-  {/* DUE DATE */}
+                        {(() => {
+                          const status =
+                            getDaysLeft(
+                              item.date
+                            );
 
-  <span className="dashboard-deadline-due">
+                          return (
+                            <span
+                              className={`dashboard-deadline-remaining ${status.className}`}
+                            >
+                              {
+                                status.text
+                              }
+                            </span>
+                          );
+                        })()}
 
-    Due:{" "}
-
-    {new Date(
-      item.date
-    ).toLocaleDateString(
-      "en-IN",
-      {
-        day: "numeric",
-        month: "short",
-      }
-    )}
-
-  </span>
-
-
-  {/* DAYS LEFT */}
-
-  {(() => {
-
-    const deadlineStatus =
-      getDaysLeft(
-        item.date
-      );
-
-    return (
-
-      <span
-        className={`dashboard-deadline-remaining ${deadlineStatus.className}`}
-      >
-
-        {deadlineStatus.text}
-
-      </span>
-
-    );
-
-  })()}
-
-</div>
+                      </div>
 
                     </Link>
-
                   )
                 )
-
               )}
 
             </div>
