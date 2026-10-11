@@ -262,7 +262,7 @@ const login = async (req, res) => {
       user: {
         id: user._id,
         _id: user._id,
-        username: user.username,
+        username: user.username || "User",
         email: user.email,
       },
     });
@@ -354,14 +354,68 @@ const forgotPassword = async (req, res) => {
 
     // ----------------------------------------------------------
     // SAVE OTP
+    //
+    // IMPORTANT:
+    // Do NOT use user.save() here.
+    //
+    // Some older OAuth users may not have username.
+    // User.save() validates the complete document and can fail
+    // with:
+    // username: Path `username` is required
+    //
+    // updateOne() only updates the required OTP fields.
     // ----------------------------------------------------------
 
-    user.resetPasswordOTP = otp;
+    const updateFields = {
+      resetPasswordOTP: otp,
+      resetPasswordOTPExpires: otpExpires,
+    };
 
-    user.resetPasswordOTPExpires =
-      otpExpires;
+    // Optional fields only if they exist in the schema
+    if (
+      Object.prototype.hasOwnProperty.call(
+        user.toObject(),
+        "resetPasswordOTPAttempts"
+      )
+    ) {
+      updateFields.resetPasswordOTPAttempts = 0;
+    }
 
-    await user.save();
+    if (
+      Object.prototype.hasOwnProperty.call(
+        user.toObject(),
+        "resetPasswordVerified"
+      )
+    ) {
+      updateFields.resetPasswordVerified = false;
+    }
+
+    if (
+      Object.prototype.hasOwnProperty.call(
+        user.toObject(),
+        "resetPasswordToken"
+      )
+    ) {
+      updateFields.resetPasswordToken = null;
+    }
+
+    if (
+      Object.prototype.hasOwnProperty.call(
+        user.toObject(),
+        "resetPasswordTokenExpires"
+      )
+    ) {
+      updateFields.resetPasswordTokenExpires = null;
+    }
+
+    await User.updateOne(
+      {
+        _id: user._id,
+      },
+      {
+        $set: updateFields,
+      }
+    );
 
     // ----------------------------------------------------------
     // SEND OTP EMAIL THROUGH RESEND
@@ -376,6 +430,10 @@ const forgotPassword = async (req, res) => {
     console.log(
       `✅ Password reset OTP sent to ${cleanEmail}`
     );
+
+    // ----------------------------------------------------------
+    // RESPONSE
+    // ----------------------------------------------------------
 
     return res.status(200).json({
       success: true,
@@ -638,8 +696,11 @@ const resetPassword = async (req, res) => {
         12
       );
 
-    user.password =
-      hashedPassword;
+    // ----------------------------------------------------------
+    // UPDATE PASSWORD
+    // ----------------------------------------------------------
+
+    user.password = hashedPassword;
 
     // ----------------------------------------------------------
     // CLEAR OTP
@@ -668,11 +729,19 @@ const resetPassword = async (req, res) => {
         undefined;
     }
 
+    // ----------------------------------------------------------
+    // SAVE
+    // ----------------------------------------------------------
+
     await user.save();
 
     console.log(
       `✅ Password reset successfully for user: ${user._id}`
     );
+
+    // ----------------------------------------------------------
+    // RESPONSE
+    // ----------------------------------------------------------
 
     return res.status(200).json({
       success: true,
