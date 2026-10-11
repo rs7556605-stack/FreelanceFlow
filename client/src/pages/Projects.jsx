@@ -44,14 +44,7 @@ const emptyForm = {
 };
 
 /* =========================================================
-   TASK STORAGE
-========================================================= */
-
-const TASK_STORAGE_KEY =
-  "freelanceflow_tasks";
-
-/* =========================================================
-   EMPTY TASK FORM
+   TASK FORM
 ========================================================= */
 
 const emptyTaskForm = {
@@ -66,6 +59,7 @@ const emptyTaskForm = {
 /* =========================================================
    PROJECTS
 ========================================================= */
+
 const Projects = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -74,11 +68,8 @@ const Projects = () => {
      PROJECT STATES
   ======================================================= */
 
-  const [projects, setProjects] =
-    useState([]);
-
-  const [clients, setClients] =
-    useState([]);
+  const [projects, setProjects] = useState([]);
+  const [clients, setClients] = useState([]);
 
   const [form, setForm] =
     useState(emptyForm);
@@ -105,72 +96,47 @@ const Projects = () => {
      PROJECT EXPANSION
   ======================================================= */
 
-  const [
-    expandedProjects,
-    setExpandedProjects,
-  ] = useState({});
+  const [expandedProjects, setExpandedProjects] =
+    useState({});
 
   /* =======================================================
      PROJECT TASKS
   ======================================================= */
 
-  const [
-    projectTasks,
-    setProjectTasks,
-  ] = useState({});
+  const [projectTasks, setProjectTasks] =
+    useState({});
 
   /* =======================================================
      ADD TASK MODAL
   ======================================================= */
 
-  const [
-    showTaskForm,
-    setShowTaskForm,
-  ] = useState(false);
+  const [showTaskForm, setShowTaskForm] =
+    useState(false);
 
-  const [
-    selectedTaskProject,
-    setSelectedTaskProject,
-  ] = useState(null);
+  const [selectedTaskProject, setSelectedTaskProject] =
+    useState(null);
 
-  const [
-    taskForm,
-    setTaskForm,
-  ] = useState(emptyTaskForm);
+  const [taskForm, setTaskForm] =
+    useState(emptyTaskForm);
 
-  const [
-    customTaskType,
-    setCustomTaskType,
-  ] = useState("");
+  const [taskSaving, setTaskSaving] =
+    useState(false);
 
-  const [
-    taskSaving,
-    setTaskSaving,
-  ] = useState(false);
-
-  const [
-    taskError,
-    setTaskError,
-  ] = useState("");
+  const [taskError, setTaskError] =
+    useState("");
 
   /* =======================================================
      TIME TRACKING
   ======================================================= */
 
-  const [
-    timeLogs,
-    setTimeLogs,
-  ] = useState([]);
+  const [timeLogs, setTimeLogs] =
+    useState([]);
 
-  const [
-    activeTimer,
-    setActiveTimer,
-  ] = useState(null);
+  const [activeTimer, setActiveTimer] =
+    useState(null);
 
-  const [
-    timerNow,
-    setTimerNow,
-  ] = useState(Date.now());
+  const [timerNow, setTimerNow] =
+    useState(Date.now());
 
   /* =========================================================
      FETCH PROJECTS
@@ -188,6 +154,11 @@ const Projects = () => {
         response.data?.projects || []
       );
     } catch (error) {
+      console.error(
+        "Fetch projects error:",
+        error
+      );
+
       setError(
         error.response?.data?.message ||
           "Failed to load projects"
@@ -210,6 +181,11 @@ const Projects = () => {
         response.data?.clients || []
       );
     } catch (error) {
+      console.error(
+        "Fetch clients error:",
+        error
+      );
+
       setError(
         error.response?.data?.message ||
           "Failed to load clients"
@@ -218,68 +194,59 @@ const Projects = () => {
   };
 
   /* =========================================================
-     READ LOCAL TASKS
+     LOAD TASKS FROM BACKEND
+
+     IMPORTANT:
+     No localStorage here.
+     Tasks are loaded from MongoDB.
   ========================================================= */
 
-  const readProjectTasks = () => {
+  const loadProjectTasks = async () => {
     try {
-      const stored =
-        localStorage.getItem(
-          TASK_STORAGE_KEY
-        );
+      const response =
+        await API.get("/tasks");
 
-      if (!stored) {
-        return [];
-      }
+      const allTasks =
+        response.data?.tasks ||
+        response.data?.data?.tasks ||
+        [];
 
-      const parsed =
-        JSON.parse(stored);
+      const grouped = {};
 
-      if (!Array.isArray(parsed)) {
-        return [];
-      }
+      allTasks.forEach((task) => {
+        const projectId =
+          task.project?._id ||
+          task.project?.id ||
+          task.projectId ||
+          task.project ||
+          "";
 
-      return parsed;
+        if (!projectId) {
+          return;
+        }
+
+        const key = String(projectId);
+
+        if (!grouped[key]) {
+          grouped[key] = [];
+        }
+
+        grouped[key].push(task);
+      });
+
+      setProjectTasks(grouped);
     } catch (error) {
       console.error(
-        "Task storage error:",
+        "Load project tasks error:",
         error
       );
 
-      return [];
+      setProjectTasks({});
     }
   };
 
   /* =========================================================
-     GROUP TASKS BY PROJECT
-  ========================================================= */
-
-  const loadProjectTasks = () => {
-    const allTasks =
-      readProjectTasks();
-
-    const grouped = {};
-
-    allTasks.forEach((task) => {
-      if (!task.projectId) {
-        return;
-      }
-
-      const projectId =
-        String(task.projectId);
-
-      if (!grouped[projectId]) {
-        grouped[projectId] = [];
-      }
-
-      grouped[projectId].push(task);
-    });
-
-    setProjectTasks(grouped);
-  };
-
-  /* =========================================================
-     FETCH TIME LOGS
+     TIME DATA
   ========================================================= */
 
   const loadProjectTimeData = async () => {
@@ -296,8 +263,7 @@ const Projects = () => {
         logsResponse.data?.success
       ) {
         setTimeLogs(
-          logsResponse.data.timeLogs ||
-            []
+          logsResponse.data.timeLogs || []
         );
       } else {
         setTimeLogs([]);
@@ -307,8 +273,7 @@ const Projects = () => {
         activeResponse.data?.success
       ) {
         setActiveTimer(
-          activeResponse.data.timer ||
-            null
+          activeResponse.data.timer || null
         );
       } else {
         setActiveTimer(null);
@@ -335,88 +300,76 @@ const Projects = () => {
     loadProjectTimeData();
   }, []);
 
-
-
-
   /* =========================================================
-   HIGHLIGHT PROJECT FROM UPCOMING DEADLINES
-   ========================================================= */
+     HIGHLIGHT PROJECT
+  ========================================================= */
 
-useEffect(() => {
-  const highlightProjectId =
-    location.state?.highlightProjectId;
+  useEffect(() => {
+    const highlightProjectId =
+      location.state?.highlightProjectId;
 
-  if (
-    !highlightProjectId ||
-    !projects.length
-  ) {
-    return;
-  }
-
-  let findProjectTimer = null;
-  let removeHighlightTimer = null;
-
-  findProjectTimer = window.setTimeout(() => {
-    const element =
-      document.getElementById(
-        `project-card-${highlightProjectId}`
-      );
-
-    if (!element) {
+    if (
+      !highlightProjectId ||
+      !projects.length
+    ) {
       return;
     }
 
-    /* SCROLL TO EXACT PROJECT */
-    element.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-    });
+    let findTimer;
+    let removeTimer;
 
-    /* START BLINK */
-    element.classList.add(
-      "project-deadline-highlight"
-    );
-
-    /* REMOVE AFTER 8 SECONDS */
-    removeHighlightTimer =
-      window.setTimeout(() => {
-        element.classList.remove(
-          "project-deadline-highlight"
+    findTimer = window.setTimeout(() => {
+      const element =
+        document.getElementById(
+          `project-card-${highlightProjectId}`
         );
-      }, 8000);
 
-    /* CLEAR NAVIGATION STATE */
-    navigate(
-      "/projects",
-      {
-        replace: true,
-        state: {},
+      if (!element) {
+        return;
       }
-    );
-  }, 200);
 
-  return () => {
-    if (findProjectTimer) {
-      window.clearTimeout(
-        findProjectTimer
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      element.classList.add(
+        "project-deadline-highlight"
       );
-    }
 
-    if (removeHighlightTimer) {
-      window.clearTimeout(
-        removeHighlightTimer
+      removeTimer =
+        window.setTimeout(() => {
+          element.classList.remove(
+            "project-deadline-highlight"
+          );
+        }, 8000);
+
+      navigate(
+        "/projects",
+        {
+          replace: true,
+          state: {},
+        }
       );
-    }
-  };
-}, [
-  projects,
-  location.state?.highlightProjectId,
-  navigate,
-]);
+    }, 200);
 
+    return () => {
+      if (findTimer) {
+        window.clearTimeout(findTimer);
+      }
+
+      if (removeTimer) {
+        window.clearTimeout(removeTimer);
+      }
+    };
+  }, [
+    projects,
+    location.state?.highlightProjectId,
+    navigate,
+  ]);
 
   /* =========================================================
-     LIVE TIMER REFRESH
+     LIVE TIMER
   ========================================================= */
 
   useEffect(() => {
@@ -426,9 +379,7 @@ useEffect(() => {
 
     const interval =
       setInterval(() => {
-        setTimerNow(
-          Date.now()
-        );
+        setTimerNow(Date.now());
       }, 1000);
 
     return () => {
@@ -452,38 +403,31 @@ useEffect(() => {
   }, []);
 
   /* =========================================================
-     INPUT CHANGE
+     PROJECT FORM CHANGE
   ========================================================= */
 
-  const handleChange = (
-    event
-  ) => {
+  const handleChange = (event) => {
     const {
       name,
       value,
     } = event.target;
 
-    setForm(
-      (previous) => ({
-        ...previous,
-        [name]: value,
-      })
-    );
+    setForm((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
   };
 
   /* =========================================================
-     OPEN ADD PROJECT
+     OPEN PROJECT FORM
   ========================================================= */
 
   const openAddForm = () => {
     setEditingId(null);
-
     setForm({
       ...emptyForm,
     });
-
     setError("");
-
     setShowForm(true);
   };
 
@@ -493,9 +437,7 @@ useEffect(() => {
 
   const closeForm = () => {
     setShowForm(false);
-
     setEditingId(null);
-
     setForm({
       ...emptyForm,
     });
@@ -505,9 +447,7 @@ useEffect(() => {
      SAVE PROJECT
   ========================================================= */
 
-  const handleSubmit = async (
-    event
-  ) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
@@ -529,7 +469,13 @@ useEffect(() => {
       closeForm();
 
       await fetchProjects();
+      await loadProjectTasks();
     } catch (error) {
+      console.error(
+        "Save project error:",
+        error
+      );
+
       setError(
         error.response?.data?.message ||
           "Failed to save project"
@@ -543,16 +489,11 @@ useEffect(() => {
      EDIT PROJECT
   ========================================================= */
 
-  const handleEdit = (
-    project
-  ) => {
-    setEditingId(
-      project._id
-    );
+  const handleEdit = (project) => {
+    setEditingId(project._id);
 
     setForm({
-      name:
-        project.name || "",
+      name: project.name || "",
 
       description:
         project.description || "",
@@ -571,9 +512,7 @@ useEffect(() => {
 
       deadline:
         project.deadline
-          ? project.deadline.split(
-              "T"
-            )[0]
+          ? String(project.deadline).split("T")[0]
           : "",
     });
 
@@ -589,9 +528,7 @@ useEffect(() => {
      DELETE PROJECT
   ========================================================= */
 
-  const handleDelete = async (
-    id
-  ) => {
+  const handleDelete = async (id) => {
     const confirmed =
       window.confirm(
         "Are you sure you want to delete this project?"
@@ -621,11 +558,14 @@ useEffect(() => {
       );
 
       await fetchProjects();
-
-      loadProjectTasks();
-
+      await loadProjectTasks();
       await loadProjectTimeData();
     } catch (error) {
+      console.error(
+        "Delete project error:",
+        error
+      );
+
       setError(
         error.response?.data?.message ||
           "Failed to delete project"
@@ -637,34 +577,64 @@ useEffect(() => {
      GET CLIENT ID
   ========================================================= */
 
-  const getClientId = (
-    project
-  ) => {
+  const getClientId = (project) => {
     if (!project) {
       return "";
     }
 
-    if (project.client?._id) {
-      return project.client._id;
-    }
-
-    if (
-      typeof project.client ===
-      "string"
-    ) {
-      return project.client;
-    }
-
-    return "";
+    return (
+      project.client?._id ||
+      project.client?.id ||
+      project.client ||
+      ""
+    );
   };
 
   /* =========================================================
-     GET PROJECT TASKS
+     GET TASK ID
   ========================================================= */
 
-  const getProjectTaskList = (
-    project
-  ) => {
+  const getTaskId = (task) => {
+    return (
+      task?._id ||
+      task?.id ||
+      ""
+    );
+  };
+
+  /* =========================================================
+     GET TASK PROJECT ID
+  ========================================================= */
+
+  const getTaskProjectId = (task) => {
+    return (
+      task?.project?._id ||
+      task?.project?.id ||
+      task?.projectId ||
+      task?.project ||
+      ""
+    );
+  };
+
+  /* =========================================================
+     GET TASK CLIENT ID
+  ========================================================= */
+
+  const getTaskClientId = (task) => {
+    return (
+      task?.client?._id ||
+      task?.client?.id ||
+      task?.clientId ||
+      task?.client ||
+      ""
+    );
+  };
+
+  /* =========================================================
+     GET PROJECT TASK LIST
+  ========================================================= */
+
+  const getProjectTaskList = (project) => {
     if (!project?._id) {
       return [];
     }
@@ -680,15 +650,12 @@ useEffect(() => {
      TASK COMPLETED
   ========================================================= */
 
-  const isTaskCompleted = (
-    task
-  ) => {
+  const isTaskCompleted = (task) => {
     return (
-      Boolean(task.completed) ||
+      Boolean(task?.completed) ||
       String(
-        task.status || ""
-      ).toLowerCase() ===
-        "completed"
+        task?.status || ""
+      ).toLowerCase() === "completed"
     );
   };
 
@@ -696,15 +663,11 @@ useEffect(() => {
      PROJECT PROGRESS
   ========================================================= */
 
-  const getProjectProgress = (
-    project
-  ) => {
+  const getProjectProgress = (project) => {
     const tasks =
-      getProjectTaskList(
-        project
-      );
+      getProjectTaskList(project);
 
-    if (tasks.length === 0) {
+    if (!tasks.length) {
       return 0;
     }
 
@@ -715,8 +678,7 @@ useEffect(() => {
       ).length;
 
     return Math.round(
-      (completed /
-        tasks.length) *
+      (completed / tasks.length) *
         100
     );
   };
@@ -725,83 +687,111 @@ useEffect(() => {
      TOGGLE PROJECT DETAILS
   ========================================================= */
 
-  const toggleProjectDetails = (
+  const toggleProjectDetails = async (
     projectId
   ) => {
     setExpandedProjects(
       (previous) => ({
         ...previous,
-
         [projectId]:
           !previous[projectId],
       })
     );
 
-    loadProjectTasks();
+    await loadProjectTasks();
   };
 
   /* =========================================================
      TOGGLE TASK COMPLETE
+
+     IMPORTANT:
+     Updates MongoDB instead of localStorage.
   ========================================================= */
 
-  const toggleProjectTask = (
-    taskId
+  const toggleProjectTask = async (
+    task
   ) => {
     try {
-      const allTasks =
-        readProjectTasks();
+      const taskId =
+        getTaskId(task);
 
-      const updatedTasks =
-        allTasks.map(
-          (task) => {
-            if (
-              String(task.id) !==
-              String(taskId)
-            ) {
-              return task;
-            }
+      const clientId =
+        getTaskClientId(task);
 
-            const completed =
-              !isTaskCompleted(
-                task
-              );
+      const projectId =
+        getTaskProjectId(task);
 
-            return {
-              ...task,
-
-              completed,
-
-              status:
-                completed
-                  ? "Completed"
-                  : "Pending",
-
-              completedAt:
-                completed
-                  ? new Date().toISOString()
-                  : null,
-            };
-          }
+      if (!taskId) {
+        setError(
+          "Task ID is missing."
         );
+        return;
+      }
 
-      localStorage.setItem(
-        TASK_STORAGE_KEY,
-        JSON.stringify(
-          updatedTasks
-        )
+      if (!clientId || !projectId) {
+        setError(
+          "Task client or project information is missing."
+        );
+        return;
+      }
+
+      const completed =
+        !isTaskCompleted(task);
+
+      await API.put(
+        `/tasks/${taskId}`,
+        {
+          client: clientId,
+          project: projectId,
+
+          title:
+            task.title ||
+            task.name ||
+            "Untitled Task",
+
+          description:
+            task.description || "",
+
+          status:
+            completed
+              ? "Completed"
+              : "Pending",
+
+          priority:
+            task.priority ||
+            "Medium",
+
+          dueDate:
+            task.dueDate || null,
+
+          estimatedTime:
+            task.estimatedTime || "",
+
+          type:
+            ["Create", "Update", "Other"].includes(
+              task.type
+            )
+              ? task.type
+              : "Other",
+        }
       );
 
-      loadProjectTasks();
+      await loadProjectTasks();
     } catch (error) {
       console.error(
-        "Task update error:",
+        "Toggle task error:",
         error
+      );
+
+      setError(
+        error.response?.data?.message ||
+          "Failed to update task"
       );
     }
   };
 
   /* =========================================================
-     OPEN EXACT CLIENT
+     OPEN CLIENT
   ========================================================= */
 
   const openProjectClient = (
@@ -818,11 +808,6 @@ useEffect(() => {
       return;
     }
 
-    /*
-      Clients page should read:
-      /clients?client=CLIENT_ID
-    */
-
     navigate(
       `/clients?client=${encodeURIComponent(
         clientId
@@ -831,7 +816,7 @@ useEffect(() => {
   };
 
   /* =========================================================
-     OPEN EXACT PROJECT TASKS
+     OPEN TASKS PAGE
   ========================================================= */
 
   const openProjectTasks = (
@@ -859,12 +844,23 @@ useEffect(() => {
   };
 
   /* =========================================================
-     OPEN ADD TASK FORM
+     OPEN ADD TASK
   ========================================================= */
 
   const openAddTaskForm = (
     project
   ) => {
+    const clientId =
+      getClientId(project);
+
+    if (!clientId) {
+      setError(
+        "Please assign a client to this project before adding a task."
+      );
+
+      return;
+    }
+
     setSelectedTaskProject(
       project
     );
@@ -873,15 +869,12 @@ useEffect(() => {
       ...emptyTaskForm,
     });
 
-    setCustomTaskType("");
-
     setTaskError("");
-
     setShowTaskForm(true);
   };
 
   /* =========================================================
-     CLOSE ADD TASK FORM
+     CLOSE ADD TASK
   ========================================================= */
 
   const closeAddTaskForm = () => {
@@ -894,8 +887,6 @@ useEffect(() => {
     setTaskForm({
       ...emptyTaskForm,
     });
-
-    setCustomTaskType("");
 
     setTaskError("");
   };
@@ -924,160 +915,149 @@ useEffect(() => {
 
   /* =========================================================
      CREATE PROJECT TASK
+
+     IMPORTANT:
+     Task goes to MongoDB through /api/tasks.
   ========================================================= */
 
-  const handleCreateProjectTask = (
-    event
-  ) => {
-    event.preventDefault();
+  const handleCreateProjectTask =
+    async (event) => {
+      event.preventDefault();
 
-    if (!selectedTaskProject) {
-      return;
-    }
+      if (!selectedTaskProject) {
+        return;
+      }
 
-    /* TASK NAME */
+      if (!taskForm.name.trim()) {
+        setTaskError(
+          "Task name is required."
+        );
 
-    if (!taskForm.name.trim()) {
-      setTaskError(
-        "Task name is required."
-      );
-
-      return;
-    }
-
-    /* CUSTOM TASK TYPE */
-
-    if (
-      taskForm.type ===
-        "Other" &&
-      !customTaskType.trim()
-    ) {
-      setTaskError(
-        "Please enter a custom task type."
-      );
-
-      return;
-    }
-
-    try {
-      setTaskSaving(true);
-      setTaskError("");
-
-      const allTasks =
-        readProjectTasks();
-
-      /* FINAL TYPE */
-
-      const finalTaskType =
-        taskForm.type === "Other"
-          ? customTaskType.trim()
-          : taskForm.type;
-
-      /* CLIENT ID */
+        return;
+      }
 
       const clientId =
         getClientId(
           selectedTaskProject
         );
 
-      /* NEW TASK */
+      const projectId =
+        selectedTaskProject._id;
 
-      const newTask = {
-        id: `${Date.now()}-${Math.random()
-          .toString(36)
-          .slice(2, 8)}`,
+      if (!clientId) {
+        setTaskError(
+          "This project has no client."
+        );
 
-        name:
-          taskForm.name.trim(),
+        return;
+      }
 
-        title:
-          taskForm.name.trim(),
+      if (!projectId) {
+        setTaskError(
+          "Project ID is missing."
+        );
 
-        type:
-          finalTaskType,
+        return;
+      }
 
-        description:
-          taskForm.description.trim(),
+      try {
+        setTaskSaving(true);
+        setTaskError("");
 
-        projectId:
-          selectedTaskProject._id,
+        /*
+          Backend currently accepts:
+          Create / Update / Other
+        */
 
-        projectName:
-          selectedTaskProject.name,
+        const taskType =
+          ["Create", "Update", "Other"].includes(
+            taskForm.type
+          )
+            ? taskForm.type
+            : "Other";
 
-        clientId,
+        const payload = {
+          client: clientId,
 
-        clientName:
-          selectedTaskProject
-            .client?.name || "",
+          project: projectId,
 
-        priority:
-          taskForm.priority ||
-          "Medium",
+          title:
+            taskForm.name.trim(),
 
-        status: "Pending",
+          description:
+            taskForm.description.trim(),
 
-        dueDate:
-          taskForm.dueDate || "",
+          status: "Pending",
 
-        estimatedTime:
-          taskForm.estimatedTime ||
-          "",
+          priority:
+            taskForm.priority ||
+            "Medium",
 
-        completed: false,
+          dueDate:
+            taskForm.dueDate ||
+            null,
 
-        date:
-          new Date()
-            .toISOString()
-            .slice(0, 10),
+          estimatedTime:
+            taskForm.estimatedTime ||
+            "",
 
-        createdAt:
-          new Date().toISOString(),
-      };
+          type: taskType,
+        };
 
-      /* SAVE */
+        console.log(
+          "Creating project task:",
+          payload
+        );
 
-      const updatedTasks = [
-        newTask,
-        ...allTasks,
-      ];
+        const response =
+          await API.post(
+            "/tasks",
+            payload
+          );
 
-      localStorage.setItem(
-        TASK_STORAGE_KEY,
-        JSON.stringify(
-          updatedTasks
-        )
-      );
+        console.log(
+          "Task created:",
+          response.data
+        );
 
-      /* REFRESH */
+        /*
+          Reload from MongoDB.
+        */
 
-      loadProjectTasks();
+        await loadProjectTasks();
 
-      /* KEEP PROJECT OPEN */
+        /*
+          Keep project expanded.
+        */
 
-      setExpandedProjects(
-        (previous) => ({
-          ...previous,
+        setExpandedProjects(
+          (previous) => ({
+            ...previous,
 
-          [selectedTaskProject._id]:
-            true,
-        })
-      );
+            [projectId]: true,
+          })
+        );
 
-      closeAddTaskForm();
-    } catch (error) {
-      console.error(
-        "Create task error:",
-        error
-      );
+        /*
+          Close modal.
+        */
 
-      setTaskError(
-        "Failed to create task."
-      );
-    } finally {
-      setTaskSaving(false);
-    }
-  };
+        closeAddTaskForm();
+      } catch (error) {
+        console.error(
+          "Create task error:",
+          error
+        );
+
+        setTaskError(
+          error.response?.data?.message ||
+            error.response?.data?.error ||
+            "Failed to create task."
+        );
+      } finally {
+        setTaskSaving(false);
+      }
+    };
 
   /* =========================================================
      START PROJECT TIMER
@@ -1096,10 +1076,6 @@ useEffect(() => {
       try {
         setError("");
 
-        /*
-          CHECK ACTIVE TIMER
-        */
-
         const activeResponse =
           await API.get(
             "/time/active"
@@ -1108,24 +1084,14 @@ useEffect(() => {
         const existingTimer =
           activeResponse.data?.timer;
 
-        /*
-          IF TIMER ALREADY RUNNING
-        */
-
         if (existingTimer) {
           const activeProjectId =
             existingTimer.project?._id ||
             existingTimer.project ||
             "";
 
-          /*
-            SAME PROJECT
-          */
-
           if (
-            String(
-              activeProjectId
-            ) ===
+            String(activeProjectId) ===
             String(project._id)
           ) {
             navigate(
@@ -1139,10 +1105,6 @@ useEffect(() => {
             return;
           }
 
-          /*
-            DIFFERENT PROJECT
-          */
-
           setError(
             "Another project timer is already running. Stop it first from Time Tracking."
           );
@@ -1150,17 +1112,12 @@ useEffect(() => {
           return;
         }
 
-        /*
-          START REAL BACKEND TIMER
-        */
-
         const response =
           await API.post(
             "/time/start",
             {
               project:
                 project._id,
-
               task: null,
             }
           );
@@ -1175,11 +1132,6 @@ useEffect(() => {
 
           await loadProjectTimeData();
 
-          /*
-            OPEN TIME TRACKER
-            WITH EXACT PROJECT
-          */
-
           navigate(
             `/time?project=${encodeURIComponent(
               project._id
@@ -1190,7 +1142,7 @@ useEffect(() => {
         }
       } catch (error) {
         console.error(
-          "Start project timer error:",
+          "Start timer error:",
           error
         );
 
@@ -1202,7 +1154,7 @@ useEffect(() => {
     };
 
   /* =========================================================
-     GET TIME LOG PROJECT ID
+     TIME LOG PROJECT ID
   ========================================================= */
 
   const getTimeLogProjectId = (
@@ -1216,16 +1168,12 @@ useEffect(() => {
   };
 
   /* =========================================================
-     PROJECT TRACKED SECONDS
+     TRACKED SECONDS
   ========================================================= */
 
   const getProjectTrackedSeconds =
     (projectId) => {
       let totalSeconds = 0;
-
-      /*
-        SAVED TIME LOGS
-      */
 
       timeLogs.forEach(
         (log) => {
@@ -1235,9 +1183,7 @@ useEffect(() => {
             );
 
           if (
-            String(
-              logProjectId
-            ) ===
+            String(logProjectId) ===
             String(projectId)
           ) {
             totalSeconds +=
@@ -1248,10 +1194,6 @@ useEffect(() => {
         }
       );
 
-      /*
-        ACTIVE TIMER
-      */
-
       const activeProjectId =
         activeTimer?.project?._id ||
         activeTimer?.project ||
@@ -1259,9 +1201,7 @@ useEffect(() => {
 
       if (
         activeTimer &&
-        String(
-          activeProjectId
-        ) ===
+        String(activeProjectId) ===
           String(projectId) &&
         activeTimer.startTime
       ) {
@@ -1297,9 +1237,7 @@ useEffect(() => {
     const safeSeconds =
       Math.max(
         0,
-        Number(
-          totalSeconds
-        ) || 0
+        Number(totalSeconds) || 0
       );
 
     const hours =
@@ -1320,7 +1258,7 @@ useEffect(() => {
   };
 
   /* =========================================================
-     DEADLINE
+     FORMAT DEADLINE
   ========================================================= */
 
   const formatDeadline = (
@@ -1343,7 +1281,7 @@ useEffect(() => {
   };
 
   /* =========================================================
-     SEARCH
+     SEARCH PROJECT
   ========================================================= */
 
   const filteredProjects =
@@ -1362,9 +1300,11 @@ useEffect(() => {
           project.name
             ?.toLowerCase()
             .includes(query) ||
+
           project.description
             ?.toLowerCase()
             .includes(query) ||
+
           project.client?.name
             ?.toLowerCase()
             .includes(query)
@@ -1378,11 +1318,10 @@ useEffect(() => {
 
   return (
     <div className="projects-page">
+
       <div className="projects-container">
 
-        {/* ==================================================
-            BACK BUTTON
-        ================================================== */}
+        {/* BACK */}
 
         <button
           className="projects-back-btn"
@@ -1397,9 +1336,7 @@ useEffect(() => {
           </span>
         </button>
 
-        {/* ==================================================
-            HEADER
-        ================================================== */}
+        {/* HEADER */}
 
         <div className="projects-header">
 
@@ -1429,9 +1366,7 @@ useEffect(() => {
 
         </div>
 
-        {/* ==================================================
-            ERROR
-        ================================================== */}
+        {/* ERROR */}
 
         {error && (
           <div className="projects-error">
@@ -1439,9 +1374,7 @@ useEffect(() => {
           </div>
         )}
 
-        {/* ==================================================
-            SEARCH
-        ================================================== */}
+        {/* SEARCH */}
 
         <div className="projects-search-box">
 
@@ -1455,7 +1388,7 @@ useEffect(() => {
             <input
               type="text"
               className="projects-search-input"
-              placeholder="Search projects..."
+              placeholder="Search projects or clients..."
               value={search}
               onChange={(event) =>
                 setSearch(
@@ -1468,9 +1401,7 @@ useEffect(() => {
 
         </div>
 
-        {/* ==================================================
-            FORM
-        ================================================== */}
+        {/* PROJECT FORM */}
 
         {showForm && (
           <div className="project-form">
@@ -1502,8 +1433,6 @@ useEffect(() => {
               className="project-form-grid"
             >
 
-              {/* NAME */}
-
               <div className="project-form-group">
 
                 <label className="project-form-label">
@@ -1513,7 +1442,9 @@ useEffect(() => {
                 <input
                   className="project-form-input"
                   name="name"
-                  value={form.name}
+                  value={
+                    form.name
+                  }
                   onChange={
                     handleChange
                   }
@@ -1522,8 +1453,6 @@ useEffect(() => {
                 />
 
               </div>
-
-              {/* CLIENT */}
 
               <div className="project-form-group">
 
@@ -1568,8 +1497,6 @@ useEffect(() => {
 
               </div>
 
-              {/* DESCRIPTION */}
-
               <div className="project-form-group project-full-width">
 
                 <label className="project-form-label">
@@ -1590,8 +1517,6 @@ useEffect(() => {
                 />
 
               </div>
-
-              {/* STATUS */}
 
               <div className="project-form-group">
 
@@ -1622,8 +1547,6 @@ useEffect(() => {
 
               </div>
 
-              {/* BUDGET */}
-
               <div className="project-form-group">
 
                 <label className="project-form-label">
@@ -1646,8 +1569,6 @@ useEffect(() => {
 
               </div>
 
-              {/* DEADLINE */}
-
               <div className="project-form-group">
 
                 <label className="project-form-label">
@@ -1667,8 +1588,6 @@ useEffect(() => {
                 />
 
               </div>
-
-              {/* BUTTONS */}
 
               <div className="project-form-actions">
 
@@ -1703,13 +1622,10 @@ useEffect(() => {
           </div>
         )}
 
-
-
-        {/* ==================================================
-            PROJECT LIST
-        ================================================== */}
+        {/* PROJECT LIST */}
 
         {loading ? (
+
           <div className="projects-empty">
 
             <div className="projects-loading-spinner" />
@@ -1719,8 +1635,10 @@ useEffect(() => {
             </p>
 
           </div>
+
         ) : filteredProjects.length ===
           0 ? (
+
           <div className="projects-empty">
 
             <FolderKanban
@@ -1738,11 +1656,14 @@ useEffect(() => {
             </p>
 
           </div>
+
         ) : (
+
           <div className="projects-grid">
 
             {filteredProjects.map(
               (project) => {
+
                 const tasks =
                   getProjectTaskList(
                     project
@@ -1786,11 +1707,12 @@ useEffect(() => {
                     );
 
                 return (
+
                   <div
                     key={
                       project._id
                     }
-                     id={`project-card-${project._id}`}
+                    id={`project-card-${project._id}`}
                     className={`project-card ${
                       expanded
                         ? "project-card-expanded"
@@ -1798,9 +1720,7 @@ useEffect(() => {
                     }`}
                   >
 
-                    {/* =================================
-                        HEADER
-                    ================================= */}
+                    {/* HEADER */}
 
                     <div className="project-card-header">
 
@@ -1875,9 +1795,7 @@ useEffect(() => {
 
                     </div>
 
-                    {/* =================================
-                        STATUS
-                    ================================= */}
+                    {/* STATUS */}
 
                     <div className="project-status-row">
 
@@ -1900,9 +1818,7 @@ useEffect(() => {
 
                     </div>
 
-                    {/* =================================
-                        COMPACT INFO
-                    ================================= */}
+                    {/* BASIC INFO */}
 
                     <div className="project-basic-info">
 
@@ -1958,9 +1874,7 @@ useEffect(() => {
 
                     </div>
 
-                    {/* =================================
-                        PROGRESS
-                    ================================= */}
+                    {/* PROGRESS */}
 
                     <div className="project-progress-section">
 
@@ -1981,7 +1895,8 @@ useEffect(() => {
                         <div
                           className="project-progress-fill"
                           style={{
-                            width: `${progress}%`,
+                            width:
+                              `${progress}%`,
                           }}
                         />
 
@@ -1989,9 +1904,7 @@ useEffect(() => {
 
                     </div>
 
-                    {/* =================================
-                        TASK SUMMARY
-                    ================================= */}
+                    {/* TASK SUMMARY */}
 
                     <div className="project-task-summary">
 
@@ -2032,7 +1945,6 @@ useEffect(() => {
                             <ChevronUp
                               size={16}
                             />
-
                             Hide
                           </>
                         ) : (
@@ -2040,7 +1952,6 @@ useEffect(() => {
                             <ChevronDown
                               size={16}
                             />
-
                             View
                           </>
                         )}
@@ -2049,16 +1960,16 @@ useEffect(() => {
 
                     </div>
 
-                    {/* =================================
-                        EXPANDED AREA
-                    ================================= */}
+                    {/* EXPANDED */}
 
                     {expanded && (
+
                       <div className="project-expanded-area">
 
                         {/* DESCRIPTION */}
 
                         {project.description && (
+
                           <div className="project-description">
 
                             <span>
@@ -2072,9 +1983,10 @@ useEffect(() => {
                             </p>
 
                           </div>
+
                         )}
 
-                        {/* TASK LIST */}
+                        {/* PROJECT TASKS */}
 
                         <div className="project-task-list">
 
@@ -2106,6 +2018,7 @@ useEffect(() => {
 
                           {tasks.length ===
                           0 ? (
+
                             <div className="project-no-tasks">
 
                               <ListChecks
@@ -2119,20 +2032,29 @@ useEffect(() => {
                               </p>
 
                             </div>
+
                           ) : (
+
                             <div className="project-task-items">
 
                               {tasks.map(
                                 (task) => {
+
                                   const completed =
                                     isTaskCompleted(
                                       task
                                     );
 
+                                  const taskId =
+                                    getTaskId(
+                                      task
+                                    );
+
                                   return (
+
                                     <div
                                       key={
-                                        task.id
+                                        taskId
                                       }
                                       className={`project-task-item ${
                                         completed
@@ -2150,10 +2072,11 @@ useEffect(() => {
                                         }`}
                                         onClick={() =>
                                           toggleProjectTask(
-                                            task.id
+                                            task
                                           )
                                         }
                                       >
+
                                         {completed && (
                                           <Check
                                             size={
@@ -2161,24 +2084,27 @@ useEffect(() => {
                                             }
                                           />
                                         )}
+
                                       </button>
 
                                       <div className="project-task-content">
 
                                         <strong>
                                           {
-                                            task.name ||
                                             task.title ||
+                                            task.name ||
                                             "Untitled Task"
                                           }
                                         </strong>
 
                                         {task.description && (
+
                                           <p>
                                             {
                                               task.description
                                             }
                                           </p>
+
                                         )}
 
                                         <div className="project-task-meta">
@@ -2202,9 +2128,9 @@ useEffect(() => {
                                           {task.dueDate && (
                                             <span>
                                               Due:{" "}
-                                              {
+                                              {formatDeadline(
                                                 task.dueDate
-                                              }
+                                              )}
                                             </span>
                                           )}
 
@@ -2221,18 +2147,18 @@ useEffect(() => {
                                       </div>
 
                                     </div>
+
                                   );
                                 }
                               )}
 
                             </div>
+
                           )}
 
                         </div>
 
-                        {/* =================================
-                            TIME TRACKED
-                        ================================= */}
+                        {/* TIME */}
 
                         <div className="project-time-box">
 
@@ -2260,15 +2186,14 @@ useEffect(() => {
                                   ● Live
                                 </small>
                               )}
+
                             </strong>
 
                           </div>
 
                         </div>
 
-                        {/* =================================
-                            ACTION BUTTONS
-                        ================================= */}
+                        {/* ACTIONS */}
 
                         <div className="project-actions">
 
@@ -2314,7 +2239,7 @@ useEffect(() => {
 
                           </button>
 
-                          {/* ADD TASKS */}
+                          {/* ADD TASK */}
 
                           <button
                             type="button"
@@ -2335,7 +2260,7 @@ useEffect(() => {
 
                           </button>
 
-                          {/* START TIMER */}
+                          {/* TIMER */}
 
                           <button
                             type="button"
@@ -2394,6 +2319,7 @@ useEffect(() => {
                         </div>
 
                       </div>
+
                     )}
 
                   </div>
@@ -2409,17 +2335,18 @@ useEffect(() => {
         ================================================== */}
 
         {showTaskForm && (
+
           <div
             className="project-task-modal-overlay"
-            onMouseDown={(
-              event
-            ) => {
+            onMouseDown={(event) => {
+
               if (
                 event.target ===
                 event.currentTarget
               ) {
                 closeAddTaskForm();
               }
+
             }}
           >
 
@@ -2436,8 +2363,7 @@ useEffect(() => {
                   </h2>
 
                   <p>
-                    Create a custom
-                    task for{" "}
+                    Create a task for{" "}
                     <strong>
                       {
                         selectedTaskProject?.name
@@ -2537,66 +2463,17 @@ useEffect(() => {
                       value={
                         taskForm.type
                       }
-                      onChange={(
-                        event
-                      ) => {
-                        const value =
-                          event.target.value;
-
-                        setTaskForm(
-                          (
-                            previous
-                          ) => ({
-                            ...previous,
-                            type: value,
-                          })
-                        );
-
-                        if (
-                          value !==
-                          "Other"
-                        ) {
-                          setCustomTaskType(
-                            ""
-                          );
-                        }
-
-                        setTaskError(
-                          ""
-                        );
-                      }}
+                      onChange={
+                        handleTaskFormChange
+                      }
                     >
 
                       <option value="Create">
                         Create
                       </option>
 
-                      <option value="Design">
-                        Design
-                      </option>
-
-                      <option value="Development">
-                        Development
-                      </option>
-
-                      <option value="Testing">
-                        Testing
-                      </option>
-
-                      <option value="Research">
-                        Research
-                      </option>
-
-                      <option value="Meeting">
-                        Meeting
-                      </option>
-
-                      <option value="Content">
-                        Content
-                      </option>
-
-                      <option value="Bug Fix">
-                        Bug Fix
+                      <option value="Update">
+                        Update
                       </option>
 
                       <option value="Other">
@@ -2606,40 +2483,6 @@ useEffect(() => {
                     </select>
 
                   </div>
-
-                  {/* CUSTOM TYPE */}
-
-                  {taskForm.type ===
-                    "Other" && (
-                    <div className="project-task-field custom-task-type-group">
-
-                      <label>
-                        Custom Task Type{" "}
-                        <span>
-                          *
-                        </span>
-                      </label>
-
-                      <input
-                        type="text"
-                        value={
-                          customTaskType
-                        }
-                        onChange={(
-                          event
-                        ) =>
-                          setCustomTaskType(
-                            event
-                              .target
-                              .value
-                          )
-                        }
-                        placeholder="e.g. Deployment"
-                        required
-                      />
-
-                    </div>
-                  )}
 
                   {/* PRIORITY */}
 
@@ -2785,6 +2628,7 @@ useEffect(() => {
             </div>
 
           </div>
+
         )}
 
       </div>
