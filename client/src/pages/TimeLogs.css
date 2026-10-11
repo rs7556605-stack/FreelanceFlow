@@ -1,335 +1,984 @@
-/* =========================================
-   ALL TIME LOGS PAGE
-========================================= */
+/* =========================================================
+   TIME LOGS PAGE
+   Modern Light + Dark Theme
+   ========================================================= */
+
+/* =========================================================
+   THEME VARIABLES
+   ========================================================= */
+
+:root {
+  /* PAGE */
+  --tl-page-bg: #f5f7fb;
+  --tl-page-glow: rgba(37, 99, 235, 0.08);
+
+  /* CARD */
+  --tl-card-bg: #ffffff;
+  --tl-card-header-bg: #ffffff;
+  --tl-table-head-bg: #f8fafc;
+  --tl-row-hover: #f8fbff;
+
+  /* TEXT */
+  --tl-text: #0f172a;
+  --tl-heading: #0f172a;
+  --tl-text-secondary: #475569;
+  --tl-text-muted: #64748b;
+
+  /* BORDER */
+  --tl-border: #e2e8f0;
+  --tl-border-light: #edf2f7;
+
+  /* BLUE */
+  --tl-blue: #2563eb;
+  --tl-blue-hover: #1d4ed8;
+  --tl-blue-bg: #eff6ff;
+  --tl-blue-border: #bfdbfe;
+
+  /* GREEN */
+  --tl-green: #15803d;
+  --tl-green-bg: #dcfce7;
+  --tl-green-border: #bbf7d0;
+
+  /* ORANGE */
+  --tl-orange: #c2410c;
+  --tl-orange-bg: #fff7ed;
+  --tl-orange-border: #fed7aa;
+
+  /* RED */
+  --tl-red: #dc2626;
+  --tl-red-hover: #b91c1c;
+  --tl-red-bg: #fef2f2;
+
+  /* SHADOW */
+  --tl-card-shadow:
+    0 20px 55px rgba(15, 23, 42, 0.10),
+    0 4px 15px rgba(15, 23, 42, 0.05);
+
+  --tl-menu-shadow:
+    0 20px 45px rgba(15, 23, 42, 0.15),
+    0 5px 15px rgba(15, 23, 42, 0.08);
+}
+
+
+/* =========================================================
+   DARK THEME
+   Supports:
+   html.dark
+   body.dark
+   .dark-theme
+   [data-theme="dark"]
+   ========================================================= */
+
+html.dark,
+body.dark,
+.dark-theme,
+[data-theme="dark"] {
+
+  --tl-page-bg: #080f1f;
+  --tl-page-glow: rgba(37, 99, 235, 0.13);
+
+  --tl-card-bg: #111827;
+  --tl-card-header-bg: #111827;
+  --tl-table-head-bg: #172033;
+  --tl-row-hover: #16243a;
+
+  --tl-text: #f8fafc;
+  --tl-heading: #f8fafc;
+  --tl-text-secondary: #cbd5e1;
+  --tl-text-muted: #94a3b8;
+
+  --tl-border: #263449;
+  --tl-border-light: #1e293b;
+
+  --tl-blue: #60a5fa;
+  --tl-blue-hover: #93c5fd;
+  --tl-blue-bg: rgba(37, 99, 235, 0.13);
+  --tl-blue-border: rgba(96, 165, 250, 0.35);
+
+  --tl-green: #4ade80;
+  --tl-green-bg: rgba(34, 197, 94, 0.13);
+  --tl-green-border: rgba(74, 222, 128, 0.28);
+
+  --tl-orange: #fb923c;
+  --tl-orange-bg: rgba(249, 115, 22, 0.12);
+  --tl-orange-border: rgba(251, 146, 60, 0.28);
+
+  --tl-red: #f87171;
+  --tl-red-hover: #fca5a5;
+  --tl-red-bg: rgba(239, 68, 68, 0.10);
+
+  --tl-card-shadow:
+    0 25px 65px rgba(0, 0, 0, 0.42),
+    0 5px 20px rgba(0, 0, 0, 0.20);
+
+  --tl-menu-shadow:
+    0 25px 55px rgba(0, 0, 0, 0.50),
+    0 5px 15px rgba(0, 0, 0, 0.30);
+}
+
+
+/* =========================================================
+   LIGHT THEME
+   ========================================================= */
+
+html.light,
+body.light,
+.light-theme,
+[data-theme="light"] {
+
+  --tl-page-bg: #f5f7fb;
+  --tl-page-glow: rgba(37, 99, 235, 0.08);
+
+  --tl-card-bg: #ffffff;
+  --tl-card-header-bg: #ffffff;
+  --tl-table-head-bg: #f8fafc;
+  --tl-row-hover: #f8fbff;
+
+  --tl-text: #0f172a;
+  --tl-heading: #0f172a;
+  --tl-text-secondary: #475569;
+  --tl-text-muted: #64748b;
+
+  --tl-border: #e2e8f0;
+  --tl-border-light: #edf2f7;
+
+  --tl-blue: #2563eb;
+  --tl-blue-hover: #1d4ed8;
+  --tl-blue-bg: #eff6ff;
+  --tl-blue-border: #bfdbfe;
+
+  --tl-green: #15803d;
+  --tl-green-bg: #dcfce7;
+  --tl-green-border: #bbf7d0;
+
+  --tl-orange: #c2410c;
+  --tl-orange-bg: #fff7ed;
+  --tl-orange-border: #fed7aa;
+
+  --tl-red: #dc2626;
+  --tl-red-hover: #b91c1c;
+  --tl-red-bg: #fef2f2;
+}
+
+
+/* =========================================================
+   MAIN PAGE
+   ========================================================= */
 
 .all-time-logs-page {
   width: 100%;
   min-height: 100vh;
-  padding: 30px;
+
   box-sizing: border-box;
+
+  padding: 22px 28px 55px;
+
+  color: var(--tl-text);
+
+  background:
+    radial-gradient(
+      circle at 85% 0%,
+      var(--tl-page-glow),
+      transparent 30%
+    ),
+    var(--tl-page-bg);
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
 }
 
-/* =========================================
-   TOP
-========================================= */
+
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 .all-time-logs-top {
-  margin-bottom: 24px;
+  width: 100%;
+  margin-bottom: 30px;
 }
+
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
 
 .all-time-logs-back {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+
+  gap: 9px;
+
+  margin: 0 0 30px;
+  padding: 0;
+
   border: none;
+  outline: none;
+
   background: transparent;
-  color: #2563eb;
-  font-size: 14px;
-  font-weight: 600;
+
+  color: var(--tl-blue);
+
+  font-size: 16px;
+  font-weight: 650;
+
   cursor: pointer;
-  padding: 8px 0;
-  margin-bottom: 20px;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .all-time-logs-back:hover {
-  color: #1d4ed8;
+  color: var(--tl-blue-hover);
+  transform: translateX(-4px);
 }
+
+
+/* =========================================================
+   TITLE
+   ========================================================= */
 
 .all-time-logs-title-row {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
+
   gap: 20px;
 }
 
 .all-time-logs-title-row h1 {
-  margin: 0 0 7px;
-  font-size: 28px;
-  font-weight: 700;
-  color: #111827;
+  margin: 0;
+
+  color: var(--tl-heading);
+
+  font-size: 36px;
+  line-height: 1.15;
+
+  font-weight: 750;
+
+  letter-spacing: -0.8px;
 }
 
 .all-time-logs-title-row p {
-  margin: 0;
-  color: #64748b;
-  font-size: 15px;
+  margin: 10px 0 0;
+
+  color: var(--tl-text-muted);
+
+  font-size: 16px;
+  line-height: 1.5;
 }
 
-.all-time-logs-count {
-  min-width: 45px;
-  height: 45px;
-  padding: 0 14px;
-  border-radius: 50%;
-  background: #eff6ff;
-  color: #2563eb;
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.time-logs-loading {
+  min-height: 60vh;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  color: var(--tl-text-secondary);
+
+  font-size: 16px;
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.time-logs-error {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  margin-bottom: 20px;
+  padding: 15px 18px;
+
+  border: 1px solid rgba(239, 68, 68, 0.28);
+
+  border-radius: 13px;
+
+  background: var(--tl-red-bg);
+
+  color: var(--tl-red);
+
+  font-size: 14px;
+  font-weight: 550;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.all-time-logs-empty {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 75px 25px;
+
+  border: 1px solid var(--tl-border);
+
+  border-radius: 22px;
+
+  background: var(--tl-card-bg);
+
+  text-align: center;
+
+  box-shadow: var(--tl-card-shadow);
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.all-time-logs-empty h3 {
+  margin: 0;
+
+  color: var(--tl-heading);
+
+  font-size: 22px;
   font-weight: 700;
 }
 
-/* =========================================
-   CARD
-========================================= */
+.all-time-logs-empty p {
+  margin: 9px 0 0;
 
-.all-time-logs-card {
-  background: #ffffff;
-  border: 1px solid #dbe3ee;
-  border-radius: 18px;
-  overflow: visible;
-  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+  color: var(--tl-text-muted);
+
+  font-size: 15px;
 }
 
+
+/* =========================================================
+   MAIN CARD
+   ========================================================= */
+
+.all-time-logs-card {
+  position: relative;
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  overflow: visible;
+
+  border: 1px solid var(--tl-border);
+
+  border-radius: 22px;
+
+  background: var(--tl-card-bg);
+
+  box-shadow: var(--tl-card-shadow);
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
+
 .all-time-logs-card-header {
-  padding: 24px 28px;
+  min-height: 132px;
+
+  box-sizing: border-box;
+
+  padding: 30px 36px;
+
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #e5eaf1;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-bottom: 1px solid var(--tl-border);
+
+  border-radius: 22px 22px 0 0;
+
+  background: var(--tl-card-header-bg);
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .all-time-logs-card-header h2 {
-  margin: 0 0 5px;
-  color: #111827;
-  font-size: 21px;
+  margin: 0;
+
+  color: var(--tl-heading);
+
+  font-size: 25px;
+  font-weight: 700;
+
+  letter-spacing: -0.3px;
 }
 
 .all-time-logs-card-header p {
-  margin: 0;
-  color: #64748b;
-  font-size: 14px;
+  margin: 8px 0 0;
+
+  color: var(--tl-text-muted);
+
+  font-size: 15px;
 }
+
+
+/* =========================================================
+   TOTAL BADGE
+   ========================================================= */
 
 .all-time-logs-card-header > span {
-  background: #eff6ff;
-  color: #2563eb;
-  border-radius: 20px;
-  padding: 7px 13px;
-  font-size: 13px;
+  flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 82px;
+  height: 38px;
+
+  padding: 0 15px;
+
+  box-sizing: border-box;
+
+  border: 1px solid var(--tl-blue-border);
+
+  border-radius: 999px;
+
+  background: var(--tl-blue-bg);
+
+  color: var(--tl-blue);
+
+  font-size: 14px;
   font-weight: 700;
+
+  white-space: nowrap;
 }
 
-/* =========================================
-   TABLE
-========================================= */
+
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
 
 .all-time-logs-table-wrapper {
   width: 100%;
+
   overflow-x: auto;
+  overflow-y: visible;
+
+  border-radius: 0 0 22px 22px;
+
+  -webkit-overflow-scrolling: touch;
 }
+
+
+/* =========================================================
+   TABLE SCROLLBAR
+   ========================================================= */
+
+.all-time-logs-table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.all-time-logs-table-wrapper::-webkit-scrollbar-track {
+  background: var(--tl-table-head-bg);
+}
+
+.all-time-logs-table-wrapper::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+
+  background: var(--tl-border);
+}
+
+.all-time-logs-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--tl-text-muted);
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
 
 .all-time-logs-table {
   width: 100%;
-  min-width: 1100px;
-  border-collapse: collapse;
+
+  min-width: 1050px;
+
+  border-collapse: separate;
+  border-spacing: 0;
+
+  background: var(--tl-card-bg);
 }
 
-.all-time-logs-table th {
-  background: #f8fafc;
-  color: #334155;
-  font-size: 14px;
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.all-time-logs-table thead th {
+  height: 72px;
+
+  box-sizing: border-box;
+
+  padding: 0 28px;
+
+  border-bottom: 1px solid var(--tl-border);
+
+  background: var(--tl-table-head-bg);
+
+  color: var(--tl-text-secondary);
+
+  font-size: 15px;
   font-weight: 700;
+
   text-align: left;
-  padding: 18px 22px;
-  border-bottom: 1px solid #e2e8f0;
+
   white-space: nowrap;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
 }
 
-.all-time-logs-table td {
-  padding: 21px 22px;
-  border-bottom: 1px solid #e8edf3;
-  color: #475569;
-  font-size: 14px;
+.all-time-logs-table thead th:first-child {
+  padding-left: 28px;
+}
+
+.all-time-logs-table thead th:last-child {
+  padding-right: 28px;
+}
+
+
+/* =========================================================
+   TABLE ROW
+   ========================================================= */
+
+.all-time-logs-table tbody tr {
+  background: var(--tl-card-bg);
+
+  transition:
+    background 0.2s ease;
+}
+
+.all-time-logs-table tbody tr:hover {
+  background: var(--tl-row-hover);
+}
+
+
+/* =========================================================
+   TABLE CELLS
+   ========================================================= */
+
+.all-time-logs-table tbody td {
+  height: 106px;
+
+  box-sizing: border-box;
+
+  padding: 20px 28px;
+
+  border-bottom: 1px solid var(--tl-border);
+
+  color: var(--tl-text-secondary);
+
+  font-size: 15px;
+
+  vertical-align: middle;
+
   white-space: nowrap;
+
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .all-time-logs-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.all-time-logs-table tbody tr:hover {
-  background: #fafcff;
+.all-time-logs-table tbody td:first-child {
+  color: var(--tl-heading);
 }
 
-.all-time-logs-table td strong {
-  color: #334155;
+.all-time-logs-table tbody td strong {
+  color: var(--tl-heading);
+
+  font-weight: 700;
 }
+
+
+/* =========================================================
+   DURATION
+   ========================================================= */
 
 .duration-value {
-  color: #334155;
-  font-weight: 600;
+  color: var(--tl-heading);
+
+  font-weight: 700;
+
+  font-variant-numeric: tabular-nums;
+
+  letter-spacing: 0.2px;
+}
+
+
+/* =========================================================
+   AMOUNT
+   ========================================================= */
+
+.amount-value {
+  color: var(--tl-heading) !important;
+
+  font-size: 16px;
+
+  font-weight: 750 !important;
+
   font-variant-numeric: tabular-nums;
 }
 
-.amount-value {
-  color: #111827 !important;
+
+/* =========================================================
+   RATE
+   ========================================================= */
+
+.all-time-logs-table td {
+  font-variant-numeric: tabular-nums;
 }
 
-/* =========================================
-   BILLED
-========================================= */
+
+/* =========================================================
+   BILLED / UNBILLED
+   ========================================================= */
 
 .all-billed,
 .all-unbilled {
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
-  padding: 9px 14px;
-  border-radius: 20px;
-  font-size: 13px;
+
+  min-width: 78px;
+  height: 46px;
+
+  padding: 0 16px;
+
+  box-sizing: border-box;
+
+  border-radius: 999px;
+
+  font-size: 14px;
   font-weight: 700;
+
+  white-space: nowrap;
 }
 
 .all-billed {
-  background: #dcfce7;
-  color: #15803d;
+  border: 1px solid var(--tl-green-border);
+
+  background: var(--tl-green-bg);
+
+  color: var(--tl-green);
 }
 
 .all-unbilled {
-  background: #fef3c7;
-  color: #b45309;
+  border: 1px solid var(--tl-orange-border);
+
+  background: var(--tl-orange-bg);
+
+  color: var(--tl-orange);
 }
 
-/* =========================================
-   ACTIONS
-========================================= */
+
+/* =========================================================
+   ACTION AREA
+   ========================================================= */
 
 .all-log-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+
+  gap: 12px;
 }
 
-.all-view-btn {
-  height: 42px;
-  padding: 0 17px;
+.all-view-btn,
+.all-menu-btn {
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  border: 1px solid #bfdbfe;
-  border-radius: 12px;
-  background: #eff6ff;
-  color: #2563eb;
-  font-size: 14px;
-  font-weight: 700;
+
+  box-sizing: border-box;
+
   cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+/* =========================================================
+   VIEW BUTTON
+   ========================================================= */
+
+.all-view-btn {
+  height: 52px;
+
+  min-width: 116px;
+
+  padding: 0 20px;
+
+  gap: 10px;
+
+  border: 1px solid var(--tl-blue-border);
+
+  border-radius: 15px;
+
+  background: var(--tl-blue-bg);
+
+  color: var(--tl-blue);
+
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .all-view-btn:hover {
-  background: #dbeafe;
+  border-color: var(--tl-blue);
+
+  background: var(--tl-blue-bg);
+
+  color: var(--tl-blue-hover);
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 8px 20px rgba(37, 99, 235, 0.12);
 }
 
-.all-menu-wrapper {
-  position: relative;
+.all-view-btn:active {
+  transform: translateY(0);
 }
+
+
+/* =========================================================
+   THREE DOT BUTTON
+   ========================================================= */
 
 .all-menu-btn {
-  width: 42px;
-  height: 42px;
-  border: 1px solid #dbe3ee;
-  border-radius: 12px;
-  background: #ffffff;
-  color: #475569;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  width: 54px;
+  height: 54px;
+
+  padding: 0;
+
+  border: 1px solid var(--tl-border);
+
+  border-radius: 15px;
+
+  background: var(--tl-card-bg);
+
+  color: var(--tl-text-secondary);
 }
 
 .all-menu-btn:hover {
-  background: #f8fafc;
+  border-color: var(--tl-blue-border);
+
+  background: var(--tl-blue-bg);
+
+  color: var(--tl-blue);
+
+  transform: translateY(-1px);
 }
 
-/* =========================================
-   DROPDOWN
-========================================= */
+
+/* =========================================================
+   MENU WRAPPER
+   ========================================================= */
+
+.all-menu-wrapper {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+}
+
+
+/* =========================================================
+   DROPDOWN MENU
+   ========================================================= */
 
 .all-log-menu {
   position: absolute;
-  right: 0;
+
+  z-index: 999;
+
   top: calc(100% + 8px);
-  width: 150px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 6px;
-  z-index: 100;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+  right: 0;
+
+  width: 155px;
+
+  padding: 7px;
+
+  box-sizing: border-box;
+
+  border: 1px solid var(--tl-border);
+
+  border-radius: 14px;
+
+  background: var(--tl-card-bg);
+
+  box-shadow: var(--tl-menu-shadow);
+
+  animation: timeLogMenuIn 0.16s ease-out;
 }
+
+@keyframes timeLogMenuIn {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(-6px)
+      scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+
+/* =========================================================
+   MENU ITEMS
+   ========================================================= */
 
 .all-log-menu button {
   width: 100%;
+
+  min-height: 42px;
+
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 10px 11px;
+
+  gap: 10px;
+
+  padding: 0 12px;
+
   border: none;
+
+  border-radius: 9px;
+
   background: transparent;
-  border-radius: 8px;
-  color: #334155;
+
+  color: var(--tl-text-secondary);
+
   font-size: 14px;
   font-weight: 600;
-  cursor: pointer;
+
   text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
 }
 
 .all-log-menu button:hover {
-  background: #f1f5f9;
+  background: var(--tl-blue-bg);
+
+  color: var(--tl-blue);
 }
 
+
+/* =========================================================
+   DELETE
+   ========================================================= */
+
 .all-log-menu .delete-action {
-  color: #dc2626;
+  color: var(--tl-red);
 }
 
 .all-log-menu .delete-action:hover {
-  background: #fef2f2;
+  background: var(--tl-red-bg);
+
+  color: var(--tl-red-hover);
 }
 
-/* =========================================
-   EMPTY / ERROR / LOADING
-========================================= */
 
-.all-time-logs-empty {
-  background: #ffffff;
-  border: 1px solid #dbe3ee;
-  border-radius: 18px;
-  padding: 70px 30px;
-  text-align: center;
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+.all-time-logs-back:focus-visible,
+.all-view-btn:focus-visible,
+.all-menu-btn:focus-visible,
+.all-log-menu button:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.25);
+
+  outline-offset: 2px;
 }
 
-.all-time-logs-empty h3 {
-  margin: 0 0 8px;
-  color: #111827;
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .all-time-logs-page {
+    padding: 20px 20px 45px;
+  }
+
+  .all-time-logs-card-header {
+    padding: 27px 28px;
+  }
+
+  .all-time-logs-table thead th,
+  .all-time-logs-table tbody td {
+    padding-left: 22px;
+    padding-right: 22px;
+  }
 }
 
-.all-time-logs-empty p {
-  margin: 0;
-  color: #64748b;
-}
 
-.time-logs-loading {
-  padding: 80px 20px;
-  text-align: center;
-  color: #64748b;
-}
-
-.time-logs-error {
-  background: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
-  padding: 14px 18px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-}
-
-/* =========================================
-   RESPONSIVE
-========================================= */
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
 @media (max-width: 768px) {
+
   .all-time-logs-page {
-    padding: 18px;
+    min-height: 100vh;
+
+    padding: 16px 12px 35px;
+  }
+
+  .all-time-logs-top {
+    margin-bottom: 22px;
+  }
+
+  .all-time-logs-back {
+    margin-bottom: 24px;
+
+    font-size: 14px;
   }
 
   .all-time-logs-title-row {
@@ -337,10 +986,266 @@
   }
 
   .all-time-logs-title-row h1 {
+    font-size: 28px;
+
+    letter-spacing: -0.5px;
+  }
+
+  .all-time-logs-title-row p {
+    margin-top: 8px;
+
+    font-size: 14px;
+  }
+
+  /* CARD */
+
+  .all-time-logs-card {
+    border-radius: 18px;
+  }
+
+  /* CARD HEADER */
+
+  .all-time-logs-card-header {
+    min-height: auto;
+
+    padding: 22px 18px;
+
+    align-items: flex-start;
+
+    border-radius: 18px 18px 0 0;
+  }
+
+  .all-time-logs-card-header h2 {
+    font-size: 21px;
+  }
+
+  .all-time-logs-card-header p {
+    font-size: 13px;
+  }
+
+  .all-time-logs-card-header > span {
+    min-width: 70px;
+
+    height: 34px;
+
+    padding: 0 11px;
+
+    font-size: 12px;
+  }
+
+  /* TABLE */
+
+  .all-time-logs-table-wrapper {
+    border-radius: 0 0 18px 18px;
+  }
+
+  .all-time-logs-table {
+    min-width: 980px;
+  }
+
+  .all-time-logs-table thead th {
+    height: 58px;
+
+    padding: 0 18px;
+
+    font-size: 13px;
+  }
+
+  .all-time-logs-table tbody td {
+    height: 92px;
+
+    padding: 16px 18px;
+
+    font-size: 13px;
+  }
+
+  /* VIEW */
+
+  .all-view-btn {
+    height: 46px;
+
+    min-width: 92px;
+
+    padding: 0 14px;
+
+    gap: 7px;
+
+    border-radius: 12px;
+
+    font-size: 13px;
+  }
+
+  /* MENU */
+
+  .all-menu-btn {
+    width: 46px;
+    height: 46px;
+
+    border-radius: 12px;
+  }
+
+  /* BADGES */
+
+  .all-billed,
+  .all-unbilled {
+    min-width: 68px;
+
+    height: 38px;
+
+    padding: 0 12px;
+
+    font-size: 12px;
+  }
+
+  /* DROPDOWN */
+
+  .all-log-menu {
+    right: 0;
+
+    width: 145px;
+  }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+  .all-time-logs-page {
+    padding: 14px 9px 30px;
+  }
+
+  .all-time-logs-back {
+    font-size: 13px;
+  }
+
+  .all-time-logs-title-row h1 {
+    font-size: 25px;
+  }
+
+  .all-time-logs-title-row p {
+    font-size: 13px;
+  }
+
+  /* CARD HEADER */
+
+  .all-time-logs-card-header {
+    padding: 19px 15px;
+  }
+
+  .all-time-logs-card-header h2 {
+    font-size: 19px;
+  }
+
+  .all-time-logs-card-header p {
+    font-size: 12px;
+  }
+
+  .all-time-logs-card-header > span {
+    min-width: 62px;
+
+    height: 31px;
+
+    font-size: 11px;
+  }
+
+  /* TABLE */
+
+  .all-time-logs-table {
+    min-width: 920px;
+  }
+
+  .all-time-logs-table thead th {
+    padding: 0 15px;
+
+    font-size: 12px;
+  }
+
+  .all-time-logs-table tbody td {
+    padding: 14px 15px;
+
+    font-size: 12px;
+  }
+
+  /* VIEW */
+
+  .all-view-btn {
+    min-width: 84px;
+
+    height: 42px;
+
+    padding: 0 12px;
+
+    font-size: 12px;
+  }
+
+  /* MENU */
+
+  .all-menu-btn {
+    width: 42px;
+    height: 42px;
+  }
+
+  .all-log-actions {
+    gap: 8px;
+  }
+
+  .all-log-menu {
+    width: 140px;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL DEVICES
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+  .all-time-logs-page {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  .all-time-logs-title-row h1 {
     font-size: 23px;
   }
 
-  .all-time-logs-card-header {
-    padding: 20px;
+  .all-time-logs-card-header h2 {
+    font-size: 18px;
+  }
+
+  .all-time-logs-card-header > span {
+    min-width: 56px;
+
+    padding: 0 8px;
+
+    font-size: 10px;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .all-time-logs-page,
+  .all-time-logs-card,
+  .all-time-logs-card-header,
+  .all-time-logs-table thead th,
+  .all-time-logs-table tbody td,
+  .all-time-logs-back,
+  .all-view-btn,
+  .all-menu-btn,
+  .all-log-menu button {
+    transition: none !important;
+  }
+
+  .all-log-menu {
+    animation: none !important;
   }
 }
