@@ -1,21 +1,439 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+
 const User = require("../models/User");
+const { sendOTPEmail } = require("../utils/sendEmail");
+
+// ============================================================
+// HELPER - GENERATE JWT
+// ============================================================
+
+const generateToken = (user) => {
+  return jwt.sign(
+    {
+      id: user._id,
+      userId: user._id,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+    }
+  );
+};
+
+// ============================================================
+// HELPER - GET USER ID
+// ============================================================
+
+const getUserIdFromRequest = (req) => {
+  return (
+    req.user?.id ||
+    req.user?._id ||
+    req.user?.userId ||
+    null
+  );
+};
+
+// ============================================================
+// FORGOT PASSWORD
+// POST /api/auth/forgot-password
+// ============================================================
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body || {};
+
+    const cleanEmail = String(email || "")
+      .trim()
+      .toLowerCase();
+
+    // ----------------------------------------------------------
+    // VALIDATION
+    // ----------------------------------------------------------
+
+    if (!cleanEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required.",
+      });
+    }
+
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(cleanEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid email address.",
+      });
+    }
+
+    // ----------------------------------------------------------
+    // FIND USER
+    // ----------------------------------------------------------
+
+    const user = await User.findOne({
+      email: cleanEmail,
+    });
+
+    // ----------------------------------------------------------
+    // SECURITY
+    // Don't reveal whether email exists
+    // ----------------------------------------------------------
+
+    if (!user) {
+      return res.status(200).json({
+        success: true,
+        message:
+          "If an account exists with this email, an OTP has been sent.",
+      });
+    }
+
+    // ----------------------------------------------------------
+    // GENERATE 6 DIGIT OTP
+    // ----------------------------------------------------------
+
+    const otp = crypto
+      .randomInt(100000, 1000000)
+      .toString();
+
+    // OTP expires in 10 minutes
+    const otpExpires = new Date(
+      Date.now() + 10 * 60 * 1000
+    );
+
+    // ----------------------------------------------------------
+    // SAVE OTP
+    // ----------------------------------------------------------
+
+    user.resetPasswordOTP = otp;
+    user.resetPasswordOTPExpires = otpExpires;
+
+    await user.save();
+
+    // ----------------------------------------------------------
+    // SEND OTP EMAIL THROUGH RESEND
+    // ----------------------------------------------------------
+
+    await sendOTPEmail(
+      cleanEmail,
+      user.username || "User",
+      otp
+    );
+
+    console.log(
+      `✅ Password reset OTP sent to ${cleanEmail}`
+    );
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "OTP sent successfully. Please check your email.",
+    });
+  } catch (error) {
+    console.error(
+      "❌ Forgot Password Error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Failed to send OTP. Please try again later.",
+    });
+  }
+};
+
+// ============================================================
+// VERIFY OTP
+// POST /api/auth/verify-otp
+// ============================================================
+
+const verifyOTP = async (req, res) => {
+  try {
+    const {
+      email,
+      otp,
+    } = req.body || {};
+
+    const cleanEmail = String(email || "")
+      .trim()
+      .toLowerCase();
+
+    const cleanOTP = String(otp || "")
+      .trim();
+
+    // ----------------------------------------------------------
+    // VALIDATION
+    // ----------------------------------------------------------
+
+    if (!cleanEmail || !cleanOTP) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and OTP are required.",
+      });
+    }
+
+    if (!/^\d{6}$/.test(cleanOTP)) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP must be 6 digits.",
+      });
+    }
+
+    // ----------------------------------------------------------
+    // FIND USER
+    // ----------------------------------------------------------
+
+    const user = await User.findOne({
+      email: cleanEmail,
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP.",
+      });
+    }
+
+    // ----------------------------------------------------------
+    // CHECK OTP
+    // ----------------------------------------------------------
+
+    if (
+      !user.resetPasswordOTP ||
+      user.resetPasswordOTP !== cleanOTP
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP.",
+      });
+    }
+
+    // ----------------------------------------------------------
+    // CHECK EXPIRY
+    // ----------------------------------------------------------
+
+    if (
+      !user.resetPasswordOTPExpires ||
+      new Date(user.resetPasswordOTPExpires) <
+        new Date()
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "OTP has expired. Please request a new OTP.",
+      });
+    }
+
+    // ----------------------------------------------------------
+    // OTP VERIFIED
+    //
+    // We don't clear OTP here because resetPassword
+    // still needs to verify it.
+    // ----------------------------------------------------------
+
+    return res.status(200).json({
+      success: true,
+      message: "OTP verified successfully.",
+    });
+  } catch (error) {
+    console.error(
+      "❌ Verify OTP Error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Failed to verify OTP. Please try again.",
+    });
+  }
+};
+
+// ============================================================
+// RESET PASSWORD
+// POST /api/auth/reset-password
+// ============================================================
+
+const resetPassword = async (req, res) => {
+  try {
+    const {
+      email,
+      otp,
+      newPassword,
+      password,
+    } = req.body || {};
+
+    const cleanEmail = String(email || "")
+      .trim()
+      .toLowerCase();
+
+    const cleanOTP = String(otp || "")
+      .trim();
+
+    // Support both newPassword and password
+    const finalPassword =
+      newPassword || password;
+
+    // ----------------------------------------------------------
+    // VALIDATION
+    // ----------------------------------------------------------
+
+    if (
+      !cleanEmail ||
+      !cleanOTP ||
+      !finalPassword
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Email, OTP and new password are required.",
+      });
+    }
+
+    if (!/^\d{6}$/.test(cleanOTP)) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP must be 6 digits.",
+      });
+    }
+
+    if (finalPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "New password must be at least 6 characters.",
+      });
+    }
+
+    // ----------------------------------------------------------
+    // FIND USER
+    // ----------------------------------------------------------
+
+    const user = await User.findOne({
+      email: cleanEmail,
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid reset request.",
+      });
+    }
+
+    // ----------------------------------------------------------
+    // CHECK OTP
+    // ----------------------------------------------------------
+
+    if (
+      !user.resetPasswordOTP ||
+      user.resetPasswordOTP !== cleanOTP
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP.",
+      });
+    }
+
+    // ----------------------------------------------------------
+    // CHECK OTP EXPIRY
+    // ----------------------------------------------------------
+
+    if (
+      !user.resetPasswordOTPExpires ||
+      new Date(user.resetPasswordOTPExpires) <
+        new Date()
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "OTP has expired. Please request a new OTP.",
+      });
+    }
+
+    // ----------------------------------------------------------
+    // CHECK OLD PASSWORD
+    // ----------------------------------------------------------
+
+    if (user.password) {
+      const samePassword =
+        await bcrypt.compare(
+          finalPassword,
+          user.password
+        );
+
+      if (samePassword) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "New password must be different from your old password.",
+        });
+      }
+    }
+
+    // ----------------------------------------------------------
+    // HASH NEW PASSWORD
+    // ----------------------------------------------------------
+
+    const hashedPassword =
+      await bcrypt.hash(
+        finalPassword,
+        12
+      );
+
+    user.password =
+      hashedPassword;
+
+    // ----------------------------------------------------------
+    // CLEAR OTP
+    // ----------------------------------------------------------
+
+    user.resetPasswordOTP = undefined;
+    user.resetPasswordOTPExpires =
+      undefined;
+
+    await user.save();
+
+    console.log(
+      `✅ Password reset successfully for user: ${user._id}`
+    );
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "Password reset successfully. You can now login with your new password.",
+    });
+  } catch (error) {
+    console.error(
+      "❌ Reset Password Error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Failed to reset password. Please try again.",
+    });
+  }
+};
+
+// ============================================================
+// CHANGE PASSWORD - LOGGED IN USER
+// PUT /api/auth/change-password
+// ============================================================
 
 const changePassword = async (req, res) => {
   try {
-    // ==========================================
-    // GET REQUEST DATA
-    // ==========================================
-
     const {
       currentPassword,
       newPassword,
     } = req.body || {};
 
-    // ==========================================
+    // ----------------------------------------------------------
     // BASIC VALIDATION
-    // ==========================================
+    // ----------------------------------------------------------
 
     if (
       !currentPassword ||
@@ -28,10 +446,6 @@ const changePassword = async (req, res) => {
       });
     }
 
-    // ==========================================
-    // PASSWORD LENGTH
-    // ==========================================
-
     if (newPassword.length < 6) {
       return res.status(400).json({
         success: false,
@@ -39,10 +453,6 @@ const changePassword = async (req, res) => {
           "New password must be at least 6 characters.",
       });
     }
-
-    // ==========================================
-    // PASSWORD DIFFERENCE
-    // ==========================================
 
     if (
       currentPassword === newPassword
@@ -54,18 +464,16 @@ const changePassword = async (req, res) => {
       });
     }
 
-    // ==========================================
+    // ----------------------------------------------------------
     // GET USER ID FROM AUTH MIDDLEWARE
-    // ==========================================
+    // ----------------------------------------------------------
 
     let userId =
-      req.user?.id ||
-      req.user?._id ||
-      req.user?.userId;
+      getUserIdFromRequest(req);
 
-    // ==========================================
+    // ----------------------------------------------------------
     // FALLBACK JWT VERIFICATION
-    // ==========================================
+    // ----------------------------------------------------------
 
     if (!userId) {
       const authHeader =
@@ -96,7 +504,6 @@ const changePassword = async (req, res) => {
           decoded.id ||
           decoded._id ||
           decoded.userId;
-
       } catch (tokenError) {
         console.error(
           "❌ JWT Verification Error:",
@@ -111,9 +518,9 @@ const changePassword = async (req, res) => {
       }
     }
 
-    // ==========================================
+    // ----------------------------------------------------------
     // FINAL USER ID CHECK
-    // ==========================================
+    // ----------------------------------------------------------
 
     if (!userId) {
       return res.status(401).json({
@@ -123,9 +530,9 @@ const changePassword = async (req, res) => {
       });
     }
 
-    // ==========================================
+    // ----------------------------------------------------------
     // FIND USER
-    // ==========================================
+    // ----------------------------------------------------------
 
     const user =
       await User.findById(userId);
@@ -133,14 +540,13 @@ const changePassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message:
-          "User not found.",
+        message: "User not found.",
       });
     }
 
-    // ==========================================
-    // CHECK PASSWORD FIELD
-    // ==========================================
+    // ----------------------------------------------------------
+    // CHECK PASSWORD
+    // ----------------------------------------------------------
 
     if (!user.password) {
       return res.status(400).json({
@@ -150,9 +556,9 @@ const changePassword = async (req, res) => {
       });
     }
 
-    // ==========================================
+    // ----------------------------------------------------------
     // CHECK CURRENT PASSWORD
-    // ==========================================
+    // ----------------------------------------------------------
 
     const passwordMatches =
       await bcrypt.compare(
@@ -168,9 +574,9 @@ const changePassword = async (req, res) => {
       });
     }
 
-    // ==========================================
+    // ----------------------------------------------------------
     // HASH NEW PASSWORD
-    // ==========================================
+    // ----------------------------------------------------------
 
     const hashedPassword =
       await bcrypt.hash(
@@ -178,18 +584,14 @@ const changePassword = async (req, res) => {
         12
       );
 
-    // ==========================================
+    // ----------------------------------------------------------
     // UPDATE PASSWORD
-    // ==========================================
+    // ----------------------------------------------------------
 
     user.password =
       hashedPassword;
 
     await user.save();
-
-    // ==========================================
-    // SUCCESS
-    // ==========================================
 
     console.log(
       `✅ Password changed successfully for user: ${user._id}`
@@ -200,13 +602,7 @@ const changePassword = async (req, res) => {
       message:
         "Password changed successfully.",
     });
-
   } catch (error) {
-
-    // ==========================================
-    // SERVER ERROR
-    // ==========================================
-
     console.error(
       "❌ Change Password Error:",
       error
@@ -220,6 +616,13 @@ const changePassword = async (req, res) => {
   }
 };
 
+// ============================================================
+// EXPORT ALL AUTH CONTROLLERS
+// ============================================================
+
 module.exports = {
+  forgotPassword,
+  verifyOTP,
+  resetPassword,
   changePassword,
 };
