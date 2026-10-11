@@ -258,8 +258,8 @@
 }
 
 .invoice-summary {
-  background: #0f172a;
-  color: white;
+  background: white;
+  color: black;
   border-radius: 12px;
   padding: 24px;
 }
@@ -280,11 +280,11 @@
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
-  color: #cbd5e1;
+  color: black;
 }
 
 .summary-row strong {
-  color: white;
+  color: black;
 }
 
 .summary-total {
@@ -717,7 +717,7 @@ html[data-theme="dark"] .tax-input-wrapper span {
    ========================================================= */
 
 html[data-theme="dark"] .invoice-summary {
-  background: #0f172a !important;
+  background:  #293443 !important;
   border-color: #334155 !important;
   color: #e2e8f0 !important;
   box-shadow: none !important;
