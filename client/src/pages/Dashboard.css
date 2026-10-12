@@ -686,6 +686,7 @@
 
   .dashboard-welcome {
     margin-bottom: 24px;
+    margin-top:70px;
   }
 
   .dashboard-welcome h2 {
@@ -1714,9 +1715,7 @@ html[data-theme="dark"] .dashboard-clickable-deadline:hover {
 
 
 
-/* ==========================================
-   DAY 18 - MOBILE SIDEBAR DRAWER
-========================================== */
+
 
 .dashboard-menu-toggle {
   display: none;
@@ -1759,6 +1758,7 @@ html[data-theme="dark"] .dashboard-clickable-deadline:hover {
   }
 
   .dashboard-header-inner {
+    
     width: 100%;
     box-sizing: border-box;
   }
@@ -1975,9 +1975,7 @@ html[data-theme="dark"] .dashboard-clickable-deadline:hover {
 
 
 
-/* ==========================================
-   DAY 18 - MOBILE WIDTH FIX
-========================================== */
+
 
 @media (max-width: 640px) {
 
@@ -3064,469 +3062,6 @@ html[data-theme="dark"] .dashboard-clickable-deadline:hover {
   font-size: 13px;
 }
 
-
-/* =========================================================
-   LIST
-========================================================= */
-
-.dashboard-deadlines-list {
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 14px;
-
-  width: 100%;
-}
-
-
-/* =========================================================
-   DEADLINE CARD
-========================================================= */
-
-.dashboard-deadline-item {
-  width: 100%;
-
-  min-height: 92px;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 16px;
-
-  padding: 14px 16px;
-
-  box-sizing: border-box;
-
-  background: #f6f7f9;
-
-  border: 1px solid #eaecee;
-
-  border-radius: 14px;
-
-  text-decoration: none;
-
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-
-.dashboard-deadline-item:hover {
-  transform: translateY(-2px);
-
-  background: #f3f3f4;
-
-  border-color: #eceef0;
-
-  box-shadow:
-    0 8px 22px
-    rgba(0, 0, 0, 0.18);
-}
-
-
-/* =========================================================
-   ICON
-========================================================= */
-
-.dashboard-deadline-icon {
-  width: 54px;
-
-  height: 54px;
-
-  min-width: 54px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  background: #fff7ed;
-
-  color: #f97316;
-
-  border-radius: 14px;
-}
-
-
-/* =========================================================
-   CONTENT
-========================================================= */
-
-.dashboard-deadline-content {
-  flex: 1;
-
-  min-width: 0;
-
-  overflow: hidden;
-}
-
-
-.dashboard-deadline-title-row {
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
-
-  min-width: 0;
-}
-
-
-.dashboard-deadline-title-row h4 {
-  margin: 0;
-
-  color: black;
-
-  font-size: 17px;
-
-  font-weight: 700;
-
-  white-space: nowrap;
-
-  overflow: hidden;
-
-  text-overflow: ellipsis;
-}
-
-
-.dashboard-deadline-content p {
-  margin: 7px 0 0;
-
-  color: #94a3b8;
-
-  font-size: 14px;
-
-  white-space: nowrap;
-
-  overflow: hidden;
-
-  text-overflow: ellipsis;
-}
-
-
-/* =========================================================
-   TYPE BADGE
-========================================================= */
-
-.dashboard-deadline-type {
-  flex-shrink: 0;
-
-  padding: 4px 9px;
-
-  border-radius: 999px;
-
-  font-size: 11px;
-
-  font-weight: 700;
-
-  line-height: 1;
-}
-
-
-/* PROJECT */
-
-.dashboard-deadline-type.project {
-  background: #dbeafe;
-
-  color: #2563eb;
-}
-
-
-/* TASK */
-
-.dashboard-deadline-type.task {
-  background: #f3e8ff;
-
-  color: #9333ea;
-}
-
-
-/* =========================================================
-   RIGHT SIDE
-========================================================= */
-
-.dashboard-deadline-right {
-  flex-shrink: 0;
-
-  min-width: 150px;
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: flex-end;
-
-  justify-content: center;
-
-  gap: 8px;
-}
-
-
-/* =========================================================
-   DUE DATE
-========================================================= */
-
-.dashboard-deadline-due {
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  min-width: 110px;
-
-  padding: 9px 13px;
-
-  box-sizing: border-box;
-
-  background: #334155;
-
-  color: #f1f5f9;
-
-  border-radius: 11px;
-
-  font-size: 13px;
-
-  font-weight: 700;
-
-  white-space: nowrap;
-}
-
-
-/* =========================================================
-   DAYS LEFT
-========================================================= */
-
-.dashboard-deadline-remaining {
-  display: inline-flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  min-width: 125px;
-
-  padding: 8px 12px;
-
-  box-sizing: border-box;
-
-  border-radius: 11px;
-
-  font-size: 13px;
-
-  font-weight: 700;
-
-  white-space: nowrap;
-}
-
-
-/* =========================================================
-   SAFE
-========================================================= */
-
-.dashboard-deadline-remaining.safe {
-  background: #334155;
-
-  color: #4ade80;
-}
-
-
-/* =========================================================
-   WARNING
-========================================================= */
-
-.dashboard-deadline-remaining.warning {
-  background: #334155;
-
-  color: #fbbf24;
-}
-
-
-/* =========================================================
-   TODAY
-========================================================= */
-
-.dashboard-deadline-remaining.today {
-  background: #422006;
-
-  color: #fbbf24;
-}
-
-
-/* =========================================================
-   OVERDUE
-========================================================= */
-
-.dashboard-deadline-remaining.overdue {
-  background: #450a0a;
-
-  color: #f87171;
-}
-
-
-/* =========================================================
-   VIEW ALL BUTTON
-========================================================= */
-
-.dashboard-view-all-button {
-  border: none;
-
-  background: transparent;
-
-  cursor: pointer;
-
-  font-family: inherit;
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 700px) {
-
-  .dashboard-deadlines-card {
-    padding: 16px;
-
-    border-radius: 14px;
-  }
-
-
-  .dashboard-deadline-item {
-    min-height: auto;
-
-    padding: 12px;
-
-    gap: 12px;
-  }
-
-
-  .dashboard-deadline-icon {
-    width: 44px;
-
-    height: 44px;
-
-    min-width: 44px;
-
-    border-radius: 11px;
-  }
-
-
-  .dashboard-deadline-title-row {
-    gap: 6px;
-  }
-
-
-  .dashboard-deadline-title-row h4 {
-    font-size: 14px;
-  }
-
-
-  .dashboard-deadline-content p {
-    font-size: 12px;
-
-    margin-top: 5px;
-  }
-
-
-  .dashboard-deadline-type {
-    padding: 3px 7px;
-
-    font-size: 9px;
-  }
-
-
-  .dashboard-deadline-right {
-    min-width: 105px;
-
-    gap: 6px;
-  }
-
-
-  .dashboard-deadline-due {
-    min-width: 100px;
-
-    padding: 7px 9px;
-
-    font-size: 11px;
-  }
-
-
-  .dashboard-deadline-remaining {
-    min-width: 105px;
-
-    padding: 7px 8px;
-
-    font-size: 11px;
-  }
-
-}
-
-
-/* =========================================================
-   SMALL MOBILE
-========================================================= */
-
-@media (max-width: 480px) {
-
-  .dashboard-deadline-item {
-    align-items: flex-start;
-  }
-
-
-  .dashboard-deadline-icon {
-    width: 38px;
-
-    height: 38px;
-
-    min-width: 38px;
-  }
-
-
-  .dashboard-deadline-title-row {
-    flex-wrap: wrap;
-  }
-
-
-  .dashboard-deadline-title-row h4 {
-    max-width: 100%;
-
-    font-size: 13px;
-  }
-
-
-  .dashboard-deadline-right {
-    min-width: 88px;
-
-    align-items: flex-end;
-  }
-
-
-  .dashboard-deadline-due {
-    min-width: 88px;
-
-    padding: 6px 7px;
-
-    font-size: 10px;
-  }
-
-
-  .dashboard-deadline-remaining {
-    min-width: 88px;
-
-    padding: 6px 6px;
-
-    font-size: 10px;
-
-    text-align: center;
-  }
-
-}
 
 
 
@@ -5286,20 +4821,70 @@ html[data-theme="dark"]
 }
 
 
-.dashboard-sidebar {
+
+
+
+.dashboard-header {
   position: fixed;
   top: 0;
   left: 0;
-  width: 310px;
-  height: 100vh;
+  right: 0;
+  height: 110px;
+  z-index: 1100;
+}
+
+.dashboard-sidebar {
+  position: fixed;
+  top: 110px;
+  left: 0;
+  bottom: 0;
+  width: 293px;
+  height: calc(100vh - 110px);
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 1000;
-  flex-shrink: 0;
 }
 
 .dashboard-main {
-  margin-left: 310px;
+  margin-left: 293px;
+  padding-top: 110px;
   min-height: 100vh;
-  width: calc(100% - 310px);
+  width: calc(100% - 293px);
+}
+
+
+
+/* MOBILE SIDEBAR */
+@media (max-width: 768px) {
+  .dashboard-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 82%;
+    max-width: 330px;
+    height: 100dvh;
+    z-index: 9999;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+.dashboard-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  z-index: 1100;
+}
+  .dashboard-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .dashboard-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(3px);
+  }
 }
