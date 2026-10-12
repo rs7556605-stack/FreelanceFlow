@@ -1,10 +1,5 @@
 const User = require("../models/User");
 
-// ==========================================
-// GET PROFILE
-// GET /api/profile
-// ==========================================
-
 const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -18,7 +13,26 @@ const getProfile = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      user,
+      user: {
+        id: user._id,
+        _id: user._id,
+        username: user.username || user.name || "",
+        name: user.name || user.username || "",
+        email: user.email,
+        plan: user.plan,
+
+        profession: user.profession,
+        bio: user.bio,
+
+        skills: user.skills,
+        experience: user.experience,
+        education: user.education,
+
+        profileImage: user.profileImage,
+        resumeUrl: user.resumeUrl,
+
+        socialLinks: user.socialLinks,
+      },
     });
   } catch (error) {
     console.error("Get Profile Error:", error);
@@ -30,15 +44,12 @@ const getProfile = async (req, res) => {
   }
 };
 
-// ==========================================
-// UPDATE PROFILE
-// PUT /api/profile
-// ==========================================
-
 const updateProfile = async (req, res) => {
   try {
     const {
+      username,
       name,
+      email,
       profession,
       bio,
       skills,
@@ -53,10 +64,6 @@ const updateProfile = async (req, res) => {
       socialLinks,
     } = req.body;
 
-    // ==========================================
-    // FIND LOGGED-IN USER
-    // ==========================================
-
     const user = await User.findById(req.user.id);
 
     if (!user) {
@@ -66,55 +73,60 @@ const updateProfile = async (req, res) => {
       });
     }
 
-    // ==========================================
-    // BUILD UPDATE OBJECT
-    // ==========================================
+    const profileUsername =
+      username !== undefined
+        ? String(username).trim()
+        : name !== undefined
+        ? String(name).trim()
+        : undefined;
 
-    const updateData = {};
-
-    // ==========================================
-    // BASIC INFORMATION
-    // ==========================================
-
-    if (name !== undefined) {
-      const cleanName = String(name).trim();
-
-      if (!cleanName) {
+    if (profileUsername !== undefined) {
+      if (!profileUsername) {
         return res.status(400).json({
           success: false,
           message: "Name cannot be empty",
         });
       }
 
-      updateData.name = cleanName;
+      user.username = profileUsername;
     }
 
-    // ==========================================
-    // PROFILE INFORMATION
-    // ==========================================
+    if (email !== undefined) {
+      const cleanEmail = String(email)
+        .trim()
+        .toLowerCase();
+
+      if (!cleanEmail) {
+        return res.status(400).json({
+          success: false,
+          message: "Email cannot be empty",
+        });
+      }
+
+      user.email = cleanEmail;
+    }
 
     if (profession !== undefined) {
-      updateData.profession = String(profession).trim();
+      user.profession = String(profession).trim();
     }
 
     if (bio !== undefined) {
-      updateData.bio = String(bio).trim();
+      user.bio = String(bio).trim();
     }
-
-    // ==========================================
-    // SKILLS
-    // ==========================================
 
     if (skills !== undefined) {
       if (Array.isArray(skills)) {
-        updateData.skills = skills
+        user.skills = skills
           .map((skill) => {
-            if (typeof skill === "object" && skill !== null) {
+            if (
+              typeof skill === "object" &&
+              skill !== null
+            ) {
               return String(
                 skill.name ||
-                skill.title ||
-                skill.skill ||
-                ""
+                  skill.title ||
+                  skill.skill ||
+                  ""
               ).trim();
             }
 
@@ -122,219 +134,149 @@ const updateProfile = async (req, res) => {
           })
           .filter(Boolean);
       } else {
-        updateData.skills = String(skills)
+        user.skills = String(skills)
           .split(",")
           .map((skill) => skill.trim())
           .filter(Boolean);
       }
     }
 
-    // ==========================================
-    // EXPERIENCE
-    // ==========================================
-
     if (experience !== undefined) {
-      updateData.experience = String(experience).trim();
+      user.experience = String(experience).trim();
     }
-
-    // ==========================================
-    // EDUCATION
-    // ==========================================
 
     if (education !== undefined) {
-      updateData.education = String(education).trim();
+      user.education = String(education).trim();
     }
-
-    // ==========================================
-    // PROFILE IMAGE
-    // ==========================================
 
     if (profileImage !== undefined) {
-      updateData.profileImage = String(profileImage).trim();
+      user.profileImage =
+        String(profileImage).trim();
     }
-
-    // ==========================================
-    // RESUME
-    // ==========================================
 
     if (resumeUrl !== undefined) {
-      updateData.resumeUrl = String(resumeUrl).trim();
+      user.resumeUrl =
+        String(resumeUrl).trim();
     }
 
-    // ==========================================
-    // SOCIAL LINKS
-    // ==========================================
-
-    const existingSocialLinks =
-      user.socialLinks &&
-      typeof user.socialLinks === "object"
-        ? user.socialLinks.toObject
-          ? user.socialLinks.toObject()
-          : { ...user.socialLinks }
-        : {};
-
-    const updatedSocialLinks = {
-      ...existingSocialLinks,
-    };
-
-    let socialLinksChanged = false;
-
-    // ==========================================
-    // SOCIAL LINKS OBJECT
-    // ==========================================
+    if (!user.socialLinks) {
+      user.socialLinks = {};
+    }
 
     if (
       socialLinks &&
-      typeof socialLinks === "object" &&
-      !Array.isArray(socialLinks)
+      typeof socialLinks === "object"
     ) {
       if (socialLinks.github !== undefined) {
-        updatedSocialLinks.github =
-          String(socialLinks.github).trim();
-
-        socialLinksChanged = true;
+        user.socialLinks.github =
+          String(
+            socialLinks.github
+          ).trim();
       }
 
-      if (socialLinks.linkedin !== undefined) {
-        updatedSocialLinks.linkedin =
-          String(socialLinks.linkedin).trim();
-
-        socialLinksChanged = true;
+      if (
+        socialLinks.linkedin !== undefined
+      ) {
+        user.socialLinks.linkedin =
+          String(
+            socialLinks.linkedin
+          ).trim();
       }
 
       if (socialLinks.twitter !== undefined) {
-        updatedSocialLinks.twitter =
-          String(socialLinks.twitter).trim();
-
-        socialLinksChanged = true;
+        user.socialLinks.twitter =
+          String(
+            socialLinks.twitter
+          ).trim();
       }
 
       if (socialLinks.website !== undefined) {
-        updatedSocialLinks.website =
-          String(socialLinks.website).trim();
-
-        socialLinksChanged = true;
+        user.socialLinks.website =
+          String(
+            socialLinks.website
+          ).trim();
       }
     }
 
-    // ==========================================
-    // DIRECT SOCIAL LINKS
-    // ==========================================
-
     if (github !== undefined) {
-      updatedSocialLinks.github =
+      user.socialLinks.github =
         String(github).trim();
-
-      socialLinksChanged = true;
     }
 
     if (linkedin !== undefined) {
-      updatedSocialLinks.linkedin =
+      user.socialLinks.linkedin =
         String(linkedin).trim();
-
-      socialLinksChanged = true;
     }
 
     if (twitter !== undefined) {
-      updatedSocialLinks.twitter =
+      user.socialLinks.twitter =
         String(twitter).trim();
-
-      socialLinksChanged = true;
     }
 
     if (website !== undefined) {
-      updatedSocialLinks.website =
+      user.socialLinks.website =
         String(website).trim();
-
-      socialLinksChanged = true;
     }
 
-    if (socialLinksChanged) {
-      updateData.socialLinks = updatedSocialLinks;
-    }
-
-    // ==========================================
-    // NOTHING TO UPDATE
-    // ==========================================
-
-    if (Object.keys(updateData).length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "No profile data provided for update",
-      });
-    }
-
-    // ==========================================
-    // UPDATE DATABASE
-    // ==========================================
-    // IMPORTANT:
-    // Using findByIdAndUpdate instead of user.save()
-    // prevents unrelated required-field validation
-    // such as missing username from breaking profile updates.
-    // ==========================================
-
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
-      {
-        $set: updateData,
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    ).select("-password");
-
-    if (!updatedUser) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found after update",
-      });
-    }
-
-    // ==========================================
-    // RESPONSE
-    // ==========================================
+    const updatedUser = await user.save();
 
     return res.status(200).json({
       success: true,
       message: "Profile updated successfully",
       user: {
         id: updatedUser._id,
-        username: updatedUser.username,
-        name: updatedUser.name,
+        _id: updatedUser._id,
+
+        username:
+          updatedUser.username ||
+          updatedUser.name ||
+          "",
+
+        name:
+          updatedUser.username ||
+          updatedUser.name ||
+          "",
+
         email: updatedUser.email,
         plan: updatedUser.plan,
 
-        profession: updatedUser.profession,
+        profession:
+          updatedUser.profession,
+
         bio: updatedUser.bio,
 
-        skills: updatedUser.skills,
-        experience: updatedUser.experience,
-        education: updatedUser.education,
+        skills:
+          updatedUser.skills,
 
-        profileImage: updatedUser.profileImage,
-        resumeUrl: updatedUser.resumeUrl,
+        experience:
+          updatedUser.experience,
 
-        socialLinks: updatedUser.socialLinks,
+        education:
+          updatedUser.education,
+
+        profileImage:
+          updatedUser.profileImage,
+
+        resumeUrl:
+          updatedUser.resumeUrl,
+
+        socialLinks:
+          updatedUser.socialLinks,
       },
     });
   } catch (error) {
-    console.error("Update Profile Error:", error);
+    console.error(
+      "Update Profile Error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: "Server error while updating profile",
-      error:
-        process.env.NODE_ENV === "development"
-          ? error.message
-          : undefined,
+      message:
+        "Server error while updating profile",
     });
   }
 };
-
-// ==========================================
-// EXPORTS
-// ==========================================
 
 module.exports = {
   getProfile,
