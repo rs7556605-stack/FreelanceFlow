@@ -5,8 +5,6 @@ const crypto = require("crypto");
 const User = require("../models/User");
 const { sendOTPEmail } = require("../utils/sendEmail");
 
-
-
 const generateToken = (user) => {
   return jwt.sign(
     {
@@ -20,8 +18,6 @@ const generateToken = (user) => {
   );
 };
 
-
-
 const getUserIdFromRequest = (req) => {
   return (
     req.user?.id ||
@@ -31,8 +27,6 @@ const getUserIdFromRequest = (req) => {
   );
 };
 
-
-
 const register = async (req, res) => {
   try {
     const {
@@ -40,8 +34,6 @@ const register = async (req, res) => {
       email,
       password,
     } = req.body || {};
-
-   
 
     const cleanUsername = String(username || "").trim();
 
@@ -62,8 +54,6 @@ const register = async (req, res) => {
         message: "Username must be at least 2 characters.",
       });
     }
-
-
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -97,23 +87,17 @@ const register = async (req, res) => {
       12
     );
 
-   
-
     const user = await User.create({
       username: cleanUsername,
       email: cleanEmail,
       password: hashedPassword,
     });
 
- 
-
     const token = generateToken(user);
 
     console.log(
-      `✅ User registered successfully: ${user._id}`
+      `User registered successfully: ${user._id}`
     );
-
-   
 
     return res.status(201).json({
       success: true,
@@ -128,12 +112,8 @@ const register = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(
-      "❌ Register Error:",
-      error
-    );
+    console.error("Register Error:", error);
 
-    // MongoDB duplicate email
     if (error.code === 11000) {
       return res.status(409).json({
         success: false,
@@ -148,16 +128,12 @@ const register = async (req, res) => {
   }
 };
 
-
-
 const login = async (req, res) => {
   try {
     const {
       email,
       password,
     } = req.body || {};
-
-  
 
     const cleanEmail = String(email || "")
       .trim()
@@ -170,8 +146,6 @@ const login = async (req, res) => {
       });
     }
 
-    
-
     const user = await User.findOne({
       email: cleanEmail,
     });
@@ -183,8 +157,6 @@ const login = async (req, res) => {
       });
     }
 
-  
-
     if (!user.password) {
       return res.status(401).json({
         success: false,
@@ -192,8 +164,6 @@ const login = async (req, res) => {
           "Password login is not available for this account.",
       });
     }
-
-  
 
     const passwordMatches =
       await bcrypt.compare(
@@ -208,15 +178,11 @@ const login = async (req, res) => {
       });
     }
 
- 
-
     const token = generateToken(user);
 
     console.log(
-      `✅ User logged in successfully: ${user._id}`
+      `User logged in successfully: ${user._id}`
     );
-
-   
 
     return res.status(200).json({
       success: true,
@@ -231,10 +197,7 @@ const login = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(
-      "❌ Login Error:",
-      error
-    );
+    console.error("Login Error:", error);
 
     return res.status(500).json({
       success: false,
@@ -242,8 +205,6 @@ const login = async (req, res) => {
     });
   }
 };
-
-
 
 const forgotPassword = async (req, res) => {
   try {
@@ -253,15 +214,12 @@ const forgotPassword = async (req, res) => {
       .trim()
       .toLowerCase();
 
-    
-
     if (!cleanEmail) {
       return res.status(400).json({
         success: false,
         message: "Email is required.",
       });
     }
-
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -273,12 +231,9 @@ const forgotPassword = async (req, res) => {
       });
     }
 
-
     const user = await User.findOne({
       email: cleanEmail,
     });
-
-  
 
     if (!user) {
       return res.status(200).json({
@@ -288,25 +243,19 @@ const forgotPassword = async (req, res) => {
       });
     }
 
-  
-
     const otp = crypto
       .randomInt(100000, 1000000)
       .toString();
 
-   
-
     const otpExpires = new Date(
       Date.now() + 10 * 60 * 1000
     );
-
 
     const updateFields = {
       resetPasswordOTP: otp,
       resetPasswordOTPExpires: otpExpires,
     };
 
-    // Optional fields only if they exist in schema
     if (
       Object.prototype.hasOwnProperty.call(
         user.toObject(),
@@ -352,8 +301,6 @@ const forgotPassword = async (req, res) => {
       }
     );
 
- 
-
     await sendOTPEmail(
       cleanEmail,
       user.username || "User",
@@ -361,9 +308,8 @@ const forgotPassword = async (req, res) => {
     );
 
     console.log(
-      `✅ Password reset OTP sent to ${cleanEmail}`
+      `Password reset OTP sent to ${cleanEmail}`
     );
-
 
     return res.status(200).json({
       success: true,
@@ -372,10 +318,7 @@ const forgotPassword = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(
-      "❌ Forgot Password Error:",
-      error
-    );
+    console.error("Forgot Password Error:", error);
 
     return res.status(500).json({
       success: false,
@@ -384,8 +327,6 @@ const forgotPassword = async (req, res) => {
     });
   }
 };
-
-
 
 const verifyOTP = async (req, res) => {
   try {
@@ -400,8 +341,6 @@ const verifyOTP = async (req, res) => {
 
     const cleanOTP = String(otp || "")
       .trim();
-
- 
 
     if (!cleanEmail || !cleanOTP) {
       return res.status(400).json({
@@ -418,7 +357,6 @@ const verifyOTP = async (req, res) => {
       });
     }
 
-
     const user = await User.findOne({
       email: cleanEmail,
     });
@@ -430,8 +368,6 @@ const verifyOTP = async (req, res) => {
       });
     }
 
-  
-
     if (
       !user.resetPasswordOTP ||
       user.resetPasswordOTP !== cleanOTP
@@ -441,8 +377,6 @@ const verifyOTP = async (req, res) => {
         message: "Invalid OTP.",
       });
     }
-
-
 
     if (
       !user.resetPasswordOTPExpires ||
@@ -457,8 +391,6 @@ const verifyOTP = async (req, res) => {
       });
     }
 
-   
-
     return res.status(200).json({
       success: true,
       message:
@@ -466,10 +398,7 @@ const verifyOTP = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(
-      "❌ Verify OTP Error:",
-      error
-    );
+    console.error("Verify OTP Error:", error);
 
     return res.status(500).json({
       success: false,
@@ -478,8 +407,6 @@ const verifyOTP = async (req, res) => {
     });
   }
 };
-
-
 
 const resetPassword = async (req, res) => {
   try {
@@ -497,10 +424,8 @@ const resetPassword = async (req, res) => {
     const cleanOTP = String(otp || "")
       .trim();
 
-    // Support both newPassword and password
     const finalPassword =
       newPassword || password;
-
 
     if (
       !cleanEmail ||
@@ -529,8 +454,6 @@ const resetPassword = async (req, res) => {
       });
     }
 
-  
-
     const user = await User.findOne({
       email: cleanEmail,
     });
@@ -543,8 +466,6 @@ const resetPassword = async (req, res) => {
       });
     }
 
-    
-
     if (
       !user.resetPasswordOTP ||
       user.resetPasswordOTP !== cleanOTP
@@ -554,7 +475,6 @@ const resetPassword = async (req, res) => {
         message: "Invalid OTP.",
       });
     }
-
 
     if (
       !user.resetPasswordOTPExpires ||
@@ -568,8 +488,6 @@ const resetPassword = async (req, res) => {
           "OTP has expired. Please request a new OTP.",
       });
     }
-
-
 
     if (user.password) {
       const samePassword =
@@ -587,52 +505,46 @@ const resetPassword = async (req, res) => {
       }
     }
 
-  
-
     const hashedPassword =
       await bcrypt.hash(
         finalPassword,
         12
       );
 
-    
+    const updateFields = {
+      password: hashedPassword,
+      resetPasswordOTP: null,
+      resetPasswordOTPExpires: null,
+    };
 
-    user.password = hashedPassword;
-
-
-
-    user.resetPasswordOTP = undefined;
-
-    user.resetPasswordOTPExpires =
-      undefined;
-
-    // Optional security cleanup
     if ("resetPasswordOTPAttempts" in user) {
-      user.resetPasswordOTPAttempts = 0;
+      updateFields.resetPasswordOTPAttempts = 0;
     }
 
     if ("resetPasswordVerified" in user) {
-      user.resetPasswordVerified = false;
+      updateFields.resetPasswordVerified = false;
     }
 
     if ("resetPasswordToken" in user) {
-      user.resetPasswordToken = undefined;
+      updateFields.resetPasswordToken = null;
     }
 
     if ("resetPasswordTokenExpires" in user) {
-      user.resetPasswordTokenExpires =
-        undefined;
+      updateFields.resetPasswordTokenExpires = null;
     }
 
-   
-
-    await user.save();
-
-    console.log(
-      `✅ Password reset successfully for user: ${user._id}`
+    await User.updateOne(
+      {
+        _id: user._id,
+      },
+      {
+        $set: updateFields,
+      }
     );
 
-  
+    console.log(
+      `Password reset successfully for user: ${user._id}`
+    );
 
     return res.status(200).json({
       success: true,
@@ -641,10 +553,7 @@ const resetPassword = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(
-      "❌ Reset Password Error:",
-      error
-    );
+    console.error("Reset Password Error:", error);
 
     return res.status(500).json({
       success: false,
@@ -654,15 +563,12 @@ const resetPassword = async (req, res) => {
   }
 };
 
-
 const changePassword = async (req, res) => {
   try {
     const {
       currentPassword,
       newPassword,
     } = req.body || {};
-
-  
 
     if (
       !currentPassword ||
@@ -693,12 +599,8 @@ const changePassword = async (req, res) => {
       });
     }
 
-
-
     let userId =
       getUserIdFromRequest(req);
-
-  
 
     if (!userId) {
       const authHeader =
@@ -706,9 +608,7 @@ const changePassword = async (req, res) => {
 
       if (
         !authHeader ||
-        !authHeader.startsWith(
-          "Bearer "
-        )
+        !authHeader.startsWith("Bearer ")
       ) {
         return res.status(401).json({
           success: false,
@@ -734,7 +634,7 @@ const changePassword = async (req, res) => {
 
       } catch (tokenError) {
         console.error(
-          "❌ JWT Verification Error:",
+          "JWT Verification Error:",
           tokenError.message
         );
 
@@ -746,7 +646,6 @@ const changePassword = async (req, res) => {
       }
     }
 
-
     if (!userId) {
       return res.status(401).json({
         success: false,
@@ -754,8 +653,6 @@ const changePassword = async (req, res) => {
           "User authentication failed.",
       });
     }
-
-   
 
     const user =
       await User.findById(userId);
@@ -767,8 +664,6 @@ const changePassword = async (req, res) => {
       });
     }
 
-  
-
     if (!user.password) {
       return res.status(400).json({
         success: false,
@@ -776,8 +671,6 @@ const changePassword = async (req, res) => {
           "Password authentication is not available for this account.",
       });
     }
-
- 
 
     const passwordMatches =
       await bcrypt.compare(
@@ -793,23 +686,35 @@ const changePassword = async (req, res) => {
       });
     }
 
-  
-
     const hashedPassword =
       await bcrypt.hash(
         newPassword,
         12
       );
 
-   
+    const updateResult =
+      await User.updateOne(
+        {
+          _id: userId,
+        },
+        {
+          $set: {
+            password: hashedPassword,
+          },
+        }
+      );
 
-    user.password =
-      hashedPassword;
-
-    await user.save();
+    if (
+      updateResult.matchedCount === 0
+    ) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
 
     console.log(
-      `✅ Password changed successfully for user: ${user._id}`
+      `Password changed successfully for user: ${userId}`
     );
 
     return res.status(200).json({
@@ -820,7 +725,7 @@ const changePassword = async (req, res) => {
 
   } catch (error) {
     console.error(
-      "❌ Change Password Error:",
+      "Change Password Error:",
       error
     );
 
@@ -832,14 +737,10 @@ const changePassword = async (req, res) => {
   }
 };
 
-
 const deleteAccount = async (req, res) => {
   try {
-    
     let userId =
       getUserIdFromRequest(req);
-
-  
 
     if (!userId) {
       const authHeader =
@@ -847,9 +748,7 @@ const deleteAccount = async (req, res) => {
 
       if (
         !authHeader ||
-        !authHeader.startsWith(
-          "Bearer "
-        )
+        !authHeader.startsWith("Bearer ")
       ) {
         return res.status(401).json({
           success: false,
@@ -875,7 +774,7 @@ const deleteAccount = async (req, res) => {
 
       } catch (tokenError) {
         console.error(
-          "❌ JWT Verification Error:",
+          "JWT Verification Error:",
           tokenError.message
         );
 
@@ -887,7 +786,6 @@ const deleteAccount = async (req, res) => {
       }
     }
 
-
     if (!userId) {
       return res.status(401).json({
         success: false,
@@ -895,8 +793,6 @@ const deleteAccount = async (req, res) => {
           "User authentication failed.",
       });
     }
-
-  
 
     const user =
       await User.findById(userId);
@@ -908,15 +804,11 @@ const deleteAccount = async (req, res) => {
       });
     }
 
-   
-
     await User.findByIdAndDelete(userId);
 
     console.log(
-      `✅ Account deleted successfully: ${userId}`
+      `Account deleted successfully: ${userId}`
     );
-
- 
 
     return res.status(200).json({
       success: true,
@@ -926,7 +818,7 @@ const deleteAccount = async (req, res) => {
 
   } catch (error) {
     console.error(
-      "❌ Delete Account Error:",
+      "Delete Account Error:",
       error
     );
 
@@ -937,8 +829,6 @@ const deleteAccount = async (req, res) => {
     });
   }
 };
-
-
 
 module.exports = {
   register,
