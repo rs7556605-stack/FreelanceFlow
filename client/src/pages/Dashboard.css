@@ -5284,3 +5284,22 @@ html[data-theme="dark"]
   }
 
 }
+
+
+.dashboard-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 310px;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 1000;
+  flex-shrink: 0;
+}
+
+.dashboard-main {
+  margin-left: 310px;
+  min-height: 100vh;
+  width: calc(100% - 310px);
+}
