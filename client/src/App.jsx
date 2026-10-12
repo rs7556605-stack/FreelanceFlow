@@ -31,6 +31,7 @@ import TimeLogs from "./pages/TimeLogs";
 import ForgotPassword from "./pages/ForgotPassword";
 import VerifyOTP from "./pages/VerifyOTP";
 import ResetPassword from "./pages/ResetPassword";
+import Upgrade from "./pages/Upgrade";
 
 const App = () => {
   // ==========================================
@@ -207,6 +208,8 @@ const App = () => {
   path="/reset-password"
   element={<ResetPassword />}
 />
+
+        <Route path="/upgrade" element={<Upgrade />} />
 
         </Routes>
       </BrowserRouter>
