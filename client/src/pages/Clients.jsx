@@ -200,64 +200,90 @@ const formatSeconds = (seconds) => {
 const Clients = () => {
   const navigate = useNavigate();
 
-  /* =======================================================
-     STATES
-  ======================================================= */
 
-  const [clients, setClients] = useState([]);
+const storedUser = JSON.parse(
+  localStorage.getItem("user") || "{}"
+);
 
-  const [form, setForm] = useState(
-    emptyForm
-  );
 
-  const [search, setSearch] = useState("");
 
-  const [showForm, setShowForm] =
-    useState(false);
+const userPlan = String(
+  storedUser?.plan ||
+  storedUser?.subscription?.plan ||
+  "free"
+).toLowerCase();
 
-  const [editingId, setEditingId] =
-    useState(null);
 
-  const [loading, setLoading] =
-    useState(true);
+const isFreePlan =
+  userPlan === "free" ||
+  userPlan === "basic";
 
-  const [saving, setSaving] =
-    useState(false);
+/* =======================================================
+   STATES
+======================================================= */
 
-  const [error, setError] =
-    useState("");
+const [clients, setClients] = useState([]);
 
-  const [expandedClients, setExpandedClients] =
-    useState({});
+const [form, setForm] = useState(
+  emptyForm
+);
 
-  const [projects, setProjects] =
-    useState([]);
+const [search, setSearch] = useState("");
 
-  const [serverTasks, setServerTasks] =
-    useState([]);
+const [showForm, setShowForm] =
+  useState(false);
 
-  const [timeLogs, setTimeLogs] =
-    useState([]);
+const [editingId, setEditingId] =
+  useState(null);
 
-  const [clientMeta, setClientMeta] =
-    useState({});
+const [loading, setLoading] =
+  useState(true);
 
-  /* =======================================================
-     CLIENT TASK STATES
-  ======================================================= */
+const [saving, setSaving] =
+  useState(false);
 
-  const [clientTasks, setClientTasks] =
-    useState([]);
+const [error, setError] =
+  useState("");
 
-  const [showTaskForm, setShowTaskForm] =
-    useState(false);
+const [expandedClients, setExpandedClients] =
+  useState({});
 
-  const [taskClientId, setTaskClientId] =
-    useState(null);
+const [projects, setProjects] =
+  useState([]);
 
-  const [taskForm, setTaskForm] =
-    useState(emptyTaskForm);
+const [serverTasks, setServerTasks] =
+  useState([]);
 
+const [timeLogs, setTimeLogs] =
+  useState([]);
+
+const [clientMeta, setClientMeta] =
+  useState({});
+
+const [clientTasks, setClientTasks] =
+  useState([]);
+
+const [showTaskForm, setShowTaskForm] =
+  useState(false);
+
+const [taskClientId, setTaskClientId] =
+  useState(null);
+
+const [taskForm, setTaskForm] =
+  useState(emptyTaskForm);
+
+
+/* =======================================================
+   PLAN LIMIT
+======================================================= */
+
+const clientLimit =
+  isFreePlan ? 2 : Infinity;
+
+const canAddClient =
+  !isFreePlan ||
+  clients.length < clientLimit;
+ 
   /* =======================================================
      LOAD LOCAL DATA
   ======================================================= */
@@ -522,34 +548,69 @@ const Clients = () => {
   ======================================================= */
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+  event.preventDefault();
 
-    try {
-      setSaving(true);
-      setError("");
+  if (!editingId && !canAddClient) {
+    setError(
+      "Free plan allows only 2 clients. Upgrade your plan to add unlimited clients."
+    );
+    return;
+  }
 
-      const apiForm = {
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-        company: form.company,
-        defaultHourlyRate:
-          form.defaultHourlyRate,
-        address: form.address,
-        status: form.status,
-        budget: form.budget,
-        received: form.received,
-        deadline: form.deadline,
-      };
+  try {
+    setSaving(true);
+    setError("");
 
-      if (editingId) {
-        await API.put(
-          `/clients/${editingId}`,
+    const apiForm = {
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      company: form.company,
+      defaultHourlyRate: form.defaultHourlyRate,
+      address: form.address,
+      status: form.status,
+      budget: form.budget,
+      received: form.received,
+      deadline: form.deadline,
+    };
+
+    if (editingId) {
+      await API.put(
+        `/clients/${editingId}`,
+        apiForm
+      );
+
+      saveExtraClientData(
+        editingId,
+        {
+          status:
+            form.status ||
+            "In Progress",
+
+          budget:
+            Number(form.budget) || 0,
+
+          received:
+            Number(form.received) || 0,
+
+          deadline:
+            form.deadline || "",
+        }
+      );
+    } else {
+      const response =
+        await API.post(
+          "/clients",
           apiForm
         );
 
+      const createdClient =
+        response.data?.client ||
+        response.data?.data;
+
+      if (createdClient?._id) {
         saveExtraClientData(
-          editingId,
+          createdClient._id,
           {
             status:
               form.status ||
@@ -565,53 +626,23 @@ const Clients = () => {
               form.deadline || "",
           }
         );
-      } else {
-        const response =
-          await API.post(
-            "/clients",
-            apiForm
-          );
-
-        const createdClient =
-          response.data?.client ||
-          response.data?.data;
-
-        if (createdClient?._id) {
-          saveExtraClientData(
-            createdClient._id,
-            {
-              status:
-                form.status ||
-                "In Progress",
-
-              budget:
-                Number(form.budget) || 0,
-
-              received:
-                Number(form.received) || 0,
-
-              deadline:
-                form.deadline || "",
-            }
-          );
-        }
       }
-
-      setForm(emptyForm);
-      setEditingId(null);
-      setShowForm(false);
-
-      await refreshData();
-    } catch (error) {
-      setError(
-        error.response?.data?.message ||
-          "Failed to save client"
-      );
-    } finally {
-      setSaving(false);
     }
-  };
 
+    setForm(emptyForm);
+    setEditingId(null);
+    setShowForm(false);
+
+    await refreshData();
+  } catch (error) {
+    setError(
+      error.response?.data?.message ||
+        "Failed to save client"
+    );
+  } finally {
+    setSaving(false);
+  }
+};
   /* =======================================================
      EDIT CLIENT
   ======================================================= */
@@ -1336,29 +1367,63 @@ const openTasks = (client) => {
 
         {/* HEADER */}
 
-        <div className="clients-header">
-          <div>
-            <h1 className="clients-title">
-              Clients
-            </h1>
+       <div className="clients-header">
+  <div>
+    <h1 className="clients-title">
+      Clients
+    </h1>
 
-            <p className="clients-subtitle">
-              Manage your freelance clients.
-            </p>
-          </div>
+    <p className="clients-subtitle">
+      Manage your freelance clients.
+    </p>
+
+    <div className="client-plan-limit">
+      <span>
+        {isFreePlan
+          ? `${Math.min(
+              clients.length,
+              2
+            )}/2 clients used`
+          : `${clients.length} clients`}
+      </span>
+
+      {isFreePlan && (
+        <button
+          type="button"
+          onClick={() => navigate("/upgrade")}
+        >
+          Upgrade for Unlimited
+        </button>
+      )}
+    </div>
+  </div>
+
+  
 
           <button
-            type="button"
-            className="add-client-btn"
-            onClick={() => {
-              setEditingId(null);
-              setForm(emptyForm);
-              setShowForm(true);
-            }}
-          >
-            <Plus size={18} />
-            <span>Add Client</span>
-          </button>
+  type="button"
+  className={`add-client-btn ${
+    !canAddClient
+      ? "add-client-btn-limit"
+      : ""
+  }`}
+  onClick={() => {
+    if (!canAddClient) {
+      setError(
+        "Free plan allows only 2 clients. Upgrade your plan to add unlimited clients."
+      );
+      return;
+    }
+
+    setError("");
+    setEditingId(null);
+    setForm(emptyForm);
+    setShowForm(true);
+  }}
+>
+  <Plus size={18} />
+  <span>Add Client</span>
+</button>
         </div>
 
         {/* ERROR */}
