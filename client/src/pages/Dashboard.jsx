@@ -1525,13 +1525,27 @@ const Dashboard = () => {
 
             <nav className="dashboard-top-nav">
 
-              <Link to="/">
-                <Home size={17} />
-                <span>
-                  Home
-                </span>
-              </Link>
+             <Link
+  to="/"
+  onClick={() => {
+    setTimeout(() => {
+      const main = document.querySelector(
+        ".dashboard-main"
+      );
 
+      if (main) {
+        main.scrollTop = 0;
+      }
+
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      window.scrollTo(0, 0);
+    }, 50);
+  }}
+>
+  <Home size={17} />
+  <span>Home</span>
+</Link>
               <Link to="/about">
                 <UserRound
                   size={17}
