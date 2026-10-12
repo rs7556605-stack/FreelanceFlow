@@ -2838,20 +2838,12 @@ const Dashboard = () => {
 
               </div>
 
-              <button
-                type="button"
-                className="dashboard-overview-link dashboard-view-all-button"
-                onClick={() =>
-                  setShowAllDeadlines(
-                    (prev) =>
-                      !prev
-                  )
-                }
-              >
-                {showAllDeadlines
-                  ? "Show Less"
-                  : "View All"}
-              </button>
+              <Link
+  to="/Upcoming-Deadlines"
+  className="dashboard-overview-link dashboard-view-all-button"
+>
+  View All
+</Link>
 
             </div>
 
