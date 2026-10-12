@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import API from "../services/api";
-
 import {
   ArrowLeft,
   User,
@@ -22,7 +21,6 @@ import {
   Receipt,
   BarChart3,
 } from "lucide-react";
-
 import "./Settings.css";
 
 const Settings = () => {
@@ -32,6 +30,7 @@ const Settings = () => {
   const [name, setName] = useState(
     user?.username || user?.name || ""
   );
+
   const [email, setEmail] = useState(user?.email || "");
 
   const currentPlan =
@@ -52,15 +51,23 @@ const Settings = () => {
   });
 
   const [notifications, setNotifications] = useState(() => {
-    return (
-      localStorage.getItem(
-        "freelanceflow-notifications"
-      ) !== "false"
+    const stored = localStorage.getItem(
+      "freelanceflow-notifications"
     );
+
+    if (user?.notifications !== undefined) {
+      return Boolean(user.notifications);
+    }
+
+    return stored !== "false";
   });
 
   const [profileVisibility, setProfileVisibility] =
     useState(() => {
+      if (user?.profileVisibility) {
+        return user.profileVisibility;
+      }
+
       return (
         localStorage.getItem(
           "freelanceflow-profile-visibility"
@@ -96,6 +103,7 @@ const Settings = () => {
     useState(false);
 
   const [message, setMessage] = useState("");
+
   const [error, setError] = useState("");
 
   const showMessage = (text) => {
@@ -133,6 +141,14 @@ const Settings = () => {
   useEffect(() => {
     setName(user?.username || user?.name || "");
     setEmail(user?.email || "");
+
+    if (user?.notifications !== undefined) {
+      setNotifications(Boolean(user.notifications));
+    }
+
+    if (user?.profileVisibility) {
+      setProfileVisibility(user.profileVisibility);
+    }
   }, [user]);
 
   const handleBack = () => {
@@ -185,15 +201,26 @@ const Settings = () => {
       });
 
       if (response.data.success) {
+        const responseUser = response.data.user || {};
+
         const updatedUser = {
           ...(user || {}),
-          ...(response.data.user || {}),
+          ...responseUser,
           username:
-            response.data.user?.username ||
-            response.data.user?.name ||
+            responseUser.username ||
+            responseUser.name ||
+            user?.username ||
+            user?.name ||
+            cleanName,
+          name:
+            responseUser.name ||
+            responseUser.username ||
+            user?.name ||
+            user?.username ||
             cleanName,
           email:
-            response.data.user?.email ||
+            responseUser.email ||
+            user?.email ||
             cleanEmail,
         };
 
@@ -202,8 +229,16 @@ const Settings = () => {
           JSON.stringify(updatedUser)
         );
 
-        setName(updatedUser.username);
-        setEmail(updatedUser.email);
+        setName(
+          updatedUser.username ||
+          updatedUser.name ||
+          cleanName
+        );
+
+        setEmail(
+          updatedUser.email ||
+          cleanEmail
+        );
 
         showMessage(
           "Profile updated successfully."
@@ -270,46 +305,130 @@ const Settings = () => {
     );
   };
 
-  const handleNotificationChange = () => {
+  const handleNotificationChange = async () => {
     const newValue = !notifications;
 
-    setNotifications(newValue);
+    try {
+      const response = await API.put("/profile", {
+        notifications: newValue,
+      });
 
-    localStorage.setItem(
-      "freelanceflow-notifications",
-      String(newValue)
-    );
+      if (!response.data.success) {
+        throw new Error(
+          response.data.message ||
+            "Failed to update notifications."
+        );
+      }
 
-    window.dispatchEvent(
-      new Event("notificationsChanged")
-    );
+      const responseUser =
+        response.data.user || {};
 
-    showMessage(
-      newValue
-        ? "Notifications enabled."
-        : "Notifications disabled."
-    );
+      const updatedUser = {
+        ...(user || {}),
+        ...responseUser,
+        notifications: Boolean(
+          responseUser.notifications ??
+            newValue
+        ),
+      };
+
+      setNotifications(
+        updatedUser.notifications
+      );
+
+      localStorage.setItem(
+        "freelanceflow-notifications",
+        String(updatedUser.notifications)
+      );
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(updatedUser)
+      );
+
+      window.dispatchEvent(
+        new Event("notificationsChanged")
+      );
+
+      showMessage(
+        updatedUser.notifications
+          ? "Notifications enabled."
+          : "Notifications disabled."
+      );
+    } catch (error) {
+      showError(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to update notifications."
+      );
+    }
   };
 
-  const handlePrivacyChange = (event) => {
+  const handlePrivacyChange = async (event) => {
     const value = event.target.value;
 
-    setProfileVisibility(value);
+    try {
+      const response = await API.put("/profile", {
+        profileVisibility: value,
+      });
 
-    localStorage.setItem(
-      "freelanceflow-profile-visibility",
-      value
-    );
+      if (!response.data.success) {
+        throw new Error(
+          response.data.message ||
+            "Failed to update privacy settings."
+        );
+      }
 
-    window.dispatchEvent(
-      new Event("privacyChanged")
-    );
+      const responseUser =
+        response.data.user || {};
 
-    showMessage(
-      value === "public"
-        ? "Your profile is now public."
-        : "Your profile is now private."
-    );
+      const updatedUser = {
+        ...(user || {}),
+        ...responseUser,
+        profileVisibility:
+          responseUser.profileVisibility ||
+          value,
+      };
+
+      setProfileVisibility(
+        updatedUser.profileVisibility
+      );
+
+      localStorage.setItem(
+        "freelanceflow-profile-visibility",
+        updatedUser.profileVisibility
+      );
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(updatedUser)
+      );
+
+      window.dispatchEvent(
+        new Event("privacyChanged")
+      );
+
+      showMessage(
+        updatedUser.profileVisibility ===
+          "public"
+          ? "Your profile is now public."
+          : "Your profile is now private."
+      );
+    } catch (error) {
+      setProfileVisibility(
+        user?.profileVisibility ||
+          localStorage.getItem(
+            "freelanceflow-profile-visibility"
+          ) ||
+          "private"
+      );
+
+      showError(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to update privacy settings."
+      );
+    }
   };
 
   const handlePasswordChange = async (event) => {
@@ -469,6 +588,7 @@ const Settings = () => {
 
       <div className="settings-header">
         <h1>Settings</h1>
+
         <p>
           Manage your FreelanceFlow account
           and preferences.
@@ -495,6 +615,7 @@ const Settings = () => {
 
           <div>
             <h2>Profile Details</h2>
+
             <p>
               Update your personal account
               information.
@@ -570,6 +691,7 @@ const Settings = () => {
 
           <div>
             <h2>Plan & Billing</h2>
+
             <p>
               Choose the plan that fits your
               freelance workflow.
@@ -876,6 +998,7 @@ const Settings = () => {
 
           <div>
             <h2>Appearance</h2>
+
             <p>
               Customize how FreelanceFlow looks.
             </p>
@@ -885,6 +1008,7 @@ const Settings = () => {
         <div className="settings-row">
           <div>
             <h3>Theme</h3>
+
             <p>
               Choose your preferred application
               theme.
@@ -895,8 +1019,13 @@ const Settings = () => {
             value={theme}
             onChange={handleThemeChange}
           >
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
+            <option value="light">
+              Light
+            </option>
+
+            <option value="dark">
+              Dark
+            </option>
           </select>
         </div>
       </div>
@@ -909,6 +1038,7 @@ const Settings = () => {
 
           <div>
             <h2>Language</h2>
+
             <p>
               Choose your preferred language.
             </p>
@@ -918,6 +1048,7 @@ const Settings = () => {
         <div className="settings-row">
           <div>
             <h3>Application Language</h3>
+
             <p>
               Your language preference is saved.
             </p>
@@ -950,6 +1081,7 @@ const Settings = () => {
 
           <div>
             <h2>Notifications</h2>
+
             <p>
               Control your notification
               preferences.
@@ -960,6 +1092,7 @@ const Settings = () => {
         <div className="settings-row">
           <div>
             <h3>Email Notifications</h3>
+
             <p>
               Receive important updates and
               reminders.
@@ -986,6 +1119,7 @@ const Settings = () => {
 
           <div>
             <h2>Privacy</h2>
+
             <p>
               Control your profile visibility.
             </p>
@@ -995,6 +1129,7 @@ const Settings = () => {
         <div className="settings-row">
           <div>
             <h3>Profile Visibility</h3>
+
             <p>
               Choose whether your profile
               is public or private.
@@ -1024,6 +1159,7 @@ const Settings = () => {
 
           <div>
             <h2>Security</h2>
+
             <p>
               Keep your FreelanceFlow account
               secure.
@@ -1036,7 +1172,9 @@ const Settings = () => {
           onSubmit={handlePasswordChange}
         >
           <div className="settings-password-field">
-            <label>Current Password</label>
+            <label>
+              Current Password
+            </label>
 
             <div>
               <input
@@ -1073,7 +1211,9 @@ const Settings = () => {
           </div>
 
           <div className="settings-password-field">
-            <label>New Password</label>
+            <label>
+              New Password
+            </label>
 
             <div>
               <input
@@ -1110,7 +1250,9 @@ const Settings = () => {
           </div>
 
           <div className="settings-password-field">
-            <label>Confirm New Password</label>
+            <label>
+              Confirm New Password
+            </label>
 
             <div>
               <input
@@ -1168,6 +1310,7 @@ const Settings = () => {
 
           <div>
             <h2>Session</h2>
+
             <p>
               Manage your current login session.
             </p>
@@ -1177,6 +1320,7 @@ const Settings = () => {
         <div className="settings-row">
           <div>
             <h3>Logout</h3>
+
             <p>
               Sign out from your FreelanceFlow
               account.
@@ -1202,6 +1346,7 @@ const Settings = () => {
 
           <div>
             <h2>Danger Zone</h2>
+
             <p>
               Permanently delete your
               FreelanceFlow account.
@@ -1212,6 +1357,7 @@ const Settings = () => {
         <div className="settings-row">
           <div>
             <h3>Delete Account</h3>
+
             <p>
               This action cannot be undone.
             </p>
