@@ -1,329 +1,1179 @@
+/* =========================================================
+   UPGRADE PAGE
+   DARK + LIGHT THEME
+   FreelanceFlow
+   ========================================================= */
+
+
+/* =========================================================
+   DEFAULT DARK THEME
+   ========================================================= */
+
 .upgrade-page {
+  --upgrade-bg: #0d1629;
+  --upgrade-bg-secondary: #111d32;
+
+  --upgrade-card: #19283f;
+  --upgrade-card-secondary: #17243a;
+
+  --upgrade-border: #30415d;
+  --upgrade-border-hover: #465b79;
+
+  --upgrade-text: #f8fafc;
+  --upgrade-text-secondary: #d2dceb;
+  --upgrade-muted: #8fa4c4;
+  --upgrade-muted-dark: #7187a8;
+
+  --upgrade-button-bg: #202f45;
+  --upgrade-button-text: #7286a3;
+
+  --upgrade-purple: #735cf5;
+  --upgrade-purple-dark: #6649e8;
+  --upgrade-purple-light: #a99aff;
+
+  --upgrade-green: #21e58a;
+  --upgrade-orange: #ffb11b;
+
   min-height: 100vh;
-  background: #0f172a;
-  color: #f8fafc;
-  padding: 30px 20px 60px;
+  width: 100%;
+
+  box-sizing: border-box;
+
+  background:
+    radial-gradient(
+      circle at 50% -10%,
+      rgba(99, 102, 241, 0.10),
+      transparent 32%
+    ),
+    var(--upgrade-bg);
+
+  color: var(--upgrade-text);
+
+  padding: 30px 20px 70px;
+
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
 }
+
+
+/* =========================================================
+   LIGHT THEME
+   ========================================================= */
+
+.light-theme .upgrade-page,
+[data-theme="light"] .upgrade-page,
+[data-theme="light"] .upgrade-page {
+  --upgrade-bg: #f4f7fb;
+  --upgrade-bg-secondary: #ffffff;
+
+  --upgrade-card: #ffffff;
+  --upgrade-card-secondary: #f8faff;
+
+  --upgrade-border: #dbe3ef;
+  --upgrade-border-hover: #b9c7da;
+
+  --upgrade-text: #172033;
+  --upgrade-text-secondary: #3b475b;
+  --upgrade-muted: #64748b;
+  --upgrade-muted-dark: #7a8799;
+
+  --upgrade-button-bg: #f1f5f9;
+  --upgrade-button-text: #64748b;
+
+  --upgrade-purple: #6854e8;
+  --upgrade-purple-dark: #5844d5;
+  --upgrade-purple-light: #6854e8;
+
+  --upgrade-green: #059669;
+  --upgrade-orange: #d97706;
+
+  background:
+    radial-gradient(
+      circle at 50% -10%,
+      rgba(99, 102, 241, 0.08),
+      transparent 35%
+    ),
+    var(--upgrade-bg);
+
+  color: var(--upgrade-text);
+}
+
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
 
 .upgrade-container {
   width: 100%;
-  max-width: 1050px;
+  max-width: 1080px;
   margin: 0 auto;
 }
+
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
 
 .upgrade-back-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+
   gap: 9px;
+
   padding: 11px 17px;
-  border: 1px solid #334155;
+
+  border: 1px solid var(--upgrade-border);
   border-radius: 10px;
-  background: #1e293b;
-  color: #e2e8f0;
+
+  background: var(--upgrade-card);
+
+  color: var(--upgrade-text-secondary);
+
   font-size: 14px;
   font-weight: 700;
+
   cursor: pointer;
-  transition: all 0.2s ease;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.2s ease,
+    box-shadow 0.25s ease;
 }
 
 .upgrade-back-btn:hover {
-  background: #263449;
-  border-color: #475569;
-  transform: translateX(-2px);
+  background: var(--upgrade-card-secondary);
+
+  border-color: var(--upgrade-border-hover);
+
+  color: var(--upgrade-text);
+
+  transform: translateX(-3px);
+
+  box-shadow:
+    0 7px 20px rgba(0, 0, 0, 0.08);
 }
 
+.upgrade-back-btn:active {
+  transform: translateX(-1px);
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
 .upgrade-hero {
-  max-width: 700px;
-  margin: 65px auto 45px;
+  max-width: 780px;
+
+  margin: 58px auto 50px;
+
   text-align: center;
 }
 
+
+/* =========================================================
+   HERO ICON
+   ========================================================= */
+
 .upgrade-icon {
-  width: 58px;
-  height: 58px;
-  margin: 0 auto 18px;
+  width: 72px;
+  height: 72px;
+
+  margin: 0 auto 22px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+
+  border-radius: 19px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #765df5,
+      #8557ec
+    );
+
   color: #ffffff;
-  box-shadow: 0 12px 35px rgba(99, 102, 241, 0.25);
+
+  box-shadow:
+    0 15px 40px rgba(108, 79, 235, 0.28);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
+
+.upgrade-icon:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 20px 45px rgba(108, 79, 235, 0.35);
+}
+
+.upgrade-icon svg {
+  width: 38px;
+  height: 38px;
+
+  stroke-width: 2;
+}
+
+
+/* =========================================================
+   BADGE
+   ========================================================= */
 
 .upgrade-badge {
   display: inline-flex;
-  padding: 6px 12px;
-  margin-bottom: 14px;
-  border: 1px solid rgba(139, 92, 246, 0.3);
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 9px 16px;
+
+  margin-bottom: 22px;
+
+  border: 1px solid rgba(118, 93, 245, 0.45);
+
   border-radius: 999px;
-  background: rgba(99, 102, 241, 0.1);
-  color: #a5b4fc;
-  font-size: 12px;
+
+  background: rgba(99, 102, 241, 0.08);
+
+  color: var(--upgrade-purple-light);
+
+  font-size: 13px;
+
   font-weight: 800;
+
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+
+  letter-spacing: 0.7px;
 }
+
+
+/* =========================================================
+   HERO TITLE
+   ========================================================= */
 
 .upgrade-hero h1 {
   margin: 0;
-  font-size: clamp(34px, 5vw, 52px);
-  line-height: 1.08;
+
+  color: var(--upgrade-text);
+
+  font-size: clamp(38px, 5vw, 62px);
+
+  line-height: 1.05;
+
   font-weight: 800;
-  letter-spacing: -1.5px;
+
+  letter-spacing: -2px;
+
+  transition: color 0.3s ease;
 }
 
+
+/* =========================================================
+   HERO DESCRIPTION
+   ========================================================= */
+
 .upgrade-hero p {
-  max-width: 650px;
-  margin: 18px auto 0;
-  color: #94a3b8;
-  font-size: 16px;
-  line-height: 1.7;
+  max-width: 760px;
+
+  margin: 24px auto 0;
+
+  color: var(--upgrade-muted);
+
+  font-size: 18px;
+
+  line-height: 1.65;
+
+  transition: color 0.3s ease;
 }
+
+
+/* =========================================================
+   PLANS GRID
+   ========================================================= */
 
 .upgrade-plans {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 26px;
+
   align-items: stretch;
 }
 
+
+/* =========================================================
+   COMMON PLAN CARD
+   ========================================================= */
+
 .upgrade-plan-card {
   position: relative;
-  padding: 28px;
-  border-radius: 18px;
-  background: #172236;
-  border: 1px solid #334155;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
+
+  min-height: 560px;
+
+  padding: 34px;
+
+  box-sizing: border-box;
+
+  border: 1px solid var(--upgrade-border);
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--upgrade-card),
+      var(--upgrade-card-secondary)
+    );
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.12);
+
+  overflow: hidden;
+
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-.pro-plan {
-  border-color: rgba(99, 102, 241, 0.6);
-  background: linear-gradient(
-    145deg,
-    #1b2542,
-    #172236
-  );
+.upgrade-plan-card:hover {
+  transform: translateY(-4px);
+
+  border-color: var(--upgrade-border-hover);
+
   box-shadow:
-    0 20px 50px rgba(79, 70, 229, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    0 25px 60px rgba(0, 0, 0, 0.15);
 }
+
+
+/* =========================================================
+   FREE PLAN
+   ========================================================= */
+
+.free-plan {
+  background:
+    linear-gradient(
+      145deg,
+      var(--upgrade-card),
+      var(--upgrade-card-secondary)
+    );
+}
+
+
+/* =========================================================
+   PRO PLAN
+   ========================================================= */
+
+.pro-plan {
+  border-color: rgba(101, 82, 218, 0.8);
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--upgrade-card),
+      var(--upgrade-card-secondary)
+    );
+
+  box-shadow:
+    0 22px 60px rgba(76, 59, 175, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.pro-plan:hover {
+  border-color: #7161e8;
+
+  box-shadow:
+    0 28px 70px rgba(76, 59, 175, 0.20);
+}
+
+
+/* =========================================================
+   PRO GLOW
+   ========================================================= */
+
+.pro-plan::before {
+  content: "";
+
+  position: absolute;
+
+  width: 280px;
+  height: 280px;
+
+  top: -150px;
+  right: -130px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(108, 87, 238, 0.10);
+
+  filter: blur(55px);
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   POPULAR BADGE
+   ========================================================= */
 
 .popular-badge {
   position: absolute;
-  top: 18px;
-  right: 18px;
-  padding: 6px 9px;
-  border-radius: 7px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+
+  top: 23px;
+  right: 23px;
+
+  padding: 9px 14px;
+
+  border-radius: 9px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #735cf5,
+      #8057eb
+    );
+
   color: #ffffff;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
+
+  font-size: 10px;
+
+  font-weight: 900;
+
+  letter-spacing: 0.6px;
+
+  text-transform: uppercase;
+
+  box-shadow:
+    0 8px 22px rgba(103, 79, 220, 0.25);
+
+  z-index: 5;
 }
 
+
+/* =========================================================
+   PLAN TOP
+   ========================================================= */
+
 .plan-card-top {
+  position: relative;
+
+  z-index: 2;
+
   display: flex;
-  align-items: center;
+
+  align-items: flex-start;
+
   justify-content: space-between;
-  gap: 15px;
+
+  gap: 18px;
 }
+
+
+/* =========================================================
+   PLAN LABEL
+   ========================================================= */
 
 .plan-label {
   display: block;
-  margin-bottom: 7px;
-  color: #64748b;
-  font-size: 10px;
+
+  margin-bottom: 12px;
+
+  color: var(--upgrade-muted-dark);
+
+  font-size: 13px;
+
   font-weight: 800;
+
   letter-spacing: 1px;
+
+  text-transform: uppercase;
 }
+
+
+/* =========================================================
+   PLAN TITLE
+   ========================================================= */
 
 .plan-card-top h2 {
   margin: 0;
-  color: #f8fafc;
-  font-size: 25px;
+
+  color: var(--upgrade-text);
+
+  font-size: 34px;
+
+  line-height: 1.1;
+
   font-weight: 800;
 }
 
+
+/* =========================================================
+   PLAN ICON
+   ========================================================= */
+
 .plan-icon {
-  width: 43px;
-  height: 43px;
+  width: 56px;
+  height: 56px;
+
+  flex-shrink: 0;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
-  background: #263449;
-  color: #94a3b8;
+
+  border-radius: 15px;
+
+  background: var(--upgrade-button-bg);
+
+  color: var(--upgrade-muted);
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.2s ease;
 }
+
+.upgrade-plan-card:hover .plan-icon {
+  transform: scale(1.04);
+}
+
+.plan-icon svg {
+  width: 29px;
+  height: 29px;
+}
+
+
+/* =========================================================
+   PRO ICON
+   ========================================================= */
 
 .pro-icon {
-  background: rgba(99, 102, 241, 0.15);
-  color: #a5b4fc;
+  background:
+    rgba(99, 102, 241, 0.15);
+margin-right: 20px;
+margin-top: 20px;
+  color: var(--upgrade-purple-light);
 }
 
+
+/* =========================================================
+   PRICE
+   ========================================================= */
+
 .plan-price {
+  position: relative;
+
+  z-index: 2;
+
   display: flex;
+
   align-items: baseline;
-  gap: 5px;
-  margin-top: 25px;
+
+  gap: 7px;
+
+  margin-top: 48px;
 }
 
 .plan-price strong {
-  color: #ffffff;
-  font-size: 37px;
+  color: var(--upgrade-text);
+
+  font-size: 48px;
+
+  line-height: 1;
+
   font-weight: 800;
+
+  letter-spacing: -1px;
 }
 
 .plan-price span {
-  color: #64748b;
-  font-size: 13px;
+  color: var(--upgrade-muted-dark);
+
+  font-size: 15px;
 }
 
+
+/* =========================================================
+   PLAN LIMIT
+   ========================================================= */
+
 .plan-limit {
-  margin-top: 8px;
-  color: #f59e0b;
-  font-size: 13px;
+  position: relative;
+
+  z-index: 2;
+
+  margin-top: 20px;
+
+  color: var(--upgrade-orange);
+
+  font-size: 15px;
+
   font-weight: 700;
 }
 
 .plan-limit.unlimited {
-  color: #34d399;
+  color: var(--upgrade-green);
 }
 
+
+/* =========================================================
+   FEATURES
+   ========================================================= */
+
 .plan-features {
+  position: relative;
+
+  z-index: 2;
+
   display: flex;
+
   flex-direction: column;
-  gap: 14px;
-  margin: 27px 0;
+
+  gap: 20px;
+
+  margin: 36px 0 30px;
+
+  padding: 0;
 }
 
 .plan-features div {
   display: flex;
+
   align-items: center;
-  gap: 10px;
-  color: #cbd5e1;
-  font-size: 13px;
+
+  gap: 13px;
+
+  color: var(--upgrade-text-secondary);
+
+  font-size: 15px;
+
+  line-height: 1.5;
 }
 
 .plan-features svg {
+  width: 19px;
+  height: 19px;
+
   flex-shrink: 0;
-  color: #6366f1;
+
+  color: var(--upgrade-purple);
+
+  stroke-width: 2.5;
 }
 
-.current-plan-btn,
-.upgrade-now-btn {
-  width: 100%;
-  min-height: 46px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 800;
-}
+
+/* =========================================================
+   CURRENT PLAN BUTTON
+   ========================================================= */
 
 .current-plan-btn {
-  border: 1px solid #334155;
-  background: #1e293b;
-  color: #64748b;
+  position: relative;
+
+  z-index: 2;
+
+  width: 100%;
+
+  min-height: 52px;
+
+  margin-top: 10px;
+
+  border: 1px solid var(--upgrade-border);
+
+  border-radius: 12px;
+
+  background: var(--upgrade-button-bg);
+
+  color: var(--upgrade-button-text);
+
+  font-size: 14px;
+
+  font-weight: 800;
+
   cursor: not-allowed;
+
+  transition:
+    background 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
 }
 
+
+/* =========================================================
+   UPGRADE BUTTON
+   ========================================================= */
+
 .upgrade-now-btn {
+  position: relative;
+
+  z-index: 2;
+
+  width: 100%;
+
+  min-height: 52px;
+
+  margin-top: 10px;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
-  gap: 8px;
+
+  gap: 9px;
+
   border: 0;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--upgrade-purple),
+      var(--upgrade-purple-dark)
+    );
+
   color: #ffffff;
+
+  font-size: 14px;
+
+  font-weight: 800;
+
   cursor: pointer;
-  box-shadow: 0 8px 22px rgba(99, 102, 241, 0.24);
-  transition: all 0.2s ease;
+
+  box-shadow:
+    0 10px 28px rgba(102, 73, 232, 0.25);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
 }
 
 .upgrade-now-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.35);
+
+  filter: brightness(1.06);
+
+  box-shadow:
+    0 15px 34px rgba(102, 73, 232, 0.38);
 }
 
 .upgrade-now-btn:active {
   transform: translateY(0);
 }
 
+.upgrade-now-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+
+/* =========================================================
+   BOTTOM NOTE
+   ========================================================= */
+
 .upgrade-bottom-note {
   display: flex;
+
   align-items: center;
+
   justify-content: center;
-  gap: 8px;
-  margin-top: 25px;
-  color: #64748b;
+
+  gap: 9px;
+
+  margin-top: 28px;
+
+  color: var(--upgrade-muted-dark);
+
   text-align: center;
+}
+
+.upgrade-bottom-note span {
+  font-size: 14px;
+
+  line-height: 1;
 }
 
 .upgrade-bottom-note p {
   margin: 0;
-  font-size: 12px;
+
+  font-size: 13px;
+
+  line-height: 1.5;
 }
 
-@media (max-width: 760px) {
+
+/* =========================================================
+   LIGHT THEME - CARD OVERRIDES
+   ========================================================= */
+
+.light-theme .upgrade-plan-card,
+[data-theme="light"] .upgrade-plan-card {
+  box-shadow:
+    0 15px 40px rgba(15, 23, 42, 0.08);
+}
+
+.light-theme .upgrade-plan-card:hover,
+[data-theme="light"] .upgrade-plan-card:hover {
+  box-shadow:
+    0 20px 45px rgba(15, 23, 42, 0.12);
+}
+
+.light-theme .pro-plan,
+[data-theme="light"] .pro-plan {
+  border-color: rgba(104, 84, 232, 0.55);
+
+  box-shadow:
+    0 18px 45px rgba(99, 82, 220, 0.12);
+}
+
+.light-theme .pro-plan:hover,
+[data-theme="light"] .pro-plan:hover {
+  border-color: #6854e8;
+
+  box-shadow:
+    0 22px 55px rgba(99, 82, 220, 0.18);
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
   .upgrade-page {
-    padding: 20px 15px 45px;
+    padding: 25px 18px 60px;
   }
 
   .upgrade-hero {
-    margin: 45px auto 32px;
+    margin-top: 50px;
   }
 
   .upgrade-hero h1 {
-    font-size: 34px;
+    font-size: 48px;
   }
 
   .upgrade-hero p {
+    font-size: 16px;
+  }
+
+  .upgrade-plans {
+    gap: 20px;
+  }
+
+  .upgrade-plan-card {
+    padding: 27px;
+  }
+
+  .plan-card-top h2 {
+    font-size: 29px;
+  }
+
+  .plan-price strong {
+    font-size: 42px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+  .upgrade-page {
+    padding: 20px 15px 50px;
+  }
+
+  .upgrade-hero {
+    margin: 45px auto 35px;
+  }
+
+  .upgrade-icon {
+    width: 64px;
+    height: 64px;
+
+    border-radius: 17px;
+  }
+
+  .upgrade-icon svg {
+    width: 34px;
+    height: 34px;
+  }
+
+  .upgrade-badge {
+    font-size: 11px;
+
+    padding: 8px 13px;
+  }
+
+  .upgrade-hero h1 {
+    font-size: 38px;
+
+    letter-spacing: -1px;
+  }
+
+  .upgrade-hero p {
+    margin-top: 18px;
+
     font-size: 14px;
+
+    line-height: 1.65;
   }
 
   .upgrade-plans {
     grid-template-columns: 1fr;
+
+    gap: 18px;
   }
 
   .upgrade-plan-card {
-    padding: 23px;
+    min-height: auto;
+
+    padding: 25px;
+
+    border-radius: 18px;
+  }
+
+  .plan-card-top h2 {
+    font-size: 30px;
+  }
+
+  .plan-icon {
+    width: 50px;
+    height: 50px;
+
+    border-radius: 14px;
+  }
+
+  .plan-price {
+    margin-top: 35px;
+  }
+
+  .plan-price strong {
+    font-size: 42px;
+  }
+
+  .plan-features {
+    gap: 17px;
+
+    margin-top: 30px;
+  }
+
+  .plan-features div {
+    font-size: 14px;
+  }
+
+  .popular-badge {
+    top: 17px;
+    right: 17px;
+
+    padding: 8px 11px;
+
+    font-size: 8px;
   }
 }
 
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
 @media (max-width: 480px) {
+
   .upgrade-page {
-    padding: 16px 12px 35px;
+    padding: 16px 12px 40px;
   }
 
   .upgrade-back-btn {
     padding: 10px 13px;
+
     font-size: 13px;
   }
 
   .upgrade-hero {
-    margin-top: 38px;
+    margin: 38px auto 30px;
+  }
+
+  .upgrade-icon {
+    width: 58px;
+    height: 58px;
+
+    margin-bottom: 18px;
+
+    border-radius: 15px;
+  }
+
+  .upgrade-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .upgrade-badge {
+    padding: 7px 11px;
+
+    margin-bottom: 16px;
+
+    font-size: 10px;
   }
 
   .upgrade-hero h1 {
-    font-size: 29px;
+    font-size: 30px;
+
+    line-height: 1.1;
   }
 
   .upgrade-hero p {
     font-size: 13px;
+
     line-height: 1.6;
   }
 
   .upgrade-plan-card {
-    padding: 20px;
-    border-radius: 15px;
+    padding: 21px;
+
+    border-radius: 16px;
+  }
+
+  .plan-label {
+    font-size: 11px;
+  }
+
+  .plan-card-top h2 {
+    font-size: 27px;
+  }
+
+  .plan-icon {
+    width: 45px;
+    height: 45px;
+
+    border-radius: 12px;
+  }
+
+  .plan-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .plan-price {
+    margin-top: 30px;
+  }
+
+  .plan-price strong {
+    font-size: 36px;
+  }
+
+  .plan-price span {
+    font-size: 12px;
+  }
+
+  .plan-limit {
+    margin-top: 12px;
+
+    font-size: 12px;
+  }
+
+  .plan-features {
+    gap: 15px;
+
+    margin: 27px 0;
+  }
+
+  .plan-features div {
+    gap: 9px;
+
+    font-size: 13px;
+  }
+
+  .plan-features svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .current-plan-btn,
+  .upgrade-now-btn {
+    min-height: 48px;
+
+    font-size: 13px;
   }
 
   .popular-badge {
-    top: 14px;
-    right: 14px;
-    font-size: 8px;
+    top: 13px;
+    right: 13px;
+
+    padding: 7px 9px;
+
+    font-size: 7px;
+  }
+
+  .upgrade-bottom-note {
+    margin-top: 22px;
+  }
+
+  .upgrade-bottom-note p {
+    font-size: 11px;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL DEVICES
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+  .upgrade-hero h1 {
+    font-size: 27px;
+  }
+
+  .upgrade-plan-card {
+    padding: 18px;
+  }
+
+  .plan-card-top h2 {
+    font-size: 24px;
   }
 
   .plan-price strong {
     font-size: 32px;
+  }
+
+  .plan-features div {
+    font-size: 12px;
+  }
+
+  .popular-badge {
+    font-size: 6px;
+
+    padding: 6px 8px;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .upgrade-plan-card,
+  .upgrade-back-btn,
+  .upgrade-now-btn,
+  .upgrade-icon,
+  .plan-icon {
+    transition: none;
   }
 }
