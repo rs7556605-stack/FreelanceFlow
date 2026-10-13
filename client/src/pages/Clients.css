@@ -1366,7 +1366,7 @@ html[data-theme="dark"] .add-client-btn:hover {
 
   border-bottom: 1px solid #334155;
 
-  color: rgb(247, 244, 244);
+  color: black;
 
   font-size: 14px;
 }
@@ -1376,7 +1376,7 @@ html[data-theme="dark"] .add-client-btn:hover {
 }
 
 .client-deadline strong {
-  color: rgb(245, 243, 243);
+  color: rgb(199, 32, 32);
 }
 
 
