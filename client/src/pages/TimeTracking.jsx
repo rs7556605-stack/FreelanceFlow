@@ -32,9 +32,7 @@ const TimeTracking = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ==========================================
-  // STATES
-  // ==========================================
+
 
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -71,17 +69,13 @@ const TimeTracking = () => {
     billed: false,
   });
 
-  // ==========================================
-  // INITIAL LOAD
-  // ==========================================
+  
 
   useEffect(() => {
     loadInitialData();
   }, []);
 
-  // ==========================================
-  // HANDLE MESSAGE + EDIT FROM OTHER PAGE
-  // ==========================================
+
 
   useEffect(() => {
     const state = location.state;
@@ -109,9 +103,6 @@ const TimeTracking = () => {
     );
   }, [location.state]);
 
-  // ==========================================
-  // CLOSE ACTION MENU OUTSIDE
-  // ==========================================
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -135,9 +126,7 @@ const TimeTracking = () => {
     };
   }, []);
 
-  // ==========================================
-  // LOAD INITIAL DATA
-  // ==========================================
+
 
   const loadInitialData = async () => {
     setError("");
@@ -161,9 +150,7 @@ const TimeTracking = () => {
     }
   };
 
-  // ==========================================
-  // PROJECTS
-  // ==========================================
+ 
 
   const loadProjects = async () => {
     const response = await API.get("/projects");
@@ -175,41 +162,54 @@ const TimeTracking = () => {
     }
   };
 
-  // ==========================================
-  // TASKS
-  // ==========================================
 
-  const loadTasks = async (projectId) => {
-    if (!projectId) {
-      setTasks([]);
-      return;
-    }
 
-    try {
-      const response = await API.get(
-        `/tasks?project=${projectId}`
+const loadTasks = async (projectId) => {
+  if (!projectId) {
+    setTasks([]);
+    return;
+  }
+
+  try {
+    const response = await API.get(
+      `/tasks?project=${projectId}`
+    );
+
+    if (response.data.success) {
+      const receivedTasks =
+        response.data.tasks || [];
+
+      // ONLY SELECTED PROJECT TASKS
+      const projectTasks = receivedTasks.filter(
+        (task) => {
+          const taskProjectId =
+            task.projectId ||
+            task.project?._id ||
+            task.project?.id ||
+            task.project;
+
+          return (
+            taskProjectId &&
+            String(taskProjectId) ===
+              String(projectId)
+          );
+        }
       );
 
-      if (response.data.success) {
-        setTasks(
-          response.data.tasks || []
-        );
-      } else {
-        setTasks([]);
-      }
-    } catch (error) {
-      console.error(
-        "Load Tasks Error:",
-        error
-      );
-
+      setTasks(projectTasks);
+    } else {
       setTasks([]);
     }
-  };
+  } catch (error) {
+    console.error(
+      "Load Tasks Error:",
+      error
+    );
 
-  // ==========================================
-  // TIME LOGS
-  // ==========================================
+    setTasks([]);
+  }
+};
+
 
   const loadTimeLogs = async () => {
     const response = await API.get("/time");
@@ -221,9 +221,6 @@ const TimeTracking = () => {
     }
   };
 
-  // ==========================================
-  // ACTIVE TIMER
-  // ==========================================
 
   const loadActiveTimer = async () => {
     const response = await API.get(
@@ -263,9 +260,7 @@ const TimeTracking = () => {
     }
   };
 
-  // ==========================================
-  // ELAPSED TIME
-  // ==========================================
+
 
   const calculateElapsedTime = (
     startTime
@@ -287,9 +282,6 @@ const TimeTracking = () => {
     setElapsedSeconds(seconds);
   };
 
-  // ==========================================
-  // TIMER INTERVAL
-  // ==========================================
 
   useEffect(() => {
     if (!activeTimer) {
@@ -311,9 +303,7 @@ const TimeTracking = () => {
   const handleBack = () => {
   navigate("/", { replace: true });
 };
-  // ==========================================
-  // REFRESH
-  // ==========================================
+
 
   const handleRefresh = async () => {
     if (refreshing) {
@@ -347,29 +337,27 @@ const TimeTracking = () => {
     }
   };
 
-  // ==========================================
-  // TIMER PROJECT
-  // ==========================================
 
-  const handleProjectChange = async (
-    event
-  ) => {
-    const projectId =
-      event.target.value;
 
-    setSelectedProject(projectId);
-    setSelectedTask("");
-    setTasks([]);
-    setError("");
 
-    if (projectId) {
-      await loadTasks(projectId);
-    }
-  };
+const handleProjectChange = async (event) => {
+  const projectId = event.target.value;
 
-  // ==========================================
-  // START TIMER
-  // ==========================================
+  setSelectedProject(projectId);
+
+ 
+  setSelectedTask("");
+
+  setTasks([]);
+
+  setError("");
+
+  if (projectId) {
+    await loadTasks(projectId);
+  }
+};
+
+
 
   const handleStartTimer = async () => {
     if (!selectedProject) {
@@ -421,9 +409,7 @@ const TimeTracking = () => {
     }
   };
 
-  // ==========================================
-  // STOP TIMER
-  // ==========================================
+ 
 
   const handleStopTimer = async () => {
     if (!activeTimer?._id) {
@@ -495,10 +481,7 @@ const TimeTracking = () => {
     }
   };
 
-  // ==========================================
-  // MANUAL FORM
-  // ==========================================
-
+  
   const handleManualChange = (
     field,
     value
@@ -511,9 +494,7 @@ const TimeTracking = () => {
     );
   };
 
-  // ==========================================
-  // MANUAL PROJECT
-  // ==========================================
+
 
   const handleManualProjectChange =
     async (event) => {
@@ -535,9 +516,7 @@ const TimeTracking = () => {
       }
     };
 
-  // ==========================================
-  // DATE FORMAT LOCAL
-  // ==========================================
+
 
   const formatDateTimeLocal = (
     date
@@ -570,9 +549,7 @@ const TimeTracking = () => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-  // ==========================================
-  // VIEW LOG
-  // ==========================================
+
 
   const handleViewLog = (log) => {
     setOpenActionMenu(null);
@@ -587,18 +564,14 @@ const TimeTracking = () => {
     );
   };
 
-  // ==========================================
-  // VIEW ALL LOGS
-  // ==========================================
+ 
 
   const handleViewAllLogs = () => {
     setOpenActionMenu(null);
     navigate("/time-logs");
   };
 
-  // ==========================================
-  // EDIT LOG
-  // ==========================================
+
 
   const handleEditLog = async (
     log
@@ -654,9 +627,7 @@ const TimeTracking = () => {
     });
   };
 
-  // ==========================================
-  // CANCEL EDIT
-  // ==========================================
+
 
   const handleCancelManual = () => {
     setShowManualForm(false);
@@ -674,9 +645,7 @@ const TimeTracking = () => {
     setTasks([]);
   };
 
-  // ==========================================
-  // CREATE / UPDATE MANUAL LOG
-  // ==========================================
+ 
 
   const handleManualSubmit =
     async (event) => {
@@ -784,9 +753,6 @@ const TimeTracking = () => {
       }
     };
 
-  // ==========================================
-  // DELETE
-  // ==========================================
 
   const handleDeleteLog = async (
     id
@@ -832,9 +798,7 @@ const TimeTracking = () => {
     }
   };
 
-  // ==========================================
-  // FORMAT TIME
-  // ==========================================
+ 
 
   const formatTime = (
     seconds
@@ -867,9 +831,6 @@ const TimeTracking = () => {
       .join(":");
   };
 
-  // ==========================================
-  // FORMAT DATE
-  // ==========================================
 
   const formatDate = (
     date
@@ -889,17 +850,12 @@ const TimeTracking = () => {
     );
   };
 
-  // ==========================================
-  // UI
-  // ==========================================
+
 
   return (
     <div className="time-page">
       <div className="time-container">
 
-        {/* ======================================
-            TOP BAR
-        ====================================== */}
 
         <div className="time-topbar">
 
@@ -934,9 +890,7 @@ const TimeTracking = () => {
 
         </div>
 
-        {/* ======================================
-            HEADER
-        ====================================== */}
+       
 
         <div className="time-header">
 
@@ -954,19 +908,14 @@ const TimeTracking = () => {
 
         </div>
 
-        {/* ======================================
-            ERROR
-        ====================================== */}
-
+    
         {error && (
           <div className="time-error">
             {error}
           </div>
         )}
 
-        {/* ======================================
-            MESSAGE
-        ====================================== */}
+       
 
         {message && (
           <div className="time-success">
@@ -974,9 +923,7 @@ const TimeTracking = () => {
           </div>
         )}
 
-        {/* ======================================
-            TIMER
-        ====================================== */}
+        
 
         <div className="timer-card">
 
@@ -1168,9 +1115,6 @@ const TimeTracking = () => {
 
         </div>
 
-        {/* ======================================
-            MANUAL TIME
-        ====================================== */}
 
         <div className="manual-log-section">
 
@@ -1447,9 +1391,7 @@ const TimeTracking = () => {
 
         </div>
 
-        {/* ======================================
-            LOGS
-        ====================================== */}
+        
 
         <div className="logs-card">
 
@@ -1747,19 +1689,6 @@ const TimeTracking = () => {
         </div>
 
       </div>
-      
-
-
-
-
-
-
-
-
-
-
-      
-
  
 
  <div className="client-project-actions">
