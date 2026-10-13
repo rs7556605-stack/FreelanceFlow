@@ -893,7 +893,7 @@ const Settings = () => {
                 marginBottom: "18px",
               }}
             >
-              ₹499
+              ₹299
 
               <span
                 style={{
@@ -1066,9 +1066,7 @@ const Settings = () => {
               Hindi
             </option>
 
-            <option value="Hinglish">
-              Hinglish
-            </option>
+    
           </select>
         </div>
       </div>
