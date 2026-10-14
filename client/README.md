@@ -1,4 +1,4 @@
-=================================================
+
              FREELANCEFLOW
  A Project Management Tool for Freelancers
 ================================================
