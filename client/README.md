@@ -1,7 +1,11 @@
 
-             FREELANCEFLOW
- A Project Management Tool for Freelancers
-================================================
+======================================================================
+                         FREELANCEFLOW
+ ======================================================================
+              A Project Management Tool for Freelancers
+
+
+                        INTERNSHIP PROJECT
 
          INTERNSHIP PROJECT
 
