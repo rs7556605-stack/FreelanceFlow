@@ -54,6 +54,7 @@ Invoice
 Revenue
 
 
+
 🎯 Objectives
 The main objectives of FreelanceFlow are:
 - Centralize client information
@@ -365,8 +366,7 @@ Before running FreelanceFlow, install:
 - Modern web browser
 - Visual Studio Code (recommended)
 1. Clone the Repository
-git clone https://github.com/rs7556605-stack/FreelanceFlow
-
+git clone:https://github.com/rs7556605-stack/FreelanceFlow
 Then move into the project directory:
 cd FreelanceFlow
 
@@ -476,7 +476,7 @@ MongoDB Atlas can be used for cloud database hosting.
 Before production deployment, configure all required environment variables.
 🌐 Live Project
 The live project link is provided separately in:
-Live_Link:https://rs7556605-stack.github.io/FreelanceFlow/
+Live_Link:https://rs7556605-stack.github.io/FreelanceFlow
 
 
 📸 Project Screenshots
